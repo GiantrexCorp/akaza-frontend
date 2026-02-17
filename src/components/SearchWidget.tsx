@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
   Hotel,
   Ship,
@@ -14,13 +13,13 @@ import {
   User,
 } from "lucide-react";
 
-const tabs = [
-  { id: "hotels", label: "Hotels", icon: Hotel },
-  { id: "excursions", label: "Excursions", icon: Ship },
-  { id: "transfers", label: "Transfers", icon: Car },
-] as const;
+export type TabId = "hotels" | "excursions" | "transfers";
 
-type TabId = (typeof tabs)[number]["id"];
+const tabs = [
+  { id: "hotels" as TabId, label: "Hotels", icon: Hotel },
+  { id: "excursions" as TabId, label: "Excursions", icon: Ship },
+  { id: "transfers" as TabId, label: "Transfers", icon: Car },
+];
 
 interface FieldConfig {
   label: string;
@@ -53,8 +52,12 @@ const buttonLabels: Record<TabId, string> = {
   transfers: "Find Transfer",
 };
 
-export default function SearchWidget() {
-  const [activeTab, setActiveTab] = useState<TabId>("excursions");
+interface SearchWidgetProps {
+  activeTab: TabId;
+  onTabChange: (tab: TabId) => void;
+}
+
+export default function SearchWidget({ activeTab, onTabChange }: SearchWidgetProps) {
   const fields = fieldConfigs[activeTab];
 
   return (
@@ -70,7 +73,7 @@ export default function SearchWidget() {
                 return (
                   <button
                     key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
+                    onClick={() => onTabChange(tab.id)}
                     className={`flex items-center gap-3 px-4 py-3 transition-all border-l-2 ${
                       isActive
                         ? "bg-primary/10 text-primary font-bold border-primary"
@@ -112,8 +115,8 @@ export default function SearchWidget() {
             })}
 
             {/* Search Button */}
-            <div className={`flex items-end h-full ${activeTab === "transfers" ? "md:col-start-5" : ""}`}>
-              <button className="w-full bg-primary hover:bg-primary-dark text-white h-[56px] font-bold transition-colors flex items-center justify-center gap-2 uppercase tracking-widest text-xs shadow-lg">
+            <div className="flex items-end h-full">
+              <button className="w-full bg-primary hover:bg-primary-gradient-end text-white h-[56px] font-bold transition-colors flex items-center justify-center gap-2 uppercase tracking-widest text-xs shadow-lg">
                 <Search size={14} />
                 {buttonLabels[activeTab]}
               </button>

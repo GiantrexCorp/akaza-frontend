@@ -41,7 +41,7 @@ export default function Navbar() {
           <button className="text-slate-300 hover:text-white transition-colors text-xs uppercase tracking-widest font-medium">
             Log In
           </button>
-          <button className="bg-gradient-to-r from-primary to-primary-dark hover:to-primary text-white px-8 py-3 font-sans uppercase tracking-widest text-xs font-bold transition-all shadow-lg hover:shadow-primary/20">
+          <button className="bg-gradient-to-r from-primary to-primary-gradient-end hover:to-primary text-white px-8 py-3 font-sans uppercase tracking-widest text-xs font-bold transition-all shadow-lg hover:shadow-primary/20">
             Book Now
           </button>
         </div>
@@ -74,7 +74,7 @@ export default function Navbar() {
               <button className="text-slate-300 hover:text-white transition-colors text-xs uppercase tracking-widest font-medium text-left">
                 Log In
               </button>
-              <button className="bg-gradient-to-r from-primary to-primary-dark text-white px-8 py-3 font-sans uppercase tracking-widest text-xs font-bold w-full">
+              <button className="bg-gradient-to-r from-primary to-primary-gradient-end text-white px-8 py-3 font-sans uppercase tracking-widest text-xs font-bold w-full">
                 Book Now
               </button>
             </div>

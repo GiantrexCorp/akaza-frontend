@@ -1,0 +1,132 @@
+## Akaza Travel — Cursor AI Rules
+
+You are working on Akaza Travel, a luxury Egypt travel platform built with Next.js. Read this entire file before writing any code. For detailed design specs, read `docs/DESIGN_SYSTEM.md`.
+
+### Project Facts
+
+- Next.js 16+ with App Router, TypeScript strict mode
+- Tailwind CSS v4 — tokens defined via `@theme inline` in `src/app/globals.css` (NO tailwind.config.ts)
+- Icons: `lucide-react` ONLY — never add other icon libraries
+- Fonts: Playfair Display (serif, headings) + Plus Jakarta Sans (sans, body) via `next/font/google`
+- Package manager: npm
+- A Laravel backend API will be integrated later — keep components prop-driven for easy data binding
+
+### Design Language
+
+This is a dark, elegant, editorial luxury brand. Think high-end magazine, not SaaS.
+
+**Colors** (always use Tailwind tokens, never hardcode hex):
+- `primary` (#b38b59) — warm gold for accents, buttons, highlights
+- `primary-dark` (#8c6b42) — pressed gold states
+- `primary-gradient-end` (#9a7648) — Book Now gradient end, search button hover
+- `accent` (#d4af37) — bright gold for gradient text
+- `accent-light` (#f3e5ab) — brand gradient text midpoint
+- `secondary` (#4a5568) — muted blue-gray
+- `bg-light` (#f5f3f0) — light mode (future)
+- `bg-dark` (#1a1c23) — main page background
+- `bg-darker` (#111216) — card overlays, gradient endpoints
+- `bg-card` (#23262f) — elevated surfaces (search widget)
+- `bg-vip` (#14161b) — VIP section, office card
+- `bg-footer` (#0f1014) — footer
+- Text: `text-white`, `text-slate-200` through `text-slate-600` for hierarchy
+
+**CRITICAL — NO ROUNDED CORNERS:**
+Never use `rounded-sm`, `rounded`, `rounded-md`, `rounded-lg`, `rounded-xl`, `rounded-2xl`, `rounded-3xl` on ANY element. Everything is sharp/square. The only exception is `rounded-full` for decorative blur circles.
+
+**Typography rules:**
+- `font-serif` (Playfair Display): all h1–h4 tags, card titles, prices, hero buttons, input text
+- `font-sans` (Plus Jakarta Sans): body text, nav links, labels, descriptions, UI buttons
+- Section labels: `text-primary font-bold uppercase tracking-[0.3em] text-xs font-sans`
+- Card titles (short): `text-4xl font-serif text-white italic`
+- Card titles (long): `text-3xl font-serif text-white italic leading-snug`
+- Service card titles: `text-2xl font-serif text-white italic`
+
+**Image treatment:**
+- Card images have grayscale filter: `grayscale-[30%]` (excursions) or `grayscale-[20%]` (hotels/vehicles)
+- Hover removes grayscale: `group-hover:grayscale-0 group-hover:scale-105`
+- All card images stored in `/public/images/`
+
+### Code Rules
+
+1. **One component per file** in `src/components/`, PascalCase filenames
+2. **Pages are composition only** — `page.tsx` imports and arranges components, no inline markup
+3. **Props over hardcoding** — all data (titles, descriptions, prices, images) must be props
+4. **TypeScript interfaces** for all component props, defined explicitly (not inline)
+5. **`"use client"` only when needed** — only for hooks, event handlers, browser APIs. Default to server components
+6. **Import the AkazaLogo component** (`src/components/AkazaLogo.tsx`) — never recreate the logo SVG inline
+7. **Check existing components first** before creating new ones. Extend with props rather than duplicate
+8. **Shared state via wrapper components** — when multiple components share state, create a client wrapper (see `HomeContent.tsx`)
+
+### Tab-Linked Content Architecture
+
+The SearchWidget tab (Hotels/Excursions/Transfers) controls BOTH the search form AND the DestinationsSection below. Managed via shared state in `HomeContent.tsx`:
+
+| Tab | Section Label | Section Heading | Card Style |
+|-----|--------------|----------------|------------|
+| Excursions | Curated Experiences | Iconic Destinations / Told Through Luxury | 3 destinations, paragraph, grayscale-30, text-4xl titles |
+| Hotels | Curated Stays | Top Luxury Hotels / Unmatched Elegance | 3 hotels, paragraph, grayscale-20, text-3xl titles |
+| Transfers | Executive Fleet | Premium Transfer Services / Seamless Travel | 3 vehicles, feature list, grayscale-20, text-3xl titles |
+
+### Tailwind Conventions
+
+- Design tokens in `src/app/globals.css` under `@theme inline` — Tailwind v4
+- Use Tailwind utilities, not custom CSS (except `.brand-gradient-text` in globals.css)
+- Mobile-first responsive: `md:` breakpoint (768px) for desktop
+- Standard spacing: `px-6` horizontal, `py-32` section vertical, `max-w-7xl mx-auto` content width
+
+### Existing Component Patterns
+
+**Buttons** (all sharp, no rounded):
+- Nav CTA: `bg-gradient-to-r from-primary to-primary-gradient-end hover:to-primary text-white px-8 py-3 uppercase tracking-widest text-xs font-bold`
+- Hero primary: `bg-primary hover:bg-white hover:text-bg-dark text-white px-10 py-4 font-serif text-lg`
+- Hero outline: `border border-white/40 bg-white/5 backdrop-blur-md text-white px-10 py-4 font-serif text-lg`
+- Section CTA: `border border-primary text-primary hover:bg-primary hover:text-white px-12 py-5 uppercase tracking-widest text-xs font-bold`
+- Search: `bg-primary hover:bg-primary-gradient-end text-white h-[56px] uppercase tracking-widest text-xs font-bold`
+- Subscribe: `bg-white text-black hover:bg-primary hover:text-white py-3 uppercase tracking-widest text-xs font-bold`
+
+**Cards (550px image cards):**
+- Two variants: paragraph description (excursions/hotels) and feature list with CheckCircle icons (transfers)
+- Container: `h-[550px]`, absolute image, gradient overlay `from-bg-darker`, content at bottom `p-10`
+- Hover: inner border frame `m-4 border-2 border-primary/50`, image `scale-105`, grayscale lifts
+- Title sizes: `titleSize="lg"` (text-4xl) or `titleSize="sm"` (text-3xl leading-snug)
+
+**Service cards:**
+- `p-10 border border-white/5 bg-white/[0.02] hover:bg-white/[0.04]`
+- Icon `size={48} strokeWidth={1}`, centered, italic serif title
+
+**Inputs**: Underline style — `bg-transparent border-b border-slate-700 focus:border-primary text-white text-lg font-serif outline-none`
+
+**Glass surfaces**: `bg-bg-dark/85 backdrop-blur-[16px] border-b border-white/5`
+
+### File Structure
+
+```
+src/app/globals.css          → Design tokens + .brand-gradient-text
+src/app/layout.tsx           → Root layout (fonts, metadata)
+src/app/page.tsx             → Page composition (thin)
+src/components/AkazaLogo.tsx → Brand logo
+src/components/Navbar.tsx    → Sticky glass nav
+src/components/Hero.tsx      → Full-viewport hero
+src/components/HomeContent.tsx → Client wrapper (shared tab state)
+src/components/SearchWidget.tsx → Tabbed search (controlled, exports TabId type)
+src/components/DestinationsSection.tsx → Tab-linked cards (3 datasets)
+src/components/DestinationCard.tsx → 550px image card (2 variants)
+src/components/VIPServices.tsx → VIP section + 3 service cards
+src/components/ServiceCard.tsx → Icon + title + description
+src/components/OfficeSection.tsx → Map background + office contact card
+src/components/Footer.tsx    → 4-column footer + newsletter
+docs/DESIGN_SYSTEM.md       → Full design system reference
+```
+
+### Do NOT
+
+- Add UI libraries (shadcn, Chakra, MUI, etc.) without explicit approval
+- Use `rounded-*` on any element (except `rounded-full` for decorative circles)
+- Hardcode hex color values — use Tailwind design tokens
+- Create a `tailwind.config.ts` — Tailwind v4 uses CSS-based config
+- Use any icon library other than `lucide-react`
+- Use Inter font — this project uses Plus Jakarta Sans
+- Add unnecessary comments that restate what code does
+- Skip reading `docs/DESIGN_SYSTEM.md` when doing UI work
+- Duplicate components — extend existing ones with props instead
+- Put shared state in page.tsx — use client wrapper components

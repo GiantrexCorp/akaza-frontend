@@ -3,7 +3,11 @@
 @theme inline {
   --color-primary: #b38b59;
   --color-primary-dark: #8c6b42;
+  --color-primary-gradient-end: #9a7648;
   --color-accent: #d4af37;
+  --color-accent-light: #f3e5ab;
+  --color-secondary: #4a5568;
+  --color-bg-light: #f5f3f0;
   --color-bg-dark: #1a1c23;
   --color-bg-darker: #111216;
   --color-bg-card: #23262f;
@@ -21,4 +25,12 @@ body {
 
 h1, h2, h3, h4, .font-serif {
   font-family: var(--font-serif), Georgia, serif;
+}
+
+.brand-gradient-text {
+  background: linear-gradient(90deg, #d4af37, #f3e5ab, #d4af37);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% auto;
 }

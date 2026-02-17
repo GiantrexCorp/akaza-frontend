@@ -1,8 +1,8 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import SearchWidget from "@/components/SearchWidget";
-import DestinationsSection from "@/components/DestinationsSection";
+import HomeContent from "@/components/HomeContent";
 import VIPServices from "@/components/VIPServices";
+import OfficeSection from "@/components/OfficeSection";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -10,9 +10,9 @@ export default function Home() {
     <>
       <Navbar />
       <Hero />
-      <SearchWidget />
-      <DestinationsSection />
+      <HomeContent />
       <VIPServices />
+      <OfficeSection />
       <Footer />
     </>
   );
