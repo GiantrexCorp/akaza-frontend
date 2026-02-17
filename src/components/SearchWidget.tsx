@@ -16,8 +16,8 @@ import {
 export type TabId = "hotels" | "excursions" | "transfers";
 
 const tabs = [
-  { id: "hotels" as TabId, label: "Hotels", icon: Hotel },
-  { id: "excursions" as TabId, label: "Excursions", icon: Ship },
+  { id: "hotels" as TabId, label: "Stays", icon: Hotel },
+  { id: "excursions" as TabId, label: "Experiences", icon: Ship },
   { id: "transfers" as TabId, label: "Transfers", icon: Car },
 ];
 
@@ -62,10 +62,10 @@ export default function SearchWidget({ activeTab, onTabChange }: SearchWidgetPro
 
   return (
     <div className="relative z-20 -mt-20 max-w-6xl mx-auto px-6">
-      <div className="bg-bg-card shadow-2xl p-1 md:p-2 border-t-4 border-primary">
+      <div className="bg-[var(--surface-card)] shadow-2xl p-1 md:p-2 border-t-4 border-primary">
         <div className="flex flex-wrap md:flex-nowrap">
           {/* Vertical Tabs */}
-          <div className="w-full md:w-56 flex flex-col p-4 border-r border-white/5">
+          <div className="w-full md:w-56 flex flex-col p-4 border-r border-[var(--line-soft)]">
             <nav className="flex md:flex-col gap-1">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
@@ -77,7 +77,7 @@ export default function SearchWidget({ activeTab, onTabChange }: SearchWidgetPro
                     className={`flex items-center gap-3 px-4 py-3 transition-all border-l-2 ${
                       isActive
                         ? "bg-primary/10 text-primary font-bold border-primary"
-                        : "text-slate-400 hover:text-primary font-medium border-transparent"
+                        : "text-[var(--text-muted)] hover:text-primary font-medium border-transparent"
                     }`}
                   >
                     <Icon size={20} />
@@ -96,18 +96,18 @@ export default function SearchWidget({ activeTab, onTabChange }: SearchWidgetPro
               const Icon = field.icon;
               return (
                 <div key={field.label} className="space-y-3">
-                  <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">
+                  <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em]">
                     {field.label}
                   </label>
                   <div className="relative group">
                     <Icon
                       size={20}
-                      className="absolute left-0 top-1/2 -translate-y-1/2 text-primary group-hover:text-white transition-colors"
+                      className="absolute left-0 top-1/2 -translate-y-1/2 text-primary group-hover:text-primary-dark transition-colors"
                     />
                     <input
                       type="text"
                       placeholder={field.placeholder}
-                      className="w-full pl-8 pr-4 py-2 bg-transparent border-b border-slate-700 focus:border-primary text-white placeholder-slate-500 focus:ring-0 text-lg font-serif transition-colors outline-none"
+                      className="w-full pl-8 pr-4 py-2 bg-transparent border-b border-[var(--line-strong)] focus:border-primary text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:ring-0 text-lg font-serif transition-colors outline-none"
                     />
                   </div>
                 </div>

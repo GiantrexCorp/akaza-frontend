@@ -16,9 +16,9 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "AKAZA Travel | Premium Egyptian Excursions",
+  title: "AKAZA Travel | Travel, handled.",
   description:
-    "Bespoke journeys and luxury concierge services tailored for the discerning traveler seeking the extraordinary.",
+    "Your journey, privately handled. Premium travel planning, VIP transfers, handpicked stays, and concierge-level execution.",
 };
 
 export default function RootLayout({
@@ -27,7 +27,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" data-theme="dark">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body className={`${playfair.variable} ${jakarta.variable} antialiased selection:bg-primary selection:text-white`}>
         {children}
       </body>

@@ -1,25 +1,79 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-primary: #b38b59;
-  --color-primary-dark: #8c6b42;
-  --color-primary-gradient-end: #9a7648;
-  --color-accent: #d4af37;
-  --color-accent-light: #f3e5ab;
-  --color-secondary: #4a5568;
-  --color-bg-light: #f5f3f0;
-  --color-bg-dark: #1a1c23;
-  --color-bg-darker: #111216;
-  --color-bg-card: #23262f;
-  --color-bg-vip: #14161b;
-  --color-bg-footer: #0f1014;
+  --color-primary: #b97532;
+  --color-primary-dark: #753f20;
+  --color-primary-gradient-end: #e2af6d;
+  --color-accent: #346d80;
+  --color-accent-light: #97b9c1;
+  --color-secondary: #688e99;
+  --color-bg-light: #f4f2f0;
+  --color-bg-dark: #0b171b;
+  --color-bg-darker: #060e11;
+  --color-bg-card: #102127;
+  --color-bg-vip: #0b1a20;
+  --color-bg-footer: #070f12;
   --font-sans: var(--font-jakarta);
   --font-serif: var(--font-playfair);
 }
 
+:root,
+:root[data-theme="dark"] {
+  --surface-page: #0b171b;
+  --surface-nav: rgba(11, 23, 27, 0.85);
+  --surface-card: #102127;
+  --surface-section: #0b1a20;
+  --surface-footer: #070f12;
+  --hero-overlay-start: rgba(11, 23, 27, 0.55);
+  --hero-overlay-end: rgba(11, 23, 27, 0.9);
+  --hero-overlay-blend: rgba(0, 0, 0, 0.35);
+  --hero-pill-bg: rgba(0, 0, 0, 0.2);
+  --hero-secondary-btn-bg: rgba(255, 255, 255, 0.05);
+  --hero-secondary-btn-border: rgba(255, 255, 255, 0.4);
+  --map-overlay: rgba(11, 23, 27, 0.5);
+  --card-overlay: rgba(6, 14, 17, 0.92);
+  --text-primary: #ffffff;
+  --text-secondary: #d7dee7;
+  --text-muted: #94a3b8;
+  --line-soft: rgba(255, 255, 255, 0.08);
+  --line-strong: rgba(255, 255, 255, 0.24);
+}
+
+:root[data-theme="light"] {
+  --color-primary: #b32759;
+  --color-primary-dark: #8e1f46;
+  --color-primary-gradient-end: #1b3a42;
+  --color-accent: #1b3a42;
+  --color-accent-light: #1b3a42;
+  --color-secondary: #1b3a42;
+  --color-bg-dark: #ffffff;
+  --color-bg-darker: #f4f7f8;
+  --color-bg-card: #ffffff;
+  --color-bg-vip: #ffffff;
+  --color-bg-footer: #ffffff;
+  --surface-page: #ffffff;
+  --surface-nav: rgba(255, 255, 255, 0.92);
+  --surface-card: #ffffff;
+  --surface-section: #ffffff;
+  --surface-footer: #ffffff;
+  --hero-overlay-start: rgba(255, 255, 255, 0.3);
+  --hero-overlay-end: rgba(255, 255, 255, 0.65);
+  --hero-overlay-blend: rgba(27, 58, 66, 0.12);
+  --hero-pill-bg: rgba(255, 255, 255, 0.85);
+  --hero-secondary-btn-bg: rgba(255, 255, 255, 0.75);
+  --hero-secondary-btn-border: rgba(27, 58, 66, 0.35);
+  --map-overlay: rgba(255, 255, 255, 0.45);
+  --card-overlay: rgba(17, 17, 17, 0.38);
+  --text-primary: #111111;
+  --text-secondary: #1b3a42;
+  --text-muted: #3a3a3a;
+  --line-soft: rgba(27, 58, 66, 0.15);
+  --line-strong: rgba(27, 58, 66, 0.3);
+}
+
 body {
-  background: var(--color-bg-dark);
-  color: #e2e8f0;
+  background: var(--surface-page);
+  color: var(--text-primary);
   font-family: var(--font-sans), system-ui, sans-serif;
 }
 
@@ -28,9 +82,32 @@ h1, h2, h3, h4, .font-serif {
 }
 
 .brand-gradient-text {
-  background: linear-gradient(90deg, #d4af37, #f3e5ab, #d4af37);
+  background: linear-gradient(90deg, #b97532, #e2af6d, #97b9c1);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   background-size: 200% auto;
+}
+
+:root[data-theme="light"] .brand-gradient-text {
+  background: linear-gradient(90deg, #b32759, #1b3a42, #111111);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.theme-dark-only {
+  display: block;
+}
+
+.theme-light-only {
+  display: none;
+}
+
+:root[data-theme="light"] .theme-dark-only {
+  display: none;
+}
+
+:root[data-theme="light"] .theme-light-only {
+  display: block;
 }

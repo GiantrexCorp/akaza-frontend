@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Menu, Moon, Sun, X } from "lucide-react";
 import AkazaLogo from "./AkazaLogo";
 
 const navLinks = [
@@ -13,9 +13,22 @@ const navLinks = [
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [theme, setTheme] = useState<"dark" | "light">(() => {
+    if (typeof window === "undefined") return "dark";
+    return localStorage.getItem("theme") === "light" ? "light" : "dark";
+  });
+
+  const toggleTheme = () => {
+    setTheme((currentTheme) => (currentTheme === "dark" ? "light" : "dark"));
+  };
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+  }, [theme]);
 
   return (
-    <nav className="fixed top-0 w-full z-50 bg-bg-dark/85 backdrop-blur-[16px] border-b border-white/5 transition-all duration-300">
+    <nav className="fixed top-0 w-full z-50 bg-[var(--surface-nav)] backdrop-blur-[16px] border-b border-[var(--line-soft)] transition-all duration-300">
       <div className="max-w-7xl mx-auto px-6 h-24 flex items-center justify-between">
         <div className="flex items-center gap-12">
           <a href="#">
@@ -28,7 +41,7 @@ export default function Navbar() {
               <a
                 key={link.label}
                 href={link.href}
-                className="text-slate-300 hover:text-primary transition-colors uppercase tracking-wider text-xs font-medium"
+                className="text-[var(--text-secondary)] hover:text-primary transition-colors uppercase tracking-wider text-xs font-medium"
               >
                 {link.label}
               </a>
@@ -38,7 +51,15 @@ export default function Navbar() {
 
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center gap-6">
-          <button className="text-slate-300 hover:text-white transition-colors text-xs uppercase tracking-widest font-medium">
+          <button
+            onClick={toggleTheme}
+            className="w-9 h-9 rounded-full border border-[var(--line-soft)] text-[var(--text-secondary)] hover:text-primary hover:border-primary transition-colors flex items-center justify-center"
+            aria-label="Toggle theme"
+            type="button"
+          >
+            {theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}
+          </button>
+          <button className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors text-xs uppercase tracking-widest font-medium">
             Log In
           </button>
           <button className="bg-gradient-to-r from-primary to-primary-gradient-end hover:to-primary text-white px-8 py-3 font-sans uppercase tracking-widest text-xs font-bold transition-all shadow-lg hover:shadow-primary/20">
@@ -48,7 +69,7 @@ export default function Navbar() {
 
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden text-white"
+          className="md:hidden text-[var(--text-primary)]"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label="Toggle menu"
         >
@@ -58,20 +79,29 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="md:hidden bg-bg-dark border-t border-white/5">
+        <div className="md:hidden bg-[var(--surface-nav)] border-t border-[var(--line-soft)]">
           <div className="px-6 py-6 space-y-4">
+            <button
+              onClick={toggleTheme}
+              className="w-full px-4 py-2 rounded-full border border-[var(--line-soft)] text-[var(--text-secondary)] hover:text-primary hover:border-primary transition-colors text-xs uppercase tracking-widest font-medium flex items-center justify-center gap-2"
+              aria-label="Toggle theme"
+              type="button"
+            >
+              {theme === "dark" ? <Sun size={14} /> : <Moon size={14} />}
+              {theme === "dark" ? "Light Theme" : "Dark Theme"}
+            </button>
             {navLinks.map((link) => (
               <a
                 key={link.label}
                 href={link.href}
-                className="block text-slate-300 hover:text-primary transition-colors uppercase tracking-wider text-xs font-medium py-2"
+                className="block text-[var(--text-secondary)] hover:text-primary transition-colors uppercase tracking-wider text-xs font-medium py-2"
                 onClick={() => setMobileOpen(false)}
               >
                 {link.label}
               </a>
             ))}
-            <div className="pt-4 border-t border-white/5 flex flex-col gap-4">
-              <button className="text-slate-300 hover:text-white transition-colors text-xs uppercase tracking-widest font-medium text-left">
+            <div className="pt-4 border-t border-[var(--line-soft)] flex flex-col gap-4">
+              <button className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors text-xs uppercase tracking-widest font-medium text-left">
                 Log In
               </button>
               <button className="bg-gradient-to-r from-primary to-primary-gradient-end text-white px-8 py-3 font-sans uppercase tracking-widest text-xs font-bold w-full">

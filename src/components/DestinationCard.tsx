@@ -46,7 +46,7 @@ export default function DestinationCard({
       />
 
       {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-bg-darker via-transparent to-transparent opacity-90" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[var(--card-overlay)] via-transparent to-transparent opacity-90" />
 
       {/* Content */}
       <div className="absolute bottom-0 left-0 p-10 w-full z-10">

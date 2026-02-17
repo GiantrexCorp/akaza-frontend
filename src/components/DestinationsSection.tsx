@@ -26,10 +26,10 @@ interface SectionConfig {
 
 const sectionData: Record<TabId, SectionConfig> = {
   excursions: {
-    label: "Curated Experiences",
-    heading: "Iconic Destinations",
-    subheading: "Told Through Luxury",
-    linkText: "Explore All",
+    label: "Core Destination Focus",
+    heading: "Egypt Signature Journeys",
+    subheading: "curated with operational precision",
+    linkText: "Explore All Journeys",
     cards: [
       {
         image: "/images/hurghada.jpg",
@@ -37,7 +37,7 @@ const sectionData: Record<TabId, SectionConfig> = {
         category: "Red Sea Luxury",
         title: "Hurghada",
         description:
-          "Crystal clear waters and private yacht charters among vibrant coral reefs.",
+          "Red Sea programs with private handling, sea experiences, and seamless day planning.",
         price: "$299",
         grayscale: "30",
       },
@@ -47,7 +47,7 @@ const sectionData: Record<TabId, SectionConfig> = {
         category: "Nature & Serenity",
         title: "Marsa Alam",
         description:
-          "Untouched marine life and exclusive eco-luxury resorts for the ultimate escape.",
+          "Nature-first coastal escapes planned for comfort, privacy, and smooth movement.",
         price: "$450",
         grayscale: "30",
       },
@@ -57,17 +57,17 @@ const sectionData: Record<TabId, SectionConfig> = {
         category: "Historic Grandeur",
         title: "Cairo & Giza",
         description:
-          "Private access to ancient wonders and world-class fine dining in the heart of history.",
+          "Cultural depth with trusted local experts, premium logistics, and clear execution.",
         price: "$1,200",
         grayscale: "30",
       },
     ],
   },
   hotels: {
-    label: "Curated Stays",
-    heading: "Top Luxury Hotels",
-    subheading: "Unmatched Elegance",
-    linkText: "View All Hotels",
+    label: "Handpicked Premium Stays",
+    heading: "Hotels Aligned To Intent",
+    subheading: "quality, location, reliability",
+    linkText: "View All Stays",
     cards: [
       {
         image: "/images/hotel-four-seasons.jpg",
@@ -105,9 +105,9 @@ const sectionData: Record<TabId, SectionConfig> = {
     ],
   },
   transfers: {
-    label: "Executive Fleet",
+    label: "Trusted Mobility Network",
     heading: "Premium Transfer Services",
-    subheading: "Seamless Travel",
+    subheading: "private, reliable, human-led",
     linkText: "View All Vehicles",
     cards: [
       {
@@ -117,8 +117,8 @@ const sectionData: Record<TabId, SectionConfig> = {
         title: "Luxury Private Limousine",
         features: [
           "Professional Chauffeur",
-          "Complimentary High-Speed Wi-Fi",
-          "Premium Refreshments",
+          "Coordinated Arrival Handling",
+          "Concierge Support on Request",
         ],
         price: "$120",
         pricePrefix: "starting from",
@@ -131,9 +131,9 @@ const sectionData: Record<TabId, SectionConfig> = {
         category: "All-Terrain Luxury",
         title: "Premium SUV",
         features: [
-          "4x4 Desert Capability",
+          "Priority Pick-up Reliability",
           "Ample Luggage Capacity",
-          "Advanced Climate Control",
+          "Executive Comfort Standards",
         ],
         price: "$180",
         pricePrefix: "starting from",
@@ -146,9 +146,9 @@ const sectionData: Record<TabId, SectionConfig> = {
         category: "Group Excellence",
         title: "VIP Executive Van",
         features: [
-          "Reclining Leather Seats",
-          "Private On-board Meeting Space",
-          "Concierge Boarding Service",
+          "Group Transfer Coordination",
+          "Flexible Multi-stop Routing",
+          "Human Oversight at Every Stage",
         ],
         price: "$250",
         pricePrefix: "starting from",
@@ -171,20 +171,20 @@ export default function DestinationsSection({
   return (
     <section id="destinations" className="py-32 px-6 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-8 border-b border-slate-800 pb-8">
+      <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-8 border-b border-[var(--line-soft)] pb-8">
         <div className="max-w-2xl">
           <h2 className="text-primary font-bold uppercase tracking-[0.3em] text-xs mb-4 font-sans">
             {section.label}
           </h2>
-          <h3 className="text-4xl md:text-6xl font-serif text-white leading-none">
+          <h3 className="text-4xl md:text-6xl font-serif text-[var(--text-primary)] leading-none">
             {section.heading}{" "}
             <br />
-            <span className="italic text-slate-500">{section.subheading}</span>
+            <span className="italic text-accent-light">{section.subheading}</span>
           </h3>
         </div>
         <a
           href="#"
-          className="group text-white font-medium flex items-center gap-3 hover:text-primary transition-all uppercase tracking-widest text-xs font-sans"
+          className="group text-[var(--text-secondary)] font-medium flex items-center gap-3 hover:text-primary transition-all uppercase tracking-widest text-xs font-sans"
         >
           {section.linkText}{" "}
           <ArrowRight
