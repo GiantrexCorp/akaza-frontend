@@ -1,5 +1,5 @@
 export interface User {
-  id: string;
+  id: number;
   name: string;
   email: string;
   phone: string | null;
@@ -54,7 +54,6 @@ export interface ChangePasswordRequest {
 
 export interface UpdateProfileRequest {
   name?: string;
-  email?: string;
   phone?: string;
   locale?: 'en' | 'de' | 'fr';
 }

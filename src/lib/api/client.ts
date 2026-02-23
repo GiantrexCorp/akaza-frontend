@@ -1,12 +1,56 @@
 import type { ApiResponse } from '@/types/api';
 
+type FieldErrors = Record<string, string[]>;
+
+function normalizeErrors(errors: unknown): { messages: string[]; fields: FieldErrors } {
+  if (Array.isArray(errors)) {
+    const messages = errors.filter((value): value is string => typeof value === 'string');
+    return { messages, fields: {} };
+  }
+
+  if (errors && typeof errors === 'object') {
+    const fields: FieldErrors = {};
+    const messages: string[] = [];
+
+    for (const [key, value] of Object.entries(errors as Record<string, unknown>)) {
+      if (Array.isArray(value)) {
+        const arr = value.filter((item): item is string => typeof item === 'string');
+        fields[key] = arr;
+        messages.push(...arr);
+        continue;
+      }
+
+      if (typeof value === 'string') {
+        fields[key] = [value];
+        messages.push(value);
+      }
+    }
+
+    return { messages, fields };
+  }
+
+  if (typeof errors === 'string') {
+    return { messages: [errors], fields: {} };
+  }
+
+  return { messages: [], fields: {} };
+}
+
 export class ApiError extends Error {
+  public fieldErrors: FieldErrors;
+
   constructor(
     public status: number,
-    public errors: string[],
+    errors: unknown,
+    fallbackMessage = 'An error occurred',
   ) {
-    super(errors[0] || 'An error occurred');
+    const normalized = normalizeErrors(errors);
+    super(normalized.messages[0] || fallbackMessage);
+    this.errors = normalized.messages;
+    this.fieldErrors = normalized.fields;
   }
+
+  public errors: string[];
 }
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api';
@@ -36,13 +80,38 @@ async function request<T>(method: string, endpoint: string, body?: unknown): Pro
     body: body ? JSON.stringify(body) : undefined,
   });
 
-  const json: ApiResponse<T> = await res.json();
-
-  if (!json.success) {
-    throw new ApiError(json.status, json.errors);
+  let json: unknown = null;
+  try {
+    json = await res.json();
+  } catch {
+    json = null;
   }
 
-  return json.payload;
+  const envelope = json as Partial<ApiResponse<T>> | null;
+  if (envelope && typeof envelope === 'object' && 'success' in envelope) {
+    if (envelope.success) {
+      return envelope.payload as T;
+    }
+
+    throw new ApiError(
+      typeof envelope.status === 'number' ? envelope.status : res.status,
+      envelope.errors,
+    );
+  }
+
+  if (!res.ok) {
+    const fallbackMessage =
+      json && typeof json === 'object' && 'message' in (json as Record<string, unknown>) && typeof (json as Record<string, unknown>).message === 'string'
+        ? ((json as Record<string, unknown>).message as string)
+        : 'Request failed';
+    const errors =
+      json && typeof json === 'object' && 'errors' in (json as Record<string, unknown>)
+        ? (json as Record<string, unknown>).errors
+        : fallbackMessage;
+    throw new ApiError(res.status, errors, fallbackMessage);
+  }
+
+  return json as T;
 }
 
 export const api = {
