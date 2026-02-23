@@ -32,21 +32,21 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         )}
         <div className="relative group">
           {icon && (
-            <span className="absolute left-0 top-1/2 -translate-y-1/2 text-primary">
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-primary">
               {icon}
             </span>
           )}
           <input
             ref={ref}
             type={inputType}
-            className={`w-full bg-transparent border-b ${error ? 'border-red-500' : 'border-[var(--line-strong)] focus:border-primary'} text-[var(--field-text)] placeholder-[var(--field-placeholder)] font-serif outline-none transition-colors duration-300 ${icon ? 'pl-8' : 'pl-0'} ${isPassword ? 'pr-10' : 'pr-0'} ${sizes[size]} ${className}`}
+            className={`w-full bg-transparent border-b ${error ? 'border-red-500' : 'border-[var(--line-strong)] focus:border-primary'} text-[var(--field-text)] placeholder-[var(--field-placeholder)] font-serif outline-none transition-colors duration-300 ${icon ? 'pl-11' : 'pl-0'} ${isPassword ? 'pr-12' : 'pr-0'} ${sizes[size]} ${className}`}
             {...props}
           />
           {isPassword && (
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-0 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-primary transition-colors"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-primary transition-colors"
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>

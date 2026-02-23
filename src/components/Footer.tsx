@@ -1,158 +1,204 @@
 "use client";
 
-import { Facebook, Camera, AtSign } from "lucide-react";
+import {
+  ArrowRight,
+  Instagram,
+  Linkedin,
+  type LucideIcon,
+  Mail,
+  MapPin,
+  Phone,
+  Youtube,
+} from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-const destinations = [
-  "Hurghada & Red Sea",
-  "Cairo & Giza",
-  "Luxor & Aswan",
-  "Marsa Alam",
-  "Sharm El Sheikh",
-  "Istanbul & Antalya",
-];
+type NavLink = {
+  label: string;
+  href: string;
+};
 
-const support = [
-  { label: "Journal", href: "/journal" },
-  { label: "Markets We Serve", href: "/markets-we-serve" },
+type SocialLink = {
+  label: string;
+  href: string;
+  icon: LucideIcon;
+};
+
+const siteLinks: NavLink[] = [
+  { label: "Destinations", href: "/destinations" },
+  { label: "Tours", href: "/tours" },
   { label: "Experiences", href: "/experiences" },
-  { label: "How We Work", href: "/how-we-work" },
-  { label: "Concierge Services", href: "/concierge-services" },
-  { label: "Concierge Support", href: "#" },
-  { label: "B2B Partnerships", href: "/corporate-partnerships" },
-  { label: "Trust Framework", href: "#" },
-  { label: "Service Philosophy", href: "/how-we-work" },
-  { label: "Contact Akaza", href: "#" },
+  { label: "Transfers", href: "/transfers" },
+  { label: "Markets We Serve", href: "/markets-we-serve" },
+  { label: "Journal", href: "/journal" },
 ];
 
-const socials = [
-  { icon: Facebook, label: "Facebook" },
-  { icon: Camera, label: "Instagram" },
-  { icon: AtSign, label: "Email" },
+const serviceLinks: NavLink[] = [
+  { label: "Concierge Services", href: "/concierge-services" },
+  { label: "How We Work", href: "/how-we-work" },
+  { label: "Corporate Partnerships", href: "/corporate-partnerships" },
+  { label: "VIP Services", href: "/#vip" },
+  { label: "Contact Akaza", href: "/contact" },
+];
+
+const companyLinks: NavLink[] = [
+  { label: "About", href: "/about" },
+  { label: "Privacy Policy", href: "/privacy" },
+  { label: "Terms of Service", href: "/terms" },
+];
+
+const socialLinks: SocialLink[] = [
+  { label: "Instagram", href: "https://instagram.com", icon: Instagram },
+  { label: "LinkedIn", href: "https://linkedin.com", icon: Linkedin },
+  { label: "YouTube", href: "https://youtube.com", icon: Youtube },
+  { label: "Email", href: "mailto:concierge@akazatravel.com", icon: Mail },
 ];
 
 export default function Footer() {
+  const currentYear = new Date().getFullYear();
+
   return (
-    <footer className="bg-[var(--surface-footer)] border-t border-[var(--line-soft)] pt-24 pb-12">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
-          {/* Brand */}
+    <footer className="relative overflow-hidden border-t border-[var(--line-soft)] bg-[var(--surface-footer)]">
+      <span className="pointer-events-none absolute -left-32 top-0 h-72 w-72 rounded-full bg-primary/14 blur-[96px]" />
+      <span className="pointer-events-none absolute right-0 top-8 h-72 w-72 rounded-full bg-[var(--color-accent)]/14 blur-[90px]" />
+
+      <div className="relative mx-auto max-w-7xl px-6 pb-10 pt-16 md:pt-20">
+        <section className="mb-14 rounded-2xl border border-[var(--line-soft)] bg-[linear-gradient(120deg,rgba(185,117,50,0.16),rgba(16,33,39,0.58),rgba(185,117,50,0.14))] p-7 md:p-9">
+          <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+            <div className="max-w-2xl">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-primary">
+                Global Concierge Network
+              </p>
+              <h3 className="mt-3 text-3xl font-serif text-[var(--text-primary)] md:text-5xl">
+                Built For Discreet
+                <span className="ml-2 italic text-[var(--color-accent-light)]">Cross-Border Execution</span>
+              </h3>
+              <p className="mt-3 text-sm leading-relaxed text-[var(--text-secondary)]">
+                From executive schedules to private leisure circuits, Akaza orchestrates every detail with precision.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-primary/70 bg-primary px-6 py-3 text-xs font-bold uppercase tracking-[0.18em] text-white transition-all hover:-translate-y-0.5 hover:bg-primary-gradient-end"
+              >
+                Inquire Now
+                <ArrowRight size={13} />
+              </Link>
+              <Link
+                href="/how-we-work"
+                className="inline-flex items-center justify-center rounded-lg border border-[var(--line-strong)] px-6 py-3 text-xs font-bold uppercase tracking-[0.18em] text-[var(--text-secondary)] transition-colors hover:border-primary/55 hover:text-primary"
+              >
+                How We Work
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        <div className="grid gap-10 border-b border-[var(--line-soft)] pb-12 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
           <div>
-            <div className="flex flex-col items-start gap-1 mb-8">
+            <Link href="/" className="inline-flex">
               <Image
                 src="/images/logos/secondary-dark.png"
                 alt="AKAZA Travel"
-                width={220}
-                height={72}
-                className="h-auto w-[160px] theme-dark-only"
+                width={230}
+                height={74}
+                className="h-auto w-[172px] theme-dark-only"
               />
               <Image
                 src="/images/logos/secondary-light.png"
                 alt="AKAZA Travel"
-                width={220}
-                height={72}
-                className="h-auto w-[160px] theme-light-only"
+                width={230}
+                height={74}
+                className="h-auto w-[172px] theme-light-only"
               />
-            </div>
-            <p className="text-[var(--text-muted)] font-light text-sm leading-relaxed mb-8">
-              Premium travel handling for clients who value certainty,
-              discretion, and complete peace of mind from inquiry to return.
+            </Link>
+
+            <p className="mt-5 max-w-sm text-sm leading-relaxed text-[var(--text-muted)]">
+              Luxury travel intelligence and concierge-grade delivery for travelers and partners who expect certainty.
             </p>
-            <div className="flex gap-4">
-              {socials.map((social) => {
+
+            <div className="mt-6 space-y-2.5 text-sm text-[var(--text-secondary)]">
+              <p className="inline-flex items-center gap-2">
+                <MapPin size={14} className="text-primary" />
+                Cairo, London, Dubai
+              </p>
+              <a
+                href="mailto:concierge@akazatravel.com"
+                className="inline-flex items-center gap-2 transition-colors hover:text-primary"
+              >
+                <Mail size={14} className="text-primary" />
+                concierge@akazatravel.com
+              </a>
+              <a href="tel:+201000123456" className="inline-flex items-center gap-2 transition-colors hover:text-primary">
+                <Phone size={14} className="text-primary" />
+                +20 100 012 3456
+              </a>
+            </div>
+
+            <div className="mt-6 flex flex-wrap gap-2.5">
+              {socialLinks.map((social) => {
                 const Icon = social.icon;
+                const isExternal = social.href.startsWith("http");
                 return (
                   <a
                     key={social.label}
-                    href="#"
+                    href={social.href}
                     aria-label={social.label}
-                    className="w-10 h-10 flex items-center justify-center text-[var(--text-muted)] hover:text-primary transition-all border border-[var(--line-soft)] hover:border-primary"
+                    target={isExternal ? "_blank" : undefined}
+                    rel={isExternal ? "noopener noreferrer" : undefined}
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[var(--line-soft)] bg-[var(--surface-card)]/55 text-[var(--text-muted)] transition-all hover:-translate-y-0.5 hover:border-primary/55 hover:text-primary"
                   >
-                    <Icon size={16} />
+                    <Icon size={15} />
                   </a>
                 );
               })}
             </div>
           </div>
 
-          {/* Destinations */}
-          <div>
-            <h5 className="text-[var(--text-primary)] font-bold mb-8 uppercase tracking-[0.2em] text-xs">
-              Destinations
-            </h5>
-            <ul className="space-y-4 text-[var(--text-muted)] text-sm font-light">
-              {destinations.map((dest) => (
-                <li key={dest}>
-                  <a
-                    href="#"
-                    className="hover:text-primary transition-colors"
-                  >
-                    {dest}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Support */}
-          <div>
-            <h5 className="text-[var(--text-primary)] font-bold mb-8 uppercase tracking-[0.2em] text-xs">
-              Support
-            </h5>
-            <ul className="space-y-4 text-[var(--text-muted)] text-sm font-light">
-              {support.map((item) => (
-                <li key={item.label}>
-                  <Link href={item.href} className="hover:text-primary transition-colors">
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Newsletter */}
-          <div>
-            <h5 className="text-[var(--text-primary)] font-bold mb-8 uppercase tracking-[0.2em] text-xs">
-              Newsletter
-            </h5>
-            <p className="text-[var(--text-muted)] text-sm mb-6 font-light">
-              Receive destination insights and premium program updates by market.
-            </p>
-            <form
-              className="space-y-3"
-              onSubmit={(e) => e.preventDefault()}
-            >
-              <input
-                type="email"
-                placeholder="Email address"
-                className="w-full px-4 py-3 bg-[var(--surface-card)] border border-[var(--line-soft)] focus:border-primary text-[var(--text-secondary)] outline-none text-sm placeholder-[var(--text-muted)] transition-colors"
-              />
-              <button
-                type="submit"
-                className="w-full bg-primary text-white hover:bg-primary-gradient-end py-3 font-bold uppercase tracking-widest text-xs transition-all"
-              >
-                Subscribe
-              </button>
-            </form>
-          </div>
+          <FooterColumn title="Site Links" links={siteLinks} />
+          <FooterColumn title="Services" links={serviceLinks} />
+          <FooterColumn title="Company" links={companyLinks} />
         </div>
 
-        {/* Copyright */}
-        <div className="pt-10 border-t border-[var(--line-soft)] flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="text-[var(--text-muted)] text-[10px] tracking-wider uppercase">
-            &copy; {new Date().getFullYear()} AKAZA Travel. All Rights Reserved.
-          </p>
-          <div className="flex items-center gap-8 text-[var(--text-muted)] text-[10px] tracking-wider uppercase">
-            <a href="#" className="hover:text-primary transition-colors">
-              Privacy Policy
-            </a>
-            <a href="#" className="hover:text-primary transition-colors">
-              Cookie Policy
-            </a>
+        <div className="flex flex-col gap-4 pt-6 text-[11px] uppercase tracking-[0.16em] text-[var(--text-muted)] md:flex-row md:items-center md:justify-between">
+          <p>&copy; {currentYear} AKAZA Travel. All rights reserved.</p>
+          <div className="flex flex-wrap items-center gap-5">
+            <Link href="/privacy" className="transition-colors hover:text-primary">
+              Privacy
+            </Link>
+            <Link href="/terms" className="transition-colors hover:text-primary">
+              Terms
+            </Link>
+            <Link href="/contact" className="transition-colors hover:text-primary">
+              Contact
+            </Link>
           </div>
         </div>
       </div>
     </footer>
+  );
+}
+
+function FooterColumn({ title, links }: { title: string; links: NavLink[] }) {
+  return (
+    <div>
+      <h5 className="mb-5 text-[11px] font-semibold uppercase tracking-[0.22em] text-[var(--text-primary)]">
+        {title}
+      </h5>
+      <ul className="space-y-3">
+        {links.map((link) => (
+          <li key={link.label}>
+            <Link
+              href={link.href}
+              className="text-sm text-[var(--text-muted)] transition-colors hover:text-primary"
+            >
+              {link.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
