@@ -7,7 +7,7 @@ import { useAuth } from "@/lib/auth";
 import AkazaLogo from "./AkazaLogo";
 
 const navLinks = [
-  { label: "Destinations", href: "/#destinations" },
+  { label: "Destinations", href: "/destinations" },
   { label: "Tours", href: "/tours" },
   { label: "Transfers", href: "/transfers" },
   { label: "VIP Services", href: "/#vip" },

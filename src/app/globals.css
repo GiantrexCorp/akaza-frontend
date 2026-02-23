@@ -32,6 +32,13 @@
   --hero-secondary-btn-border: rgba(255, 255, 255, 0.4);
   --map-overlay: rgba(11, 23, 27, 0.5);
   --card-overlay: rgba(6, 14, 17, 0.92);
+  --destinations-surface: #0b171b;
+  --destinations-divider: rgba(151, 185, 193, 0.22);
+  --destinations-card-border: rgba(151, 185, 193, 0.26);
+  --destinations-title: #ffffff;
+  --destinations-body: #d7dee7;
+  --destinations-program-surface: #102127;
+  --destinations-program-overlay: rgba(11, 23, 27, 0.88);
   --text-primary: #ffffff;
   --text-secondary: #d7dee7;
   --text-muted: #94a3b8;
@@ -66,6 +73,13 @@
   --hero-secondary-btn-border: rgba(27, 58, 66, 0.35);
   --map-overlay: rgba(255, 255, 255, 0.45);
   --card-overlay: rgba(17, 17, 17, 0.38);
+  --destinations-surface: #f8f4ef;
+  --destinations-divider: rgba(27, 58, 66, 0.22);
+  --destinations-card-border: rgba(27, 58, 66, 0.3);
+  --destinations-title: #111111;
+  --destinations-body: #34545e;
+  --destinations-program-surface: #ffffff;
+  --destinations-program-overlay: rgba(255, 255, 255, 0.9);
   --text-primary: #111111;
   --text-secondary: #1b3a42;
   --text-muted: #3a3a3a;
