@@ -2,6 +2,7 @@
 
 import { Facebook, Camera, AtSign } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 const destinations = [
   "Hurghada & Red Sea",
@@ -13,11 +14,14 @@ const destinations = [
 ];
 
 const support = [
-  "Concierge Support",
-  "B2B Partnerships",
-  "Trust Framework",
-  "Service Philosophy",
-  "Contact Akaza",
+  { label: "Experiences", href: "/experiences" },
+  { label: "How We Work", href: "/how-we-work" },
+  { label: "Concierge Services", href: "/concierge-services" },
+  { label: "Concierge Support", href: "#" },
+  { label: "B2B Partnerships", href: "/corporate-partnerships" },
+  { label: "Trust Framework", href: "#" },
+  { label: "Service Philosophy", href: "/how-we-work" },
+  { label: "Contact Akaza", href: "#" },
 ];
 
 const socials = [
@@ -96,13 +100,10 @@ export default function Footer() {
             </h5>
             <ul className="space-y-4 text-[var(--text-muted)] text-sm font-light">
               {support.map((item) => (
-                <li key={item}>
-                  <a
-                    href="#"
-                    className="hover:text-primary transition-colors"
-                  >
-                    {item}
-                  </a>
+                <li key={item.label}>
+                  <Link href={item.href} className="hover:text-primary transition-colors">
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>

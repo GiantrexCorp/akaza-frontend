@@ -26,13 +26,17 @@ export default function ToursPage() {
       const params = new URLSearchParams({ page: page.toString() });
       if (searchQuery) params.set('filter[location]', searchQuery);
       const data = await toursApi.list(params.toString());
-      setTours(data.data);
-      setCurrentPage(data.current_page);
-      setLastPage(data.last_page);
+      const normalizedTours = Array.isArray(data?.data) ? data.data : [];
+      setTours(normalizedTours);
+      setCurrentPage(typeof data?.current_page === 'number' ? data.current_page : 1);
+      setLastPage(typeof data?.last_page === 'number' ? data.last_page : 1);
     } catch (err) {
       if (err instanceof ApiError) {
         toast('error', err.errors[0] || 'Failed to load tours');
       }
+      setTours([]);
+      setCurrentPage(1);
+      setLastPage(1);
     } finally {
       setLoading(false);
     }

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SubpageHero from "@/components/SubpageHero";
 
 type DestinationLayout = "mosaic" | "grid" | "programs";
 
@@ -138,51 +139,21 @@ export default function DestinationsPage() {
       <Navbar />
 
       <main className="relative bg-[var(--surface-page)] overflow-hidden">
-        <section className="mt-24">
-          <article className="relative w-full h-[72vh] min-h-[560px] overflow-hidden border border-[var(--line-soft)] group">
-            <Image
-              src="https://as1.ftcdn.net/v2/jpg/02/72/23/66/1000_F_272236661_FpxJjrVwxYys822eNGYtPCrRuImDykZ4.jpg"
-              alt="AKAZA destination programs"
-              fill
-              className="object-cover transition-transform duration-1000 group-hover:scale-105"
-              sizes="100vw"
-              priority
-            />
-            <div className="absolute inset-0 bg-black/45" />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/35 to-[var(--hero-overlay-end)]" />
-
-            <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
-              <span className="inline-flex items-center rounded-full border border-primary/35 bg-primary/15 px-5 py-2 text-[11px] uppercase tracking-[0.24em] font-bold font-sans text-primary mb-7">
-                Luxury Experiences
-              </span>
-
-              <h1 className="text-5xl md:text-7xl font-serif text-white leading-[0.9] tracking-tight mb-4">
-                Discover Our
-                <br />
-                Destinations
-              </h1>
-
-              <p className="text-2xl md:text-4xl font-serif italic text-slate-200/90 mb-10">
-                Your journey, privately handled.
-              </p>
-
-              <div className="flex flex-col sm:flex-row items-center gap-4">
-                <Link
-                  href="#destinations-grid"
-                  className="inline-flex items-center justify-center bg-gradient-to-r from-primary to-primary-gradient-end text-white min-w-[220px] px-8 py-4 text-xs uppercase tracking-[0.18em] font-sans font-bold hover:shadow-lg hover:shadow-primary/20 transition-all"
-                >
-                  Start Exploring
-                </Link>
-                <Link
-                  href="/hotels/search"
-                  className="inline-flex items-center justify-center min-w-[220px] px-8 py-4 text-xs uppercase tracking-[0.18em] font-sans font-bold text-white border border-white/30 bg-white/10 backdrop-blur-sm hover:border-white/50 hover:bg-white/15 transition-all"
-                >
-                  View All Offers
-                </Link>
-              </div>
-            </div>
-          </article>
-        </section>
+        <SubpageHero
+          badge="Luxury Experiences"
+          title={
+            <>
+              Discover Our
+              <br />
+              Destinations
+            </>
+          }
+          subtitle="Your journey, privately handled."
+          imageSrc="https://as1.ftcdn.net/v2/jpg/02/72/23/66/1000_F_272236661_FpxJjrVwxYys822eNGYtPCrRuImDykZ4.jpg"
+          imageAlt="AKAZA destination programs"
+          primaryCta={{ label: "Start Exploring", href: "#destinations-grid" }}
+          secondaryCta={{ label: "View All Offers", href: "/hotels/search" }}
+        />
 
         <section id="destinations-grid" className="bg-[var(--destinations-surface)] px-6 pt-12 pb-24">
           <div className="max-w-7xl mx-auto space-y-16">

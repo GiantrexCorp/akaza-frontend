@@ -167,32 +167,29 @@ export default function DestinationsSection({
   activeTab,
 }: DestinationsSectionProps) {
   const section = sectionData[activeTab];
-  const sectionGradient =
-    "linear-gradient(180deg, rgba(27,58,66,0.16) 0%, rgba(185,117,50,0.14) 34%, rgba(0,0,0,0) 72%)";
 
   return (
     <section
       id="destinations"
-      className="relative py-32 px-6 overflow-hidden bg-[#04141b]"
-      style={{ backgroundImage: sectionGradient }}
+      className="relative py-32 px-6 overflow-hidden bg-[var(--surface-section)]"
     >
 
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-8 border-b border-white/10 pb-10">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-8 border-b border-[var(--destinations-divider)] pb-10">
           <div className="max-w-3xl">
             <span className="inline-flex items-center px-4 py-2 rounded-full border border-primary/40 bg-primary/10 text-primary font-semibold uppercase tracking-[0.24em] text-[10px] mb-6">
               {section.label}
             </span>
-            <h3 className="text-4xl md:text-7xl font-serif text-white leading-[0.95] tracking-tight">
+            <h3 className="text-4xl md:text-7xl font-serif text-[var(--destinations-title)] leading-[0.95] tracking-tight">
               {section.heading}
               <br />
-              <span className="italic text-[#688E99]">{section.subheading}</span>
+              <span className="italic text-[var(--destinations-body)]">{section.subheading}</span>
             </h3>
           </div>
           <a
             href="#"
-            className="group self-start md:self-auto text-white/85 font-semibold flex items-center gap-3 hover:text-primary transition-all uppercase tracking-[0.2em] text-xs font-sans border border-white/15 px-5 py-3 rounded-full hover:border-primary/60 hover:bg-primary/5"
+            className="group self-start md:self-auto text-[var(--destinations-title)] font-semibold flex items-center gap-3 hover:text-primary transition-all uppercase tracking-[0.2em] text-xs font-sans border border-[var(--destinations-card-border)] px-5 py-3 rounded-full hover:border-primary/60 hover:bg-primary/5"
           >
             {section.linkText}
             <ArrowRight

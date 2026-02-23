@@ -77,9 +77,11 @@ export default function SearchWidget({
 
   return (
     <div className="relative z-20 -mt-20 max-w-6xl mx-auto px-6">
-      <div className="bg-[var(--surface-card)] shadow-2xl p-1 md:p-2 border-t-4 border-primary">
-        <div className="px-4 pt-3 pb-2 border-b border-[var(--line-soft)]">
-          <nav className="flex flex-wrap md:flex-nowrap gap-2">
+      <div className="relative overflow-hidden rounded-3xl border border-[var(--line-soft)] bg-[var(--search-widget-surface)] shadow-[0_24px_56px_-24px_rgba(0,0,0,0.45)]">
+        <span className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary/70 via-primary to-primary-gradient-end/75" />
+
+        <div className="bg-[var(--search-widget-topbar)] px-5 pt-4 pb-3 md:px-7 md:pt-5 md:pb-4 border-b border-[var(--line-soft)]">
+          <nav className="flex flex-wrap md:flex-nowrap gap-2 md:gap-3">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -87,40 +89,43 @@ export default function SearchWidget({
                 <button
                   key={tab.id}
                   onClick={() => onTabChange(tab.id)}
-                  className={`flex items-center gap-2 px-4 py-2.5 transition-all rounded-md border ${
+                  className={`group relative flex items-center gap-2 px-4 py-2.5 transition-all rounded-xl border ${
                     isActive
-                      ? "bg-primary/10 text-primary font-bold border-primary/60"
-                      : "text-[var(--text-muted)] hover:text-primary font-medium border-transparent hover:border-[var(--line-soft)]"
+                      ? "bg-primary/12 text-primary font-bold border-primary/50"
+                      : "text-[var(--text-secondary)] font-semibold border-transparent hover:border-[var(--line-soft)] hover:bg-[var(--search-widget-tab-hover)] hover:text-primary"
                   }`}
                 >
                   <Icon size={17} />
-                  <span className="text-xs uppercase tracking-[0.16em]">
+                  <span className="text-xs uppercase tracking-[0.2em]">
                     {tab.label}
                   </span>
+                  {isActive && (
+                    <span className="absolute inset-x-4 -bottom-px h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
+                  )}
                 </button>
               );
             })}
           </nav>
         </div>
 
-        <div className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-6 items-center">
+        <div className="p-5 md:p-7">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 md:gap-6 items-end">
             {fields.map((field) => {
               const Icon = field.icon;
               return (
-                <div key={field.label} className="space-y-3">
-                  <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em]">
+                <div key={field.label} className="space-y-2">
+                  <label className="block text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-[0.22em]">
                     {field.label}
                   </label>
-                  <div className="relative group">
+                  <div className="relative group rounded-xl border border-[var(--search-widget-field-border)] bg-[var(--search-widget-field-bg)] px-3 py-3 transition-all hover:border-primary/45 focus-within:border-primary/55 focus-within:shadow-[0_0_0_1px_rgba(185,117,50,0.2)]">
                     <Icon
-                      size={20}
-                      className="absolute left-0 top-1/2 -translate-y-1/2 text-primary group-hover:text-primary-dark transition-colors"
+                      size={18}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-primary group-hover:text-primary-dark transition-colors"
                     />
                     <input
                       type="text"
                       placeholder={field.placeholder}
-                      className="w-full pl-8 pr-4 py-2 bg-transparent border-b border-[var(--line-strong)] focus:border-primary text-[var(--field-text)] placeholder-[var(--field-placeholder)] focus:ring-0 text-lg font-serif transition-colors outline-none"
+                      className="w-full pl-8 pr-2 py-1 bg-transparent text-[var(--field-text)] placeholder-[var(--field-placeholder)] focus:ring-0 text-[1.15rem] font-serif transition-colors outline-none"
                     />
                   </div>
                 </div>
@@ -128,8 +133,8 @@ export default function SearchWidget({
             })}
 
             <div className="flex items-end h-full md:col-span-1">
-              <button className="w-full bg-primary hover:bg-primary-gradient-end text-white h-[56px] font-bold transition-colors flex items-center justify-center gap-2 uppercase tracking-widest text-xs shadow-lg">
-                <Search size={14} />
+              <button className="w-full rounded-xl border border-primary/60 bg-gradient-to-r from-primary to-primary-gradient-end text-white h-[50px] px-4 font-bold transition-all duration-300 flex items-center justify-center gap-2 uppercase tracking-[0.14em] text-[11px] shadow-[0_14px_28px_-18px_rgba(185,117,50,0.85)] hover:-translate-y-0.5 hover:brightness-105">
+                <Search size={13} />
                 {buttonLabels[activeTab]}
               </button>
             </div>

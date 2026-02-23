@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
-import { User, Mail, Phone, Globe, Lock } from 'lucide-react';
+import { User, Mail, Phone, Lock } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import DashboardLayout from '@/components/DashboardLayout';
@@ -30,7 +30,7 @@ export default function ProfilePage() {
     e.preventDefault();
     setSaving(true);
     try {
-      await profileApi.update({ name, email, phone: phone || undefined, locale: locale as 'en' | 'de' | 'fr' });
+      await profileApi.update({ name, phone: phone || undefined, locale: locale as 'en' | 'de' | 'fr' });
       await refreshUser();
       toast('success', 'Profile updated');
     } catch (err) {

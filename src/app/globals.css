@@ -37,8 +37,30 @@
   --destinations-card-border: rgba(151, 185, 193, 0.26);
   --destinations-title: #ffffff;
   --destinations-body: #d7dee7;
+  --destinations-focus-gradient: linear-gradient(
+    180deg,
+    rgba(185, 117, 50, 0.2) 0%,
+    rgba(117, 63, 32, 0.16) 36%,
+    rgba(0, 0, 0, 0) 72%
+  );
   --destinations-program-surface: #102127;
   --destinations-program-overlay: rgba(11, 23, 27, 0.88);
+  --search-widget-surface: linear-gradient(
+    140deg,
+    rgba(10, 23, 29, 0.96),
+    rgba(7, 18, 24, 0.98)
+  );
+  --search-widget-topbar: rgba(10, 23, 29, 0.94);
+  --search-widget-tab-hover: rgba(255, 255, 255, 0.06);
+  --search-widget-field-bg: rgba(255, 255, 255, 0.02);
+  --search-widget-field-border: rgba(255, 255, 255, 0.12);
+  --experiences-surface: #0a1418;
+  --experiences-section: #120d09;
+  --experiences-hero-overlay-start: rgba(6, 12, 15, 0.22);
+  --experiences-hero-overlay-mid: rgba(6, 12, 15, 0.56);
+  --experiences-hero-overlay-end: rgba(18, 13, 9, 0.92);
+  --experiences-accent-glow: rgba(185, 117, 50, 0.22);
+  --experiences-muted-card: rgba(255, 255, 255, 0.02);
   --text-primary: #ffffff;
   --text-secondary: #d7dee7;
   --text-muted: #94a3b8;
@@ -78,8 +100,30 @@
   --destinations-card-border: rgba(27, 58, 66, 0.3);
   --destinations-title: #111111;
   --destinations-body: #34545e;
+  --destinations-focus-gradient: linear-gradient(
+    180deg,
+    rgba(27, 58, 66, 0.16) 0%,
+    rgba(52, 109, 128, 0.1) 38%,
+    rgba(255, 255, 255, 0) 78%
+  );
   --destinations-program-surface: #ffffff;
   --destinations-program-overlay: rgba(255, 255, 255, 0.9);
+  --search-widget-surface: linear-gradient(
+    145deg,
+    rgba(250, 251, 252, 0.98),
+    rgba(241, 245, 247, 0.96)
+  );
+  --search-widget-topbar: rgba(245, 248, 250, 0.96);
+  --search-widget-tab-hover: rgba(27, 58, 66, 0.08);
+  --search-widget-field-bg: rgba(255, 255, 255, 0.95);
+  --search-widget-field-border: rgba(27, 58, 66, 0.18);
+  --experiences-surface: #f4f2f0;
+  --experiences-section: #f0ece7;
+  --experiences-hero-overlay-start: rgba(255, 255, 255, 0.26);
+  --experiences-hero-overlay-mid: rgba(255, 255, 255, 0.58);
+  --experiences-hero-overlay-end: rgba(240, 236, 231, 0.9);
+  --experiences-accent-glow: rgba(27, 58, 66, 0.16);
+  --experiences-muted-card: rgba(27, 58, 66, 0.03);
   --text-primary: #111111;
   --text-secondary: #1b3a42;
   --text-muted: #3a3a3a;
@@ -93,6 +137,21 @@ body {
   background: var(--surface-page);
   color: var(--text-primary);
   font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.reveal-item {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 650ms ease, transform 650ms ease;
+}
+
+.reveal-item.is-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 h1, h2, h3, h4, .font-serif {
