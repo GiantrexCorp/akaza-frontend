@@ -14,6 +14,8 @@ const destinations = [
 ];
 
 const support = [
+  { label: "Journal", href: "/journal" },
+  { label: "Markets We Serve", href: "/markets-we-serve" },
   { label: "Experiences", href: "/experiences" },
   { label: "How We Work", href: "/how-we-work" },
   { label: "Concierge Services", href: "/concierge-services" },
