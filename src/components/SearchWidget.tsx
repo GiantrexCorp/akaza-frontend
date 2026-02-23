@@ -30,16 +30,28 @@ interface FieldConfig {
 const fieldConfigs: Record<TabId, FieldConfig[]> = {
   hotels: [
     { label: "Destination", placeholder: "Destination", icon: MapPin },
-    { label: "Check-in - Check-out", placeholder: "Check-in - Check-out", icon: Calendar },
+    {
+      label: "Check-in - Check-out",
+      placeholder: "Check-in - Check-out",
+      icon: Calendar,
+    },
     { label: "Guests", placeholder: "Guests", icon: Users },
   ],
   excursions: [
-    { label: "Excursion Destination", placeholder: "e.g. Giza Pyramids", icon: MapPin },
+    {
+      label: "Excursion Destination",
+      placeholder: "e.g. Giza Pyramids",
+      icon: MapPin,
+    },
     { label: "Excursion Date", placeholder: "Select Date", icon: Calendar },
     { label: "Participants", placeholder: "1 Participant", icon: User },
   ],
   transfers: [
-    { label: "Pick-up Location", placeholder: "From airport or hotel", icon: MapPin },
+    {
+      label: "Pick-up Location",
+      placeholder: "From airport or hotel",
+      icon: MapPin,
+    },
     { label: "Drop-off Location", placeholder: "To destination", icon: Navigation },
     { label: "Date & Time", placeholder: "Select date", icon: Clock },
     { label: "Passengers", placeholder: "How many", icon: User },
@@ -57,41 +69,42 @@ interface SearchWidgetProps {
   onTabChange: (tab: TabId) => void;
 }
 
-export default function SearchWidget({ activeTab, onTabChange }: SearchWidgetProps) {
+export default function SearchWidget({
+  activeTab,
+  onTabChange,
+}: SearchWidgetProps) {
   const fields = fieldConfigs[activeTab];
 
   return (
     <div className="relative z-20 -mt-20 max-w-6xl mx-auto px-6">
       <div className="bg-[var(--surface-card)] shadow-2xl p-1 md:p-2 border-t-4 border-primary">
-        <div className="flex flex-wrap md:flex-nowrap">
-          {/* Vertical Tabs */}
-          <div className="w-full md:w-56 flex flex-col p-4 border-r border-[var(--line-soft)]">
-            <nav className="flex md:flex-col gap-1">
-              {tabs.map((tab) => {
-                const Icon = tab.icon;
-                const isActive = activeTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => onTabChange(tab.id)}
-                    className={`flex items-center gap-3 px-4 py-3 transition-all border-l-2 ${
-                      isActive
-                        ? "bg-primary/10 text-primary font-bold border-primary"
-                        : "text-[var(--text-muted)] hover:text-primary font-medium border-transparent"
-                    }`}
-                  >
-                    <Icon size={20} />
-                    <span className="text-sm uppercase tracking-wider">
-                      {tab.label}
-                    </span>
-                  </button>
-                );
-              })}
-            </nav>
-          </div>
+        <div className="px-4 pt-3 pb-2 border-b border-[var(--line-soft)]">
+          <nav className="flex flex-wrap md:flex-nowrap gap-2">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => onTabChange(tab.id)}
+                  className={`flex items-center gap-2 px-4 py-2.5 transition-all rounded-md border ${
+                    isActive
+                      ? "bg-primary/10 text-primary font-bold border-primary/60"
+                      : "text-[var(--text-muted)] hover:text-primary font-medium border-transparent hover:border-[var(--line-soft)]"
+                  }`}
+                >
+                  <Icon size={17} />
+                  <span className="text-xs uppercase tracking-[0.16em]">
+                    {tab.label}
+                  </span>
+                </button>
+              );
+            })}
+          </nav>
+        </div>
 
-          {/* Form Fields */}
-          <div className="flex-1 grid grid-cols-1 md:grid-cols-4 gap-6 p-6 items-center">
+        <div className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-6 items-center">
             {fields.map((field) => {
               const Icon = field.icon;
               return (
@@ -107,15 +120,14 @@ export default function SearchWidget({ activeTab, onTabChange }: SearchWidgetPro
                     <input
                       type="text"
                       placeholder={field.placeholder}
-                      className="w-full pl-8 pr-4 py-2 bg-transparent border-b border-[var(--line-strong)] focus:border-primary text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:ring-0 text-lg font-serif transition-colors outline-none"
+                      className="w-full pl-8 pr-4 py-2 bg-transparent border-b border-[var(--line-strong)] focus:border-primary text-[var(--field-text)] placeholder-[var(--field-placeholder)] focus:ring-0 text-lg font-serif transition-colors outline-none"
                     />
                   </div>
                 </div>
               );
             })}
 
-            {/* Search Button */}
-            <div className="flex items-end h-full">
+            <div className="flex items-end h-full md:col-span-1">
               <button className="w-full bg-primary hover:bg-primary-gradient-end text-white h-[56px] font-bold transition-colors flex items-center justify-center gap-2 uppercase tracking-widest text-xs shadow-lg">
                 <Search size={14} />
                 {buttonLabels[activeTab]}

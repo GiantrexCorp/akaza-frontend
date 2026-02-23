@@ -60,7 +60,7 @@ export default function Navbar() {
             {theme === "dark" ? <Sun size={15} /> : <Moon size={15} />}
           </button>
           <button className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors text-xs uppercase tracking-widest font-medium">
-            Log In
+            Login/Register
           </button>
           <button className="bg-gradient-to-r from-primary to-primary-gradient-end hover:to-primary text-white px-8 py-3 font-sans uppercase tracking-widest text-xs font-bold transition-all shadow-lg hover:shadow-primary/20">
             Book Now
@@ -102,7 +102,7 @@ export default function Navbar() {
             ))}
             <div className="pt-4 border-t border-[var(--line-soft)] flex flex-col gap-4">
               <button className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors text-xs uppercase tracking-widest font-medium text-left">
-                Log In
+                Login/Register
               </button>
               <button className="bg-gradient-to-r from-primary to-primary-gradient-end text-white px-8 py-3 font-sans uppercase tracking-widest text-xs font-bold w-full">
                 Book Now

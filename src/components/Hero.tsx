@@ -2,44 +2,48 @@ import Image from "next/image";
 
 export default function Hero() {
   return (
-    <section className="relative h-[95vh] flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[92vh] pt-40 pb-24 overflow-hidden">
       {/* Background image */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/hero-pyramids.png"
+          src="/images/hero/hero-main-v2.png"
           alt="Ancient Egyptian Pyramids at sunset"
           fill
-          className="object-cover"
+          quality={100}
+          sizes="100vw"
+          className="object-cover object-center"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[var(--hero-overlay-start)] to-[var(--hero-overlay-end)]" />
-        <div className="absolute inset-0 bg-[var(--hero-overlay-blend)] mix-blend-multiply" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/8 via-black/20 to-black/38" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#1b3a42]/12 via-transparent to-[#b97532]/10" />
       </div>
 
       {/* Content */}
-      <div className="relative z-10 max-w-5xl mx-auto text-center px-6 mt-12">
-        <span className="inline-block px-4 py-1.5 border border-primary/40 bg-[var(--hero-pill-bg)] backdrop-blur-sm text-xs font-serif italic tracking-wider text-primary mb-8">
-          Travel, handled.
-        </span>
+      <div className="relative z-10 max-w-7xl mx-auto px-6">
+        <div className="max-w-4xl bg-black/20 backdrop-blur-[2px] border border-white/10 rounded-2xl p-8 md:p-10">
+          <span className="inline-block px-5 py-2 border border-white/35 bg-black/25 backdrop-blur-sm text-xs uppercase tracking-[0.2em] text-primary mb-7 rounded-full font-semibold">
+            Travel, handled.
+          </span>
 
-        <h1 className="text-5xl md:text-8xl font-serif text-[var(--text-primary)] mb-8 tracking-wide leading-tight drop-shadow-2xl">
-          Your journey,{" "}
-          <br />
-          <span className="text-primary italic">privately handled.</span>
-        </h1>
+          <h1 className="text-5xl md:text-7xl font-serif text-white mb-7 tracking-[0.01em] leading-[0.95] drop-shadow-[0_10px_28px_rgba(0,0,0,0.55)]">
+            Your journey,
+            <br />
+            <span className="italic bg-gradient-to-r from-[#B97532] to-[#753F20] bg-clip-text text-transparent">privately handled.</span>
+          </h1>
 
-        <p className="text-lg md:text-xl text-[var(--text-secondary)] mb-12 max-w-2xl mx-auto font-light leading-relaxed tracking-wide drop-shadow-md font-sans">
-          Premium travel planning, handpicked stays, VIP transfers, and
-          concierge-level handling across Egypt and key regional destinations.
-        </p>
+          <p className="text-lg md:text-[1.25rem] text-white/92 mb-10 max-w-3xl font-normal leading-relaxed tracking-[0.01em] drop-shadow-[0_8px_22px_rgba(0,0,0,0.45)]">
+            Premium travel planning, handpicked stays, VIP transfers, and
+            concierge-level handling across Egypt and key regional destinations.
+          </p>
 
-        <div className="flex flex-col md:flex-row items-center justify-center gap-6">
-          <button className="w-full md:w-auto bg-primary hover:bg-primary-dark text-white px-10 py-4 font-serif text-lg tracking-wide transition-all duration-300 min-w-[200px]">
-            Plan My Journey
-          </button>
-          <button className="w-full md:w-auto border border-[var(--hero-secondary-btn-border)] bg-[var(--hero-secondary-btn-bg)] backdrop-blur-md text-[var(--text-primary)] px-10 py-4 font-serif text-lg tracking-wide hover:bg-white/90 transition-all min-w-[200px]">
-            Explore Services
-          </button>
+          <div className="flex flex-col sm:flex-row items-start gap-4">
+            <button className="w-full sm:w-auto bg-primary hover:bg-primary-dark text-white px-10 py-4 text-sm uppercase tracking-[0.2em] transition-all duration-300 min-w-[220px] rounded-sm font-semibold">
+              Plan My Journey
+            </button>
+            <button className="w-full sm:w-auto border border-white/35 bg-black/22 backdrop-blur-md text-white px-10 py-4 text-sm uppercase tracking-[0.2em] hover:bg-black/32 transition-all min-w-[220px] rounded-sm font-semibold">
+              Explore Services
+            </button>
+          </div>
         </div>
       </div>
     </section>

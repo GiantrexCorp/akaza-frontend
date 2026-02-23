@@ -35,6 +35,8 @@
   --text-primary: #ffffff;
   --text-secondary: #d7dee7;
   --text-muted: #94a3b8;
+  --field-text: #d7dee7;
+  --field-placeholder: rgba(215, 222, 231, 0.46);
   --line-soft: rgba(255, 255, 255, 0.08);
   --line-strong: rgba(255, 255, 255, 0.24);
 }
@@ -67,6 +69,8 @@
   --text-primary: #111111;
   --text-secondary: #1b3a42;
   --text-muted: #3a3a3a;
+  --field-text: #1b3a42;
+  --field-placeholder: rgba(27, 58, 66, 0.42);
   --line-soft: rgba(27, 58, 66, 0.15);
   --line-strong: rgba(27, 58, 66, 0.3);
 }

@@ -34,30 +34,31 @@ export default function DestinationCard({
     grayscale === "30" ? "grayscale-[30%]" : "grayscale-[20%]";
 
   return (
-    <div className="group relative overflow-hidden transition-all cursor-pointer h-[550px]">
+    <article className="group relative overflow-hidden transition-all duration-500 cursor-pointer h-[590px] rounded-2xl bg-black/30 border border-white/10 hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(0,0,0,0.42)]">
       {/* Hover border frame */}
-      <div className="absolute inset-0 border-2 border-transparent group-hover:border-primary/50 z-20 transition-all duration-500 pointer-events-none m-4" />
+      <div className="absolute inset-0 border border-transparent group-hover:border-primary/50 z-20 transition-all duration-500 pointer-events-none m-3 rounded-xl" />
 
       {/* Image */}
       <img
         alt={alt}
         src={image}
-        className={`absolute inset-0 w-full h-full object-cover ${grayscaleClass} group-hover:grayscale-0 group-hover:scale-105 transition-all duration-1000`}
+        className={`absolute inset-0 w-full h-full object-cover ${grayscaleClass} group-hover:grayscale-0 group-hover:scale-[1.06] transition-all duration-1000`}
       />
 
       {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[var(--card-overlay)] via-transparent to-transparent opacity-90" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/18 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#1b3a42]/22" />
 
       {/* Content */}
-      <div className="absolute bottom-0 left-0 p-10 w-full z-10">
-        <span className="text-primary text-[10px] font-bold uppercase tracking-[0.3em] mb-2 block font-sans">
+      <div className="absolute bottom-0 left-0 p-7 w-full z-10">
+        <span className="text-primary text-[10px] font-semibold uppercase tracking-[0.24em] mb-2 block font-sans">
           {category}
         </span>
         <h4 className={titleClass}>{title}</h4>
         <div className="w-12 h-[1px] bg-primary mb-6" />
 
         {features ? (
-          <ul className="text-slate-300 text-sm mb-6 space-y-1 font-light leading-relaxed font-sans">
+          <ul className="text-slate-200 text-sm mb-6 space-y-1 font-light leading-relaxed font-sans">
             {features.map((feature) => (
               <li key={feature} className="flex items-center gap-2">
                 <CheckCircle size={14} className="text-primary shrink-0" />
@@ -66,20 +67,20 @@ export default function DestinationCard({
             ))}
           </ul>
         ) : (
-          <p className="text-slate-300 text-sm mb-6 line-clamp-2 font-light leading-relaxed font-sans">
+          <p className="text-slate-200 text-sm mb-6 line-clamp-2 font-light leading-relaxed font-sans min-h-[44px]">
             {description}
           </p>
         )}
 
         <div className="flex items-center justify-between">
-          <span className="text-white font-serif text-lg">
+          <span className="text-white font-serif text-xl">
             {pricePrefix} {price}
           </span>
-          <div className="w-12 h-12 flex items-center justify-center text-white border border-white/30 group-hover:bg-primary group-hover:border-primary transition-all">
+          <div className="w-12 h-12 flex items-center justify-center text-white border border-white/30 bg-white/5 group-hover:bg-primary group-hover:border-primary transition-all rounded-lg">
             <ArrowRight size={16} />
           </div>
         </div>
       </div>
-    </div>
+    </article>
   );
 }

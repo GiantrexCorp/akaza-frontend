@@ -8,9 +8,9 @@ export default function HomeContent() {
   const [activeTab, setActiveTab] = useState<TabId>("excursions");
 
   return (
-    <>
+    <div className="relative">
       <SearchWidget activeTab={activeTab} onTabChange={setActiveTab} />
       <DestinationsSection activeTab={activeTab} />
-    </>
+    </div>
   );
 }

@@ -167,38 +167,47 @@ export default function DestinationsSection({
   activeTab,
 }: DestinationsSectionProps) {
   const section = sectionData[activeTab];
+  const sectionGradient =
+    "linear-gradient(180deg, rgba(27,58,66,0.16) 0%, rgba(185,117,50,0.14) 34%, rgba(0,0,0,0) 72%)";
 
   return (
-    <section id="destinations" className="py-32 px-6 max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-8 border-b border-[var(--line-soft)] pb-8">
-        <div className="max-w-2xl">
-          <h2 className="text-primary font-bold uppercase tracking-[0.3em] text-xs mb-4 font-sans">
-            {section.label}
-          </h2>
-          <h3 className="text-4xl md:text-6xl font-serif text-[var(--text-primary)] leading-none">
-            {section.heading}{" "}
-            <br />
-            <span className="italic text-accent-light">{section.subheading}</span>
-          </h3>
-        </div>
-        <a
-          href="#"
-          className="group text-[var(--text-secondary)] font-medium flex items-center gap-3 hover:text-primary transition-all uppercase tracking-widest text-xs font-sans"
-        >
-          {section.linkText}{" "}
-          <ArrowRight
-            size={16}
-            className="group-hover:translate-x-1 transition-transform"
-          />
-        </a>
-      </div>
+    <section
+      id="destinations"
+      className="relative py-32 px-6 overflow-hidden bg-[#04141b]"
+      style={{ backgroundImage: sectionGradient }}
+    >
 
-      {/* Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {section.cards.map((card) => (
-          <DestinationCard key={card.title} {...card} />
-        ))}
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-8 border-b border-white/10 pb-10">
+          <div className="max-w-3xl">
+            <span className="inline-flex items-center px-4 py-2 rounded-full border border-primary/40 bg-primary/10 text-primary font-semibold uppercase tracking-[0.24em] text-[10px] mb-6">
+              {section.label}
+            </span>
+            <h3 className="text-4xl md:text-7xl font-serif text-white leading-[0.95] tracking-tight">
+              {section.heading}
+              <br />
+              <span className="italic text-[#688E99]">{section.subheading}</span>
+            </h3>
+          </div>
+          <a
+            href="#"
+            className="group self-start md:self-auto text-white/85 font-semibold flex items-center gap-3 hover:text-primary transition-all uppercase tracking-[0.2em] text-xs font-sans border border-white/15 px-5 py-3 rounded-full hover:border-primary/60 hover:bg-primary/5"
+          >
+            {section.linkText}
+            <ArrowRight
+              size={16}
+              className="group-hover:translate-x-1 transition-transform"
+            />
+          </a>
+        </div>
+
+        {/* Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          {section.cards.map((card) => (
+            <DestinationCard key={card.title} {...card} />
+          ))}
+        </div>
       </div>
     </section>
   );
