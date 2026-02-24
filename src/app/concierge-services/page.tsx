@@ -103,11 +103,11 @@ export default function ConciergeServicesPage() {
                 <article
                   key={program.title}
                   data-reveal
-                  className={`reveal-item group grid gap-8 rounded-2xl border border-[var(--line-soft)] bg-[var(--surface-card)]/45 p-6 md:p-8 lg:grid-cols-2 lg:items-center ${
+                  className={`reveal-item group grid gap-8 border border-[var(--line-soft)] bg-[var(--surface-card)]/45 p-6 md:p-8 lg:grid-cols-2 lg:items-center ${
                     reverse ? 'lg:[&>div:first-child]:order-2' : ''
                   }`}
                 >
-                  <div className="relative overflow-hidden rounded-xl border border-[var(--line-soft)]">
+                  <div className="relative overflow-hidden border border-[var(--line-soft)]">
                     <Image
                       src={program.image}
                       alt={program.alt}
@@ -141,7 +141,7 @@ export default function ConciergeServicesPage() {
                     </ul>
                     <Link
                       href={program.href}
-                      className="mt-7 inline-flex items-center justify-center rounded-lg border border-primary/60 bg-primary px-6 py-3 text-xs font-bold uppercase tracking-[0.18em] text-white transition-all hover:bg-primary-gradient-end hover:-translate-y-0.5"
+                      className="mt-7 inline-flex items-center justify-center border border-primary/60 bg-primary px-6 py-3 text-xs font-bold uppercase tracking-[0.18em] text-white transition-all hover:bg-primary-gradient-end hover:-translate-y-0.5"
                     >
                       {program.cta}
                     </Link>
@@ -170,9 +170,9 @@ export default function ConciergeServicesPage() {
                   <article
                     key={service.title}
                     data-reveal
-                    className="reveal-item group rounded-xl border border-[var(--line-soft)] bg-[var(--surface-card)]/45 p-5 transition-all duration-500 hover:-translate-y-1 hover:border-primary/55 hover:shadow-[0_22px_40px_-24px_rgba(185,117,50,0.8)]"
+                    className="reveal-item group border border-[var(--line-soft)] bg-[var(--surface-card)]/45 p-5 transition-all duration-500 hover:-translate-y-1 hover:border-primary/55 hover:shadow-[0_22px_40px_-24px_rgba(185,117,50,0.8)]"
                   >
-                    <div className="relative overflow-hidden rounded-lg border border-[var(--line-soft)]">
+                    <div className="relative overflow-hidden border border-[var(--line-soft)]">
                       <Image
                         src={service.image}
                         alt={service.alt}
@@ -203,7 +203,7 @@ export default function ConciergeServicesPage() {
         <section className="bg-[var(--surface-page)] px-6 pb-24">
           <div
             data-reveal
-            className="reveal-item mx-auto max-w-6xl rounded-2xl border border-[var(--line-soft)] bg-[linear-gradient(120deg,rgba(185,117,50,0.18),rgba(16,33,39,0.5),rgba(185,117,50,0.16))] p-8 md:p-12 text-center"
+            className="reveal-item mx-auto max-w-6xl border border-[var(--line-soft)] bg-[linear-gradient(120deg,rgba(185,117,50,0.18),rgba(16,33,39,0.5),rgba(185,117,50,0.16))] p-8 md:p-12 text-center"
           >
             <h3 className="text-4xl md:text-6xl font-serif text-[var(--text-primary)]">Ready to Refine Your Next Journey?</h3>
             <p className="mt-4 max-w-2xl mx-auto text-[var(--text-secondary)]">
@@ -213,13 +213,13 @@ export default function ConciergeServicesPage() {
             <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center rounded-lg border border-primary/65 bg-primary px-8 py-3 text-xs font-bold uppercase tracking-[0.18em] text-white hover:bg-primary-gradient-end transition-all"
+                className="inline-flex items-center justify-center border border-primary/65 bg-primary px-8 py-3 text-xs font-bold uppercase tracking-[0.18em] text-white hover:bg-primary-gradient-end transition-all"
               >
                 Inquire Now
               </Link>
               <Link
                 href="/how-we-work"
-                className="inline-flex items-center justify-center rounded-lg border border-[var(--line-strong)] bg-black/6 px-8 py-3 text-xs font-bold uppercase tracking-[0.18em] text-[var(--text-secondary)] hover:border-primary/55 hover:bg-primary/10 hover:text-primary transition-all"
+                className="inline-flex items-center justify-center border border-[var(--line-strong)] bg-black/6 px-8 py-3 text-xs font-bold uppercase tracking-[0.18em] text-[var(--text-secondary)] hover:border-primary/55 hover:bg-primary/10 hover:text-primary transition-all"
               >
                 How We Work
               </Link>

@@ -20,7 +20,7 @@ export default function Hero() {
 
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-6">
-        <div className="max-w-4xl bg-black/20 backdrop-blur-[2px] border border-white/10 rounded-2xl p-8 md:p-10">
+        <div className="max-w-4xl bg-black/20 backdrop-blur-[2px] border border-white/10 p-8 md:p-10">
           <span className="inline-block px-5 py-2 border border-white/35 bg-black/25 backdrop-blur-sm text-xs uppercase tracking-[0.2em] text-primary mb-7 rounded-full font-semibold">
             Travel, handled.
           </span>
@@ -37,10 +37,10 @@ export default function Hero() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-start gap-4">
-            <button className="w-full sm:w-auto bg-primary hover:bg-primary-dark text-white px-10 py-4 text-sm uppercase tracking-[0.2em] transition-all duration-300 min-w-[220px] rounded-sm font-semibold">
+            <button className="w-full sm:w-auto bg-primary hover:bg-primary-dark text-white px-10 py-4 text-sm uppercase tracking-[0.2em] transition-all duration-300 min-w-[220px] font-semibold">
               Plan My Journey
             </button>
-            <button className="w-full sm:w-auto border border-white/35 bg-black/22 backdrop-blur-md text-white px-10 py-4 text-sm uppercase tracking-[0.2em] hover:bg-black/32 transition-all min-w-[220px] rounded-sm font-semibold">
+            <button className="w-full sm:w-auto border border-white/35 bg-black/22 backdrop-blur-md text-white px-10 py-4 text-sm uppercase tracking-[0.2em] hover:bg-black/32 transition-all min-w-[220px] font-semibold">
               Explore Services
             </button>
           </div>

@@ -64,7 +64,7 @@ function LoginForm() {
           onChange={(e) => setEmail(e.target.value)}
           error={errors.email}
           icon={<Mail size={18} />}
-          className="h-[52px] rounded-lg border border-[var(--line-soft)] bg-[var(--surface-page)]/72 px-4 pl-10 text-base font-sans focus:border-primary"
+          className="h-[52px] border border-[var(--line-soft)] bg-[var(--surface-page)]/72 px-4 pl-10 text-base font-sans focus:border-primary"
         />
 
         <Input
@@ -75,7 +75,7 @@ function LoginForm() {
           onChange={(e) => setPassword(e.target.value)}
           error={errors.password}
           icon={<Lock size={18} />}
-          className="h-[52px] rounded-lg border border-[var(--line-soft)] bg-[var(--surface-page)]/72 px-4 pl-10 pr-12 text-base font-sans focus:border-primary"
+          className="h-[52px] border border-[var(--line-soft)] bg-[var(--surface-page)]/72 px-4 pl-10 pr-12 text-base font-sans focus:border-primary"
         />
 
         <div className="flex items-center justify-between">
@@ -123,7 +123,7 @@ export default function LoginPage() {
           </Link>
         </div>
 
-        <div className="rounded-2xl bg-[var(--surface-card)]/92 border border-[var(--line-soft)] p-8 md:p-10 shadow-[0_34px_58px_-36px_rgba(0,0,0,0.86)] backdrop-blur-sm">
+        <div className="bg-[var(--surface-card)]/92 border border-[var(--line-soft)] p-8 md:p-10 shadow-[0_34px_58px_-36px_rgba(0,0,0,0.86)] backdrop-blur-sm">
           <Suspense fallback={<Spinner size="lg" className="py-12" />}>
             <LoginForm />
           </Suspense>

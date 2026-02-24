@@ -1,9 +1,15 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SubpageHero from "@/components/SubpageHero";
+
+export const metadata: Metadata = {
+  title: "Destinations | AKAZA Travel",
+  description: "Explore luxury destinations across Egypt, Turkey, and beyond. Curated travel programs for the discerning traveler.",
+};
 
 type DestinationLayout = "mosaic" | "grid" | "programs";
 
@@ -186,7 +192,7 @@ export default function DestinationsPage() {
                           className={`group/destination block ${isCairo ? "md:col-span-2 xl:col-span-2 xl:row-span-2" : ""}`}
                         >
                           <article
-                            className={`relative overflow-hidden rounded-2xl border border-[var(--destinations-card-border)] bg-black/30 transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-primary/75 hover:shadow-[0_28px_70px_rgba(0,0,0,0.56)] ${
+                            className={`relative overflow-hidden border border-[var(--destinations-card-border)] bg-black/30 transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-primary/75 hover:shadow-[0_28px_70px_rgba(0,0,0,0.56)] ${
                               isCairo ? "h-[540px] md:h-[620px] xl:h-full" : "h-[300px] xl:h-full"
                             }`}
                           >
@@ -228,7 +234,7 @@ export default function DestinationsPage() {
                       const href = `${group.basePath}/${toSlug(destination.name)}`;
                       return (
                         <Link key={destination.name} href={href} className="group/destination block">
-                          <article className="relative h-[300px] sm:h-[360px] overflow-hidden rounded-2xl border border-[var(--destinations-card-border)] bg-black/20 transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-primary/75 hover:shadow-[0_24px_65px_rgba(0,0,0,0.54)]">
+                          <article className="relative h-[300px] sm:h-[360px] overflow-hidden border border-[var(--destinations-card-border)] bg-black/20 transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-primary/75 hover:shadow-[0_24px_65px_rgba(0,0,0,0.54)]">
                             <Image
                               src={destination.image}
                               alt={destination.name}
@@ -256,7 +262,7 @@ export default function DestinationsPage() {
                       const href = `${group.basePath}/${toSlug(destination.name)}`;
                       return (
                         <Link key={destination.name} href={href} className="group/program block">
-                          <article className="relative overflow-hidden rounded-2xl border border-[var(--destinations-card-border)] bg-[var(--destinations-program-surface)] transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-primary/80 hover:shadow-[0_28px_70px_rgba(0,0,0,0.55)]">
+                          <article className="relative overflow-hidden border border-[var(--destinations-card-border)] bg-[var(--destinations-program-surface)] transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-primary/80 hover:shadow-[0_28px_70px_rgba(0,0,0,0.55)]">
                             <div className="grid grid-cols-1 md:grid-cols-[48%_52%]">
                               <div className="relative min-h-[250px] md:min-h-[340px]">
                                 <Image

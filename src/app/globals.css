@@ -61,6 +61,20 @@
   --experiences-hero-overlay-end: rgba(18, 13, 9, 0.92);
   --experiences-accent-glow: rgba(185, 117, 50, 0.22);
   --experiences-muted-card: rgba(255, 255, 255, 0.02);
+  --contact-form-surface: linear-gradient(
+    130deg,
+    rgba(185, 117, 50, 0.13),
+    rgba(16, 33, 39, 0.52),
+    rgba(185, 117, 50, 0.08)
+  );
+  --contact-form-shadow: 0 30px 48px -32px rgba(0, 0, 0, 0.76);
+  --contact-form-text: #e5edf6;
+  --contact-form-label: #9ab9d7;
+  --contact-form-line: rgba(215, 222, 231, 0.28);
+  --contact-form-placeholder: rgba(215, 222, 231, 0.58);
+  --contact-select-menu-bg: #102127;
+  --contact-select-menu-text: #dbe7f3;
+  --contact-select-menu-hover: rgba(185, 117, 50, 0.22);
   --text-primary: #ffffff;
   --text-secondary: #d7dee7;
   --text-muted: #94a3b8;
@@ -124,6 +138,20 @@
   --experiences-hero-overlay-end: rgba(240, 236, 231, 0.9);
   --experiences-accent-glow: rgba(27, 58, 66, 0.16);
   --experiences-muted-card: rgba(27, 58, 66, 0.03);
+  --contact-form-surface: linear-gradient(
+    132deg,
+    rgba(255, 255, 255, 0.97),
+    rgba(245, 249, 252, 0.98),
+    rgba(235, 242, 246, 0.96)
+  );
+  --contact-form-shadow: 0 22px 40px -32px rgba(19, 47, 57, 0.28);
+  --contact-form-text: #183640;
+  --contact-form-label: #2f5461;
+  --contact-form-line: rgba(27, 58, 66, 0.34);
+  --contact-form-placeholder: rgba(27, 58, 66, 0.62);
+  --contact-select-menu-bg: #ffffff;
+  --contact-select-menu-text: #183640;
+  --contact-select-menu-hover: rgba(27, 58, 66, 0.08);
   --text-primary: #111111;
   --text-secondary: #1b3a42;
   --text-muted: #3a3a3a;
@@ -153,6 +181,23 @@ select:-webkit-autofill:focus {
   -webkit-box-shadow: 0 0 0 1000px var(--surface-card) inset;
   box-shadow: 0 0 0 1000px var(--surface-card) inset;
   transition: background-color 9999s ease-out 0s;
+}
+
+.contact-select option {
+  background-color: var(--contact-select-menu-bg);
+  color: var(--contact-select-menu-text);
+}
+
+.contact-select option[disabled] {
+  color: var(--contact-form-placeholder);
+}
+
+.contact-select option:checked,
+.contact-select option:hover,
+.contact-select option:focus-visible {
+  background: linear-gradient(0deg, var(--contact-select-menu-hover), var(--contact-select-menu-hover)),
+    var(--contact-select-menu-bg);
+  color: var(--contact-select-menu-text);
 }
 
 html {

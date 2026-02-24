@@ -6,65 +6,86 @@ Single source of truth for all design decisions. Every AI tool and developer mus
 
 - **Product**: Akaza Travel — luxury Egypt travel platform
 - **Tone**: Dark, elegant, editorial. Think high-end magazine, not SaaS dashboard.
-- **Shape language**: Sharp edges only. NO rounded corners (`rounded-*`) on any UI element. The only exception is `rounded-full` for decorative blur circles.
+- **Shape language**: Sharp edges only. NO rounded corners (`rounded-*`) on any UI element. The only exception is `rounded-full` for decorative blur circles and pill badges.
 - **Motion**: Subtle, slow transitions. Default `transition-all duration-300` or `duration-500`. Never jarring or fast.
 
 ## Color Palette
 
 All colors are defined in `src/app/globals.css` via `@theme inline`. Always use the Tailwind token names — never hardcode hex values inline.
 
+### Base Palette (dark theme defaults)
+
 | Token                  | Hex       | Usage                                       |
 |------------------------|-----------|---------------------------------------------|
-| `primary`              | `#b38b59` | Warm gold — buttons, links, highlights, active states |
-| `primary-dark`         | `#8c6b42` | Darker gold — pressed states                |
-| `primary-gradient-end` | `#9a7648` | Book Now button gradient end-stop, search hover |
-| `accent`               | `#d4af37` | Bright gold — gradient text highlights      |
-| `accent-light`         | `#f3e5ab` | Light gold — brand gradient text midpoint   |
-| `secondary`            | `#4a5568` | Muted blue-gray — brand gradient endpoint   |
-| `bg-light`             | `#f5f3f0` | Light mode background (future use)          |
-| `bg-dark`              | `#1a1c23` | Main page background                        |
-| `bg-darker`            | `#111216` | Card overlays, gradient endpoints           |
-| `bg-card`              | `#23262f` | Search widget, elevated card surfaces       |
-| `bg-vip`               | `#14161b` | VIP section, office card background         |
-| `bg-footer`            | `#0f1014` | Footer background                           |
+| `primary`              | `#b97532` | Warm gold — buttons, links, highlights, active states |
+| `primary-dark`         | `#753f20` | Darker gold — pressed states                |
+| `primary-gradient-end` | `#e2af6d` | Button gradient end-stop, search hover      |
+| `accent`               | `#346d80` | Teal — brand gradient text highlights       |
+| `accent-light`         | `#97b9c1` | Light teal — brand gradient text endpoint   |
+| `secondary`            | `#688e99` | Muted teal-gray — brand gradient endpoint   |
+| `bg-light`             | `#f4f2f0` | Light mode background                       |
+| `bg-dark`              | `#0b171b` | Main page background                        |
+| `bg-darker`            | `#060e11` | Card overlays, gradient endpoints           |
+| `bg-card`              | `#102127` | Search widget, elevated card surfaces       |
+| `bg-vip`               | `#0b1a20` | VIP section, office card background         |
+| `bg-footer`            | `#070f12` | Footer background                           |
 
-### Text Colors (from Tailwind's slate palette)
+### CSS Custom Properties (Theme-Aware)
 
-| Class              | Usage                                       |
-|--------------------|---------------------------------------------|
-| `text-white`       | Primary headings, important text            |
-| `text-slate-200`   | Body text, hero subtitles                   |
-| `text-slate-300`   | Nav links, card descriptions, secondary text|
-| `text-slate-400`   | Form labels, muted descriptions, VIP body   |
-| `text-slate-500`   | Footer text, service card descriptions      |
-| `text-slate-600`   | Copyright text, very muted                  |
-| `text-primary`     | Gold accent text, category labels, active tabs |
+The project uses a dual-layer system. Tailwind `@theme` tokens provide the base palette. CSS custom properties provide semantic values that swap between dark/light themes via `data-theme` attribute.
+
+**Surface tokens** (`--surface-*`):
+| Variable | Dark Value | Usage |
+|----------|-----------|-------|
+| `--surface-page` | `#0b171b` | Main background (`body`) |
+| `--surface-nav` | `rgba(11,23,27,0.85)` | Navbar glass background |
+| `--surface-card` | `#102127` | Card/elevated surface |
+| `--surface-section` | `#0b1a20` | Section backgrounds |
+| `--surface-footer` | `#070f12` | Footer background |
+
+**Text tokens** (`--text-*`):
+| Variable | Dark Value | Usage |
+|----------|-----------|-------|
+| `--text-primary` | `#ffffff` | Primary headings, important text |
+| `--text-secondary` | `#d7dee7` | Body text, descriptions |
+| `--text-muted` | `#94a3b8` | Muted labels, captions |
+
+**Line tokens** (`--line-*`):
+| Variable | Dark Value | Usage |
+|----------|-----------|-------|
+| `--line-soft` | `rgba(255,255,255,0.08)` | Subtle dividers, card borders |
+| `--line-strong` | `rgba(255,255,255,0.24)` | Visible borders, button outlines |
+
+**Field tokens** (`--field-*`):
+| Variable | Dark Value | Usage |
+|----------|-----------|-------|
+| `--field-text` | `#d7dee7` | Input text color |
+| `--field-placeholder` | `rgba(215,222,231,0.46)` | Placeholder text |
+
+**Component-specific tokens**: `--hero-*`, `--search-widget-*`, `--destinations-*`, `--experiences-*`, `--contact-*` — see `globals.css` for full list.
 
 ### Border Colors
 
 | Class              | Usage                                       |
 |--------------------|---------------------------------------------|
-| `border-white/5`   | Subtle dividers (nav, footer, cards, tab sidebar) |
-| `border-white/10`  | Office card border                          |
-| `border-white/30`  | Card action buttons (arrow buttons)         |
-| `border-white/40`  | Hero outline button                         |
+| `border-[var(--line-soft)]` | Subtle dividers (cards, sections, nav) |
+| `border-[var(--line-strong)]` | Visible borders, button outlines |
 | `border-primary`   | Active tab indicator, search widget top border |
-| `border-primary/40`| Hero badge border                           |
+| `border-primary/40`| Badge borders                               |
 | `border-primary/50`| Hover state card frames                     |
-| `border-slate-700` | Input underlines                            |
-| `border-slate-800` | Section dividers, footer social icons       |
 
 ### Special CSS Classes
 
 ```css
 .brand-gradient-text {
-  background: linear-gradient(90deg, #d4af37, #f3e5ab, #d4af37);
+  background: linear-gradient(90deg, #b97532, #e2af6d, #97b9c1);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
   background-size: 200% auto;
 }
 ```
-Use for gold shimmer text effects on special headings. Defined in `globals.css`.
+Use for gold-to-teal shimmer text effects on special headings. Defined in `globals.css`. Light theme version uses different gradient stops.
 
 ## Typography
 
@@ -72,7 +93,7 @@ Use for gold shimmer text effects on special headings. Defined in `globals.css`.
 
 | Token       | Font                | Usage                                      |
 |-------------|---------------------|--------------------------------------------|
-| `font-serif`| Playfair Display    | All headings (h1–h4), prices, hero buttons, card titles, input text |
+| `font-serif`| Playfair Display    | All headings (h1-h4), prices, hero buttons, card titles, input text |
 | `font-sans` | Plus Jakarta Sans   | Body text, nav links, labels, descriptions, UI buttons |
 
 ### Typography Patterns
@@ -120,14 +141,14 @@ Subscribe:      bg-white text-black hover:bg-primary hover:text-white py-3 upper
 
 **CRITICAL**: No `rounded-*` classes on buttons. All buttons are sharp/square.
 
-### Cards — Destination / Hotel / Vehicle (550px)
+### Cards — Destination / Hotel / Vehicle (590px)
 
 Full-height image cards used in the featured section. Two content variants:
 
 **Paragraph variant** (excursions, hotels):
-- `h-[550px]` container, absolute positioned image with gradient overlay
-- Hover: inner border frame (`m-4 border-2 border-primary/50`), image `scale-105`, grayscale lifts to 0
-- Content at bottom: category label → title (italic serif) → gold divider → description → price + arrow
+- `h-[590px]` container, absolute positioned image with gradient overlay
+- Hover: inner border frame (`m-3 border border-primary/50`), image `scale-105`, grayscale lifts to 0
+- Content at bottom: category label -> title (italic serif) -> gold divider -> description -> price + arrow
 - Excursion cards: `grayscale-[30%]`, `text-4xl` titles
 - Hotel cards: `grayscale-[20%]`, `text-3xl leading-snug` titles
 
@@ -156,7 +177,7 @@ Each input has an icon positioned with `absolute left-0 top-1/2 -translate-y-1/2
 
 ### Glass / Frosted Surfaces
 
-- Navbar: `bg-bg-dark/85 backdrop-blur-[16px] border-b border-white/5`
+- Navbar: `bg-[var(--surface-nav)] backdrop-blur-2xl border-b border-[var(--line-soft)]`
 - Hero badge: `bg-black/20 backdrop-blur-sm border border-primary/40`
 - Office card: `bg-bg-vip/95 backdrop-blur-xl border border-white/10`
 
@@ -172,6 +193,31 @@ Each input has an icon positioned with `absolute left-0 top-1/2 -translate-y-1/2
 - Max content width: `max-w-7xl mx-auto px-6`
 - Section header to content: `mb-20`
 - Search widget max-width: `max-w-6xl mx-auto px-6`
+
+## Page Patterns
+
+### Booking Flow (Hotels, Tours, Transfers)
+
+All three booking flows follow the same layout:
+- **Form area** (2/3 width): Guest details, contact info, special requests
+- **Sticky sidebar** (1/3 width): Price summary, booking details, submit button
+- Grid: `grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-8`
+- After submission: redirect to `/[type]/bookings/[id]/confirmation`
+
+### Dashboard Pages
+
+Protected pages use `DashboardLayout` + `ProtectedRoute`:
+- Sidebar: user card + nav links (bookings, profile, notifications) + logout
+- Content area: booking lists, booking detail with cancel/voucher actions
+- Grid: `grid grid-cols-1 md:grid-cols-[280px_1fr] gap-8`
+
+### Editorial/Static Pages
+
+Subpages (about, how-we-work, concierge-services, etc.) use `SubpageHero` for the hero section, then editorial content sections with reveal animations via `IntersectionObserver`.
+
+### Auth Pages
+
+Login/register pages use a centered card layout with the form fields styled to match the design system. Wrapped in `Navbar` + `Footer`.
 
 ## Page Architecture — Tab-Linked Sections
 
@@ -217,33 +263,6 @@ All images are stored in `/public/images/`. The hero background is at `/public/h
 | `map-egypt.jpg`           | Office section background|
 
 Card images use `<img>` tags (for absolute positioning inside cards). Always include meaningful `alt` text. Images have grayscale filter that lifts on hover.
-
-## File Structure
-
-```
-src/
-├── app/
-│   ├── layout.tsx          # Root layout (fonts, metadata)
-│   ├── globals.css         # Design tokens (@theme inline), base styles, .brand-gradient-text
-│   └── page.tsx            # Page composition (thin — imports + assembles components)
-│   └── [feature]/          # Future pages (e.g., /destinations, /booking)
-│       └── page.tsx
-├── components/
-│   ├── AkazaLogo.tsx       # Brand logo component
-│   ├── Navbar.tsx           # Sticky glass nav
-│   ├── Hero.tsx             # Full-viewport hero with background image
-│   ├── HomeContent.tsx      # Client wrapper — manages shared tab state
-│   ├── SearchWidget.tsx     # Tabbed search form (controlled by parent)
-│   ├── DestinationsSection.tsx # Tab-linked card section with all 3 datasets
-│   ├── DestinationCard.tsx  # 550px image card (paragraph + feature list variants)
-│   ├── VIPServices.tsx      # VIP section with 3 service cards
-│   ├── ServiceCard.tsx      # Centered icon + title + description card
-│   ├── OfficeSection.tsx    # Map background with office contact card
-│   ├── Footer.tsx           # 4-column footer with newsletter
-│   └── ui/                  # Future: small reusable primitives (Button, Input, Badge)
-├── lib/                     # Future: API client, utilities, helpers
-└── types/                   # Future: shared TypeScript interfaces
-```
 
 ## Contact Information
 

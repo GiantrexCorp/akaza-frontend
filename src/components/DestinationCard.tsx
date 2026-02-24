@@ -34,9 +34,9 @@ export default function DestinationCard({
     grayscale === "30" ? "grayscale-[30%]" : "grayscale-[20%]";
 
   return (
-    <article className="group relative overflow-hidden transition-all duration-500 cursor-pointer h-[590px] rounded-2xl bg-black/30 border border-white/10 hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(0,0,0,0.42)]">
+    <article className="group relative overflow-hidden transition-all duration-500 cursor-pointer h-[590px] bg-black/30 border border-white/10 hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(0,0,0,0.42)]">
       {/* Hover border frame */}
-      <div className="absolute inset-0 border border-transparent group-hover:border-primary/50 z-20 transition-all duration-500 pointer-events-none m-3 rounded-xl" />
+      <div className="absolute inset-0 border border-transparent group-hover:border-primary/50 z-20 transition-all duration-500 pointer-events-none m-3" />
 
       {/* Image */}
       <img
@@ -76,7 +76,7 @@ export default function DestinationCard({
           <span className="text-white font-serif text-xl">
             {pricePrefix} {price}
           </span>
-          <div className="w-12 h-12 flex items-center justify-center text-white border border-white/30 bg-white/5 group-hover:bg-primary group-hover:border-primary transition-all rounded-lg">
+          <div className="w-12 h-12 flex items-center justify-center text-white border border-white/30 bg-white/5 group-hover:bg-primary group-hover:border-primary transition-all">
             <ArrowRight size={16} />
           </div>
         </div>

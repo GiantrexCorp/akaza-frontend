@@ -11,7 +11,7 @@ import { hotelsApi } from '@/lib/api/hotels';
 import { useToast } from '@/components/ui/Toast';
 import { ApiError } from '@/lib/api/client';
 import { ProtectedRoute } from '@/lib/auth';
-import type { HotelBooking } from '@/types/hotel';
+import type { HotelBooking, CancellationCost } from '@/types/hotel';
 
 const statusColors: Record<string, 'yellow' | 'green' | 'red' | 'gray' | 'orange' | 'purple'> = {
   pending: 'yellow',
@@ -29,6 +29,8 @@ function HotelBookingDetail({ id }: { id: string }) {
   const [loading, setLoading] = useState(true);
   const [cancelModal, setCancelModal] = useState(false);
   const [cancelling, setCancelling] = useState(false);
+  const [cancellationCost, setCancellationCost] = useState<CancellationCost | null>(null);
+  const [fetchingCost, setFetchingCost] = useState(false);
 
   useEffect(() => {
     const fetch = async () => {
@@ -43,6 +45,19 @@ function HotelBookingDetail({ id }: { id: string }) {
     };
     fetch();
   }, [id]);
+
+  const openCancelModal = async () => {
+    setFetchingCost(true);
+    setCancelModal(true);
+    try {
+      const cost = await hotelsApi.getCancellationCost(id);
+      setCancellationCost(cost);
+    } catch {
+      setCancellationCost(null);
+    } finally {
+      setFetchingCost(false);
+    }
+  };
 
   const handleCancel = async () => {
     setCancelling(true);
@@ -148,7 +163,7 @@ function HotelBookingDetail({ id }: { id: string }) {
           </Button>
         )}
         {booking.is_cancellable && (
-          <Button variant="ghost" onClick={() => setCancelModal(true)} className="text-red-400 hover:text-red-300">
+          <Button variant="ghost" onClick={openCancelModal} className="text-red-400 hover:text-red-300">
             Cancel Booking
           </Button>
         )}
@@ -156,15 +171,39 @@ function HotelBookingDetail({ id }: { id: string }) {
 
       {/* Cancel modal */}
       <Modal open={cancelModal} onClose={() => setCancelModal(false)} title="Cancel Booking">
-        <p className="text-sm text-[var(--text-secondary)] font-sans mb-6">
-          Are you sure you want to cancel this booking? This action may be subject to cancellation fees.
-        </p>
-        <div className="flex gap-3">
-          <Button variant="ghost" onClick={() => setCancelModal(false)}>Keep Booking</Button>
-          <Button variant="primary" onClick={handleCancel} loading={cancelling} className="bg-red-500 hover:bg-red-600">
-            Confirm Cancel
-          </Button>
-        </div>
+        {fetchingCost ? (
+          <div className="py-6"><Spinner size="md" /></div>
+        ) : (
+          <>
+            <p className="text-sm text-[var(--text-secondary)] font-sans mb-4">
+              Are you sure you want to cancel this booking?
+            </p>
+            {cancellationCost && cancellationCost.cancellation_cost > 0 && (
+              <div className="border border-[var(--line-soft)] bg-[var(--surface-card)] p-4 mb-6">
+                <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-2">Cancellation Fee</p>
+                <p className="text-xl font-serif text-red-400">
+                  {formatPrice(cancellationCost.cancellation_cost, cancellationCost.currency)}
+                </p>
+              </div>
+            )}
+            {cancellationCost && cancellationCost.cancellation_cost === 0 && (
+              <p className="text-sm text-green-400 font-sans mb-6">
+                Free cancellation — no fees apply.
+              </p>
+            )}
+            {!cancellationCost && (
+              <p className="text-sm text-[var(--text-muted)] font-sans mb-6">
+                This action may be subject to cancellation fees.
+              </p>
+            )}
+            <div className="flex gap-3">
+              <Button variant="ghost" onClick={() => setCancelModal(false)}>Keep Booking</Button>
+              <Button variant="primary" onClick={handleCancel} loading={cancelling} className="bg-red-500 hover:bg-red-600">
+                Confirm Cancel
+              </Button>
+            </div>
+          </>
+        )}
       </Modal>
     </div>
   );

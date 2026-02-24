@@ -102,7 +102,7 @@ export default function ContactPage() {
           <div className="relative mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.05fr_0.95fr]">
             <div
               data-reveal
-              className="reveal-item rounded-2xl border border-[var(--line-soft)] bg-[linear-gradient(130deg,rgba(185,117,50,0.13),rgba(16,33,39,0.52),rgba(185,117,50,0.08))] p-7 md:p-8"
+              className="reveal-item border border-[var(--line-soft)] bg-[var(--contact-form-surface)] p-7 shadow-[var(--contact-form-shadow)] md:p-8"
             >
               <h2 className="text-4xl font-serif md:text-5xl">Inquiry Form</h2>
               <div className="mt-4 h-px w-20 bg-gradient-to-r from-primary to-primary-gradient-end" />
@@ -131,14 +131,16 @@ export default function ContactPage() {
                   />
 
                   <div>
-                    <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--text-muted)]">
+                    <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--contact-form-label)]">
                       Destination Of Interest
                     </label>
                     <div className="relative mt-2">
                       <select
                         value={destination}
                         onChange={(e) => setDestination(e.target.value)}
-                        className="h-12 w-full appearance-none border-b border-[var(--line-strong)] bg-transparent pr-8 text-base text-[var(--field-text)] outline-none transition-colors focus:border-primary"
+                        className={`contact-select h-12 w-full appearance-none border-b border-[var(--contact-form-line)] bg-transparent pr-8 text-base ${
+                          destination ? 'text-[var(--contact-form-text)]' : 'text-[var(--contact-form-placeholder)]'
+                        } outline-none transition-colors focus:border-primary`}
                       >
                         <option value="" disabled>
                           Select a destination
@@ -149,13 +151,16 @@ export default function ContactPage() {
                           </option>
                         ))}
                       </select>
-                      <ChevronDown size={16} className="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 text-[var(--text-muted)]" />
+                      <ChevronDown
+                        size={16}
+                        className="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 text-[var(--contact-form-label)]"
+                      />
                     </div>
                   </div>
                 </div>
 
                 <div>
-                  <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--text-muted)]">
+                  <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--contact-form-label)]">
                     Your Vision
                   </label>
                   <textarea
@@ -163,7 +168,7 @@ export default function ContactPage() {
                     value={vision}
                     onChange={(e) => setVision(e.target.value)}
                     placeholder="How can we design your unforgettable journey?"
-                    className="mt-2 w-full resize-none border-b border-[var(--line-strong)] bg-transparent py-2 text-base text-[var(--field-text)] placeholder-[var(--field-placeholder)] outline-none transition-colors focus:border-primary"
+                    className="mt-2 w-full resize-none border-b border-[var(--contact-form-line)] bg-transparent py-2 text-base text-[var(--contact-form-text)] placeholder-[var(--contact-form-placeholder)] outline-none transition-colors focus:border-primary"
                   />
                 </div>
 
@@ -171,7 +176,7 @@ export default function ContactPage() {
                   <button
                     type="submit"
                     disabled={sending}
-                    className="inline-flex h-12 items-center gap-2 rounded-lg border border-primary/65 bg-primary px-7 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all hover:-translate-y-0.5 hover:bg-primary-gradient-end disabled:cursor-not-allowed disabled:opacity-60"
+                    className="inline-flex h-12 items-center gap-2 border border-primary/65 bg-primary px-7 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all hover:-translate-y-0.5 hover:bg-primary-gradient-end disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {sending ? 'Submitting...' : 'Submit Inquiry'}
                     <ArrowRight size={13} />
@@ -181,7 +186,7 @@ export default function ContactPage() {
             </div>
 
             <aside data-reveal className="reveal-item space-y-7">
-              <div className="rounded-2xl border border-[var(--line-soft)] bg-[var(--surface-card)]/78 p-7 shadow-[0_24px_44px_-28px_rgba(0,0,0,0.72)]">
+              <div className="border border-[var(--line-soft)] bg-[var(--surface-card)]/78 p-7 shadow-[0_24px_44px_-28px_rgba(0,0,0,0.72)]">
                 <span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-primary/45 bg-primary/10 text-primary">
                   <Sparkles size={17} />
                 </span>
@@ -200,13 +205,13 @@ export default function ContactPage() {
 
                 <a
                   href="tel:+442012345678"
-                  className="mt-6 inline-flex h-11 w-full items-center justify-center rounded-lg border border-primary/55 text-[11px] font-semibold uppercase tracking-[0.2em] text-primary transition-all hover:bg-primary hover:text-white"
+                  className="mt-6 inline-flex h-11 w-full items-center justify-center border border-primary/55 text-[11px] font-semibold uppercase tracking-[0.2em] text-primary transition-all hover:bg-primary hover:text-white"
                 >
                   Schedule A Private Call
                 </a>
               </div>
 
-              <div className="rounded-2xl border border-[var(--line-soft)] bg-[var(--surface-card)]/65 p-7">
+              <div className="border border-[var(--line-soft)] bg-[var(--surface-card)]/65 p-7">
                 <div className="grid gap-6 sm:grid-cols-2">
                   <div>
                     <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">London Office</p>
@@ -283,13 +288,15 @@ function Field({
 }) {
   return (
     <div>
-      <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--text-muted)]">{label}</label>
+      <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--contact-form-label)]">
+        {label}
+      </label>
       <input
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="mt-2 h-12 w-full border-b border-[var(--line-strong)] bg-transparent text-base text-[var(--field-text)] placeholder-[var(--field-placeholder)] outline-none transition-colors focus:border-primary"
+        className="mt-2 h-12 w-full border-b border-[var(--contact-form-line)] bg-transparent text-base text-[var(--contact-form-text)] placeholder-[var(--contact-form-placeholder)] outline-none transition-colors focus:border-primary"
       />
     </div>
   );

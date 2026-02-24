@@ -105,7 +105,7 @@ export default function ExperiencesPage() {
           <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.12fr_0.88fr] lg:gap-14">
             <div
               id="gallery"
-              className="relative overflow-hidden rounded-2xl border border-[var(--line-soft)] bg-[var(--experiences-muted-card)]"
+              className="relative overflow-hidden border border-[var(--line-soft)] bg-[var(--experiences-muted-card)]"
             >
               <Image
                 src={featured.image}
@@ -149,7 +149,7 @@ export default function ExperiencesPage() {
                 </div>
                 <Link
                   href="/contact"
-                  className="inline-flex h-12 items-center justify-center gap-2 rounded-lg border border-primary/65 bg-primary px-7 text-xs font-bold uppercase tracking-[0.18em] text-white transition-all hover:bg-primary-gradient-end"
+                  className="inline-flex h-12 items-center justify-center gap-2 border border-primary/65 bg-primary px-7 text-xs font-bold uppercase tracking-[0.18em] text-white transition-all hover:bg-primary-gradient-end"
                 >
                   Inquire Now
                   <ArrowRight size={14} />
@@ -198,7 +198,7 @@ interface StandardCardProps {
 
 function StandardCard({ icon, title, body }: StandardCardProps) {
   return (
-    <article className="rounded-xl border border-[var(--line-soft)] bg-[var(--experiences-muted-card)] p-7 text-center">
+    <article className="border border-[var(--line-soft)] bg-[var(--experiences-muted-card)] p-7 text-center">
       <div className="mx-auto mb-4 inline-flex h-10 w-10 items-center justify-center rounded-full border border-primary/45 text-primary">
         {icon}
       </div>

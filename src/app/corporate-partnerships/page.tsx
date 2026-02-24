@@ -157,7 +157,7 @@ export default function CorporatePartnershipsPage() {
 
             <article
               data-reveal
-              className="reveal-item mt-10 grid overflow-hidden rounded-2xl border border-[var(--line-soft)] bg-[var(--surface-card)] shadow-[0_28px_54px_-34px_rgba(0,0,0,0.8)] md:grid-cols-[1.05fr_0.95fr]"
+              className="reveal-item mt-10 grid overflow-hidden border border-[var(--line-soft)] bg-[var(--surface-card)] shadow-[0_28px_54px_-34px_rgba(0,0,0,0.8)] md:grid-cols-[1.05fr_0.95fr]"
             >
               <div className="relative overflow-hidden">
                 <Image
@@ -213,9 +213,9 @@ export default function CorporatePartnershipsPage() {
                 <article
                   key={card.title}
                   data-reveal
-                  className="reveal-item group rounded-xl border border-[var(--line-soft)] bg-[var(--surface-card)]/45 p-4 transition-all duration-500 hover:-translate-y-1 hover:border-primary/55 hover:shadow-[0_24px_45px_-28px_rgba(185,117,50,0.8)]"
+                  className="reveal-item group border border-[var(--line-soft)] bg-[var(--surface-card)]/45 p-4 transition-all duration-500 hover:-translate-y-1 hover:border-primary/55 hover:shadow-[0_24px_45px_-28px_rgba(185,117,50,0.8)]"
                 >
-                  <div className="relative overflow-hidden rounded-lg border border-[var(--line-soft)]">
+                  <div className="relative overflow-hidden border border-[var(--line-soft)]">
                     <Image
                       src={card.image}
                       alt={card.alt}
@@ -252,7 +252,7 @@ export default function CorporatePartnershipsPage() {
                 {metrics.map((metric) => (
                   <div
                     key={metric.key}
-                    className="rounded-lg border border-[var(--line-soft)] bg-[var(--surface-card)]/55 px-4 py-4"
+                    className="border border-[var(--line-soft)] bg-[var(--surface-card)]/55 px-4 py-4"
                   >
                     <p className="text-3xl font-serif text-primary">
                       {counts[metric.key]}
@@ -267,13 +267,13 @@ export default function CorporatePartnershipsPage() {
 
               <Link
                 href="/destinations"
-                className="mt-7 inline-flex items-center justify-center rounded-lg border border-primary/60 bg-primary px-6 py-3 text-xs font-bold uppercase tracking-[0.18em] text-white transition-all hover:bg-primary-gradient-end hover:-translate-y-0.5"
+                className="mt-7 inline-flex items-center justify-center border border-primary/60 bg-primary px-6 py-3 text-xs font-bold uppercase tracking-[0.18em] text-white transition-all hover:bg-primary-gradient-end hover:-translate-y-0.5"
               >
                 Explore Destinations
               </Link>
             </div>
 
-            <div data-reveal className="reveal-item relative overflow-hidden rounded-2xl border border-[var(--line-soft)]">
+            <div data-reveal className="reveal-item relative overflow-hidden border border-[var(--line-soft)]">
               <Image
                 src="/images/hotel-steigenberger.jpg"
                 alt="Luxury destination collaboration"
@@ -304,7 +304,7 @@ export default function CorporatePartnershipsPage() {
                   <article
                     key={pillar.title}
                     data-reveal
-                    className="reveal-item rounded-xl border border-[var(--line-soft)] bg-[var(--surface-card)]/45 p-5 transition-all duration-500 hover:border-primary/55 hover:-translate-y-1"
+                    className="reveal-item border border-[var(--line-soft)] bg-[var(--surface-card)]/45 p-5 transition-all duration-500 hover:border-primary/55 hover:-translate-y-1"
                   >
                     <div className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-primary/45 text-primary">
                       <Icon size={16} />
@@ -326,7 +326,7 @@ export default function CorporatePartnershipsPage() {
             </p>
             <Link
               href="/contact"
-              className="mt-7 inline-flex items-center justify-center rounded-lg border border-black/35 bg-black text-white px-8 py-3 text-xs font-bold uppercase tracking-[0.18em] transition-all hover:bg-black/80"
+              className="mt-7 inline-flex items-center justify-center border border-black/35 bg-black text-white px-8 py-3 text-xs font-bold uppercase tracking-[0.18em] transition-all hover:bg-black/80"
             >
               Request a Proposal
             </Link>

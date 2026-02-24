@@ -109,7 +109,7 @@ export default function HowWeWorkPage() {
                     >
                       {reverse ? (
                         <>
-                          <div className="relative overflow-hidden rounded-xl border border-[var(--line-soft)] bg-[var(--surface-card)] shadow-[0_20px_45px_-30px_rgba(0,0,0,0.6)] transition-all duration-500 group-hover/step:-translate-y-1 group-hover/step:border-primary/45 group-hover/step:shadow-[0_28px_50px_-28px_rgba(185,117,50,0.85)]">
+                          <div className="relative overflow-hidden border border-[var(--line-soft)] bg-[var(--surface-card)] shadow-[0_20px_45px_-30px_rgba(0,0,0,0.6)] transition-all duration-500 group-hover/step:-translate-y-1 group-hover/step:border-primary/45 group-hover/step:shadow-[0_28px_50px_-28px_rgba(185,117,50,0.85)]">
                             <Image
                               src={step.image}
                               alt={step.alt}
@@ -158,7 +158,7 @@ export default function HowWeWorkPage() {
                             </span>
                           </div>
 
-                          <div className="relative overflow-hidden rounded-xl border border-[var(--line-soft)] bg-[var(--surface-card)] shadow-[0_20px_45px_-30px_rgba(0,0,0,0.6)] transition-all duration-500 group-hover/step:-translate-y-1 group-hover/step:border-primary/45 group-hover/step:shadow-[0_28px_50px_-28px_rgba(185,117,50,0.85)]">
+                          <div className="relative overflow-hidden border border-[var(--line-soft)] bg-[var(--surface-card)] shadow-[0_20px_45px_-30px_rgba(0,0,0,0.6)] transition-all duration-500 group-hover/step:-translate-y-1 group-hover/step:border-primary/45 group-hover/step:shadow-[0_28px_50px_-28px_rgba(185,117,50,0.85)]">
                             <Image
                               src={step.image}
                               alt={step.alt}
@@ -185,7 +185,7 @@ export default function HowWeWorkPage() {
         </section>
 
         <section className="bg-[var(--surface-section)] px-6 pb-22">
-          <div className="mx-auto max-w-4xl rounded-2xl border border-[var(--line-soft)] bg-[var(--surface-card)] p-8 md:p-12 text-center">
+          <div className="mx-auto max-w-4xl border border-[var(--line-soft)] bg-[var(--surface-card)] p-8 md:p-12 text-center">
             <h3 className="text-4xl md:text-5xl font-serif text-[var(--text-primary)]">
               Ready For Your Next Chapter?
             </h3>
@@ -196,13 +196,13 @@ export default function HowWeWorkPage() {
             <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center rounded-lg border border-primary/60 bg-primary px-8 py-3 text-xs font-bold uppercase tracking-[0.18em] text-white hover:bg-primary-gradient-end transition-all"
+                className="inline-flex items-center justify-center border border-primary/60 bg-primary px-8 py-3 text-xs font-bold uppercase tracking-[0.18em] text-white hover:bg-primary-gradient-end transition-all"
               >
                 Begin Your Journey
               </Link>
               <Link
                 href="/experiences"
-                className="inline-flex items-center justify-center rounded-lg border border-[var(--line-strong)] px-8 py-3 text-xs font-bold uppercase tracking-[0.18em] text-[var(--text-secondary)] hover:border-primary/55 hover:text-primary transition-all"
+                className="inline-flex items-center justify-center border border-[var(--line-strong)] px-8 py-3 text-xs font-bold uppercase tracking-[0.18em] text-[var(--text-secondary)] hover:border-primary/55 hover:text-primary transition-all"
               >
                 View Experiences
               </Link>

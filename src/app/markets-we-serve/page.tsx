@@ -13,7 +13,7 @@ import type { MarketPoint } from '@/components/MarketsGlobe';
 const MarketsGlobe = dynamic(() => import('@/components/MarketsGlobe'), {
   ssr: false,
   loading: () => (
-    <div className="flex h-[430px] w-full items-center justify-center rounded-[24px] border border-[var(--line-soft)] bg-[linear-gradient(140deg,rgba(18,38,46,0.75),rgba(8,17,22,0.9))] text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)] md:h-[590px]">
+    <div className="flex h-[430px] w-full items-center justify-center border border-[var(--line-soft)] bg-[linear-gradient(140deg,rgba(18,38,46,0.75),rgba(8,17,22,0.9))] text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)] md:h-[590px]">
       Initializing Global Interface
     </div>
   ),
@@ -179,9 +179,9 @@ export default function MarketsWeServePage() {
 
               <aside
                 data-reveal
-                className="reveal-item rounded-[24px] border border-[var(--line-soft)] bg-[var(--surface-card)]/92 p-6 md:p-8 backdrop-blur-sm shadow-[0_26px_44px_-32px_rgba(0,0,0,0.35)]"
+                className="reveal-item border border-[var(--line-soft)] bg-[var(--surface-card)]/92 p-6 md:p-8 backdrop-blur-sm shadow-[0_26px_44px_-32px_rgba(0,0,0,0.35)]"
               >
-                <div className="relative mb-5 overflow-hidden rounded-xl border border-[var(--line-soft)]">
+                <div className="relative mb-5 overflow-hidden border border-[var(--line-soft)]">
                   <Image
                     src={activeMarket.image}
                     alt={activeMarket.name}
@@ -216,7 +216,7 @@ export default function MarketsWeServePage() {
 
                 <Link
                   href="/contact"
-                  className="mt-8 inline-flex items-center gap-2 rounded-lg border border-primary/70 bg-primary px-6 py-3 text-xs font-bold uppercase tracking-[0.18em] text-white transition-all hover:-translate-y-0.5 hover:bg-primary-gradient-end hover:shadow-[0_16px_32px_-18px_rgba(185,117,50,0.95)]"
+                  className="mt-8 inline-flex items-center gap-2 border border-primary/70 bg-primary px-6 py-3 text-xs font-bold uppercase tracking-[0.18em] text-white transition-all hover:-translate-y-0.5 hover:bg-primary-gradient-end hover:shadow-[0_16px_32px_-18px_rgba(185,117,50,0.95)]"
                 >
                   Start Partnership
                   <ArrowRight size={13} />
@@ -242,13 +242,13 @@ export default function MarketsWeServePage() {
                   <button
                     key={market.id}
                     onClick={() => setSelectedId(market.id)}
-                    className={`group rounded-2xl border p-3 text-left transition-all duration-500 ${
+                    className={`group border p-3 text-left transition-all duration-500 ${
                       isActive
                         ? 'border-primary/65 bg-primary/10 shadow-[0_18px_36px_-24px_rgba(185,117,50,0.75)]'
                         : 'border-[var(--line-soft)] bg-[var(--surface-card)]/70 hover:-translate-y-1 hover:border-primary/45 hover:shadow-[0_16px_32px_-24px_rgba(185,117,50,0.56)]'
                     }`}
                   >
-                    <div className="relative mb-3 overflow-hidden rounded-lg border border-[var(--line-soft)]">
+                    <div className="relative mb-3 overflow-hidden border border-[var(--line-soft)]">
                       <Image
                         src={market.image}
                         alt={market.name}
@@ -275,7 +275,7 @@ export default function MarketsWeServePage() {
         <section className="bg-[var(--surface-section)] px-6 py-14">
           <div
             data-reveal
-            className="reveal-item mx-auto max-w-5xl rounded-2xl border border-[var(--line-soft)] bg-[linear-gradient(120deg,rgba(185,117,50,0.2),rgba(16,33,39,0.52),rgba(185,117,50,0.18))] p-8 md:p-11 text-center"
+            className="reveal-item mx-auto max-w-5xl border border-[var(--line-soft)] bg-[linear-gradient(120deg,rgba(185,117,50,0.2),rgba(16,33,39,0.52),rgba(185,117,50,0.18))] p-8 md:p-11 text-center"
           >
             <h3 className="text-4xl md:text-6xl font-serif text-[var(--text-primary)]">Built For Cross-Border Excellence</h3>
             <p className="mt-4 max-w-3xl mx-auto text-[var(--text-secondary)]">
@@ -284,7 +284,7 @@ export default function MarketsWeServePage() {
             <div className="mt-7 flex justify-center">
               <Link
                 href="/corporate-partnerships"
-                className="inline-flex items-center gap-2 rounded-lg border border-primary/65 bg-primary px-8 py-3 text-xs font-bold uppercase tracking-[0.18em] text-white transition-all hover:bg-primary-gradient-end hover:-translate-y-0.5"
+                className="inline-flex items-center gap-2 border border-primary/65 bg-primary px-8 py-3 text-xs font-bold uppercase tracking-[0.18em] text-white transition-all hover:bg-primary-gradient-end hover:-translate-y-0.5"
               >
                 View Corporate Partnerships
                 <Sparkles size={13} />

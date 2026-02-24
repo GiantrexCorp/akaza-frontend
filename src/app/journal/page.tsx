@@ -127,7 +127,7 @@ export default function JournalPage() {
             <div className="mt-9 grid gap-7 lg:grid-cols-[1.05fr_0.95fr]">
               <article
                 data-reveal
-                className="reveal-item group overflow-hidden rounded-xl border border-[var(--line-soft)] bg-[var(--surface-card)]/45 transition-all duration-500 hover:border-primary/55 hover:shadow-[0_24px_48px_-28px_rgba(185,117,50,0.8)]"
+                className="reveal-item group overflow-hidden border border-[var(--line-soft)] bg-[var(--surface-card)]/45 transition-all duration-500 hover:border-primary/55 hover:shadow-[0_24px_48px_-28px_rgba(185,117,50,0.8)]"
               >
                 <div className="relative overflow-hidden">
                   <Image
@@ -160,7 +160,7 @@ export default function JournalPage() {
                   <article
                     key={item.title}
                     data-reveal
-                    className="reveal-item rounded-xl border border-[var(--line-soft)] bg-[var(--surface-card)]/45 p-5 transition-all duration-500 hover:-translate-y-0.5 hover:border-primary/45"
+                    className="reveal-item border border-[var(--line-soft)] bg-[var(--surface-card)]/45 p-5 transition-all duration-500 hover:-translate-y-0.5 hover:border-primary/45"
                   >
                     <p className="text-[10px] uppercase tracking-[0.2em] text-primary font-semibold">{item.category}</p>
                     <h4 className="mt-2 text-3xl font-serif">{item.title}</h4>
@@ -181,7 +181,7 @@ export default function JournalPage() {
         <section className="bg-[var(--surface-section)] px-6 pb-16">
           <div
             data-reveal
-            className="reveal-item mx-auto max-w-5xl rounded-2xl border border-[var(--line-soft)] bg-[linear-gradient(120deg,rgba(185,117,50,0.2),rgba(16,33,39,0.5),rgba(185,117,50,0.18))] p-8 md:p-10 text-center"
+            className="reveal-item mx-auto max-w-5xl border border-[var(--line-soft)] bg-[linear-gradient(120deg,rgba(185,117,50,0.2),rgba(16,33,39,0.5),rgba(185,117,50,0.18))] p-8 md:p-10 text-center"
           >
             <h3 className="text-4xl md:text-5xl font-serif italic text-[var(--text-primary)]">The Akaza Ledger</h3>
             <p className="mt-3 max-w-2xl mx-auto text-[var(--text-secondary)]">
@@ -191,11 +191,11 @@ export default function JournalPage() {
               <input
                 type="email"
                 placeholder="Email Address"
-                className="h-12 flex-1 rounded-lg border border-[var(--line-strong)] bg-[var(--surface-card)]/65 px-4 text-sm text-[var(--field-text)] placeholder-[var(--field-placeholder)] outline-none focus:border-primary"
+                className="h-12 flex-1 border border-[var(--line-strong)] bg-[var(--surface-card)]/65 px-4 text-sm text-[var(--field-text)] placeholder-[var(--field-placeholder)] outline-none focus:border-primary"
               />
               <button
                 type="submit"
-                className="h-12 rounded-lg border border-primary/65 bg-primary px-7 text-xs font-bold uppercase tracking-[0.18em] text-white transition-all hover:bg-primary-gradient-end"
+                className="h-12 border border-primary/65 bg-primary px-7 text-xs font-bold uppercase tracking-[0.18em] text-white transition-all hover:bg-primary-gradient-end"
               >
                 Subscribe
               </button>
@@ -220,9 +220,9 @@ export default function JournalPage() {
                 <article
                   key={card.title}
                   data-reveal
-                  className="reveal-item group rounded-xl border border-[var(--line-soft)] bg-[var(--surface-card)]/45 p-3 transition-all duration-500 hover:-translate-y-1 hover:border-primary/55 hover:shadow-[0_24px_45px_-28px_rgba(185,117,50,0.75)]"
+                  className="reveal-item group border border-[var(--line-soft)] bg-[var(--surface-card)]/45 p-3 transition-all duration-500 hover:-translate-y-1 hover:border-primary/55 hover:shadow-[0_24px_45px_-28px_rgba(185,117,50,0.75)]"
                 >
-                  <div className="relative overflow-hidden rounded-lg">
+                  <div className="relative overflow-hidden">
                     <Image
                       src={card.image}
                       alt={card.alt}
@@ -252,9 +252,9 @@ export default function JournalPage() {
                   <article
                     key={trend.title}
                     data-reveal
-                    className="reveal-item group flex gap-4 rounded-xl border border-[var(--line-soft)] bg-[var(--surface-card)]/45 p-4 transition-all duration-500 hover:border-primary/55 hover:-translate-y-0.5"
+                    className="reveal-item group flex gap-4 border border-[var(--line-soft)] bg-[var(--surface-card)]/45 p-4 transition-all duration-500 hover:border-primary/55 hover:-translate-y-0.5"
                   >
-                    <div className="relative h-18 w-28 shrink-0 overflow-hidden rounded-md border border-[var(--line-soft)]">
+                    <div className="relative h-18 w-28 shrink-0 overflow-hidden border border-[var(--line-soft)]">
                       <Image
                         src={trend.image}
                         alt={trend.title}
@@ -279,7 +279,7 @@ export default function JournalPage() {
         <section className="bg-[var(--surface-section)] px-6 pb-24">
           <div
             data-reveal
-            className="reveal-item mx-auto max-w-5xl rounded-2xl border border-[var(--line-soft)] bg-[var(--surface-card)] p-8 md:p-10 text-center"
+            className="reveal-item mx-auto max-w-5xl border border-[var(--line-soft)] bg-[var(--surface-card)] p-8 md:p-10 text-center"
           >
             <h3 className="text-4xl md:text-6xl font-serif">Ready to Curate Your Next Story?</h3>
             <p className="mt-4 text-[var(--text-muted)]">
@@ -288,13 +288,13 @@ export default function JournalPage() {
             <div className="mt-7 flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center rounded-lg border border-primary/65 bg-primary px-8 py-3 text-xs font-bold uppercase tracking-[0.18em] text-white transition-all hover:bg-primary-gradient-end"
+                className="inline-flex items-center justify-center border border-primary/65 bg-primary px-8 py-3 text-xs font-bold uppercase tracking-[0.18em] text-white transition-all hover:bg-primary-gradient-end"
               >
                 Speak With Editorial
               </Link>
               <Link
                 href="/experiences"
-                className="inline-flex items-center justify-center rounded-lg border border-[var(--line-strong)] px-8 py-3 text-xs font-bold uppercase tracking-[0.18em] text-[var(--text-secondary)] transition-all hover:border-primary/55 hover:text-primary"
+                className="inline-flex items-center justify-center border border-[var(--line-strong)] px-8 py-3 text-xs font-bold uppercase tracking-[0.18em] text-[var(--text-secondary)] transition-all hover:border-primary/55 hover:text-primary"
               >
                 Explore Experiences
               </Link>

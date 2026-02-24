@@ -1,7 +1,13 @@
+import type { Metadata } from 'next';
 import Image from 'next/image';
 import { Award, Shield, Globe, Heart } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+
+export const metadata: Metadata = {
+  title: 'About | AKAZA Travel',
+  description: 'Learn about AKAZA Travel — luxury Egypt travel experiences, our values, and our commitment to exceptional journeys.',
+};
 
 const values = [
   { icon: Award, title: 'Excellence', description: 'We curate only the finest experiences across Egypt, ensuring every journey meets the highest standards of quality and sophistication.' },

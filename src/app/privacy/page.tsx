@@ -1,5 +1,11 @@
+import type { Metadata } from 'next';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+
+export const metadata: Metadata = {
+  title: 'Privacy Policy | AKAZA Travel',
+  description: 'AKAZA Travel privacy policy — how we collect, use, and protect your personal information.',
+};
 
 const sections = [
   {

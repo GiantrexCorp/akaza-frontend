@@ -692,7 +692,7 @@ function GlobeScene({ markets, selectedId, onSelect, onHover, theme }: GlobeScen
         style={{ pointerEvents: "none" }}
       >
         <div
-          className="rounded-md border px-2 py-0.5 font-semibold uppercase"
+          className="border px-2 py-0.5 font-semibold uppercase"
           style={{
             background: palette.labelBg,
             borderColor: palette.labelBorder,
@@ -775,7 +775,7 @@ export default function MarketsGlobe({
       : "bg-[linear-gradient(145deg,rgba(253,251,247,0.98),rgba(236,242,245,0.96))] shadow-[0_34px_58px_-34px_rgba(21,53,68,0.24)]";
 
   return (
-    <div className={`relative overflow-hidden rounded-[24px] border border-[var(--line-soft)] ${shellClass}`}>
+    <div className={`relative overflow-hidden border border-[var(--line-soft)] ${shellClass}`}>
       <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/80 to-transparent" />
       <span className="pointer-events-none absolute -left-20 top-1/3 h-52 w-52 rounded-full bg-primary/14 blur-[72px]" />
       <span className="pointer-events-none absolute -right-16 bottom-8 h-52 w-52 rounded-full bg-[var(--color-accent)]/16 blur-[70px]" />

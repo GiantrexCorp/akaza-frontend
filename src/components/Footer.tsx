@@ -63,7 +63,7 @@ export default function Footer() {
       <span className="pointer-events-none absolute right-0 top-8 h-72 w-72 rounded-full bg-[var(--color-accent)]/14 blur-[90px]" />
 
       <div className="relative mx-auto max-w-7xl px-6 pb-10 pt-16 md:pt-20">
-        <section className="mb-14 rounded-2xl border border-[var(--line-soft)] bg-[linear-gradient(120deg,rgba(185,117,50,0.16),rgba(16,33,39,0.58),rgba(185,117,50,0.14))] p-7 md:p-9">
+        <section className="mb-14 border border-[var(--line-soft)] bg-[linear-gradient(120deg,rgba(185,117,50,0.16),rgba(16,33,39,0.58),rgba(185,117,50,0.14))] p-7 md:p-9">
           <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
             <div className="max-w-2xl">
               <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-primary">
@@ -81,14 +81,14 @@ export default function Footer() {
             <div className="flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center gap-2 rounded-lg border border-primary/70 bg-primary px-6 py-3 text-xs font-bold uppercase tracking-[0.18em] text-white transition-all hover:-translate-y-0.5 hover:bg-primary-gradient-end"
+                className="inline-flex items-center justify-center gap-2 border border-primary/70 bg-primary px-6 py-3 text-xs font-bold uppercase tracking-[0.18em] text-white transition-all hover:-translate-y-0.5 hover:bg-primary-gradient-end"
               >
                 Inquire Now
                 <ArrowRight size={13} />
               </Link>
               <Link
                 href="/how-we-work"
-                className="inline-flex items-center justify-center rounded-lg border border-[var(--line-strong)] px-6 py-3 text-xs font-bold uppercase tracking-[0.18em] text-[var(--text-secondary)] transition-colors hover:border-primary/55 hover:text-primary"
+                className="inline-flex items-center justify-center border border-[var(--line-strong)] px-6 py-3 text-xs font-bold uppercase tracking-[0.18em] text-[var(--text-secondary)] transition-colors hover:border-primary/55 hover:text-primary"
               >
                 How We Work
               </Link>

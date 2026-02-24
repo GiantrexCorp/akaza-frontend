@@ -91,7 +91,7 @@ export default function Navbar() {
   return (
     <nav className="fixed top-0 w-full z-50 px-3 pt-3 transition-all duration-300 md:px-6 md:pt-4">
       <div className="pointer-events-none mx-auto max-w-7xl">
-        <div className={`pointer-events-auto relative overflow-visible rounded-2xl border border-[var(--line-soft)] ${shellGradient} shadow-[0_20px_48px_-24px_rgba(0,0,0,0.75)] backdrop-blur-2xl`}>
+        <div className={`pointer-events-auto relative overflow-visible border border-[var(--line-soft)] ${shellGradient} shadow-[0_20px_48px_-24px_rgba(0,0,0,0.75)] backdrop-blur-2xl`}>
           <span className={`pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent ${topAccent} to-transparent`} />
           <div className="px-4 py-3 md:px-6 md:py-4">
             <div className="flex items-center justify-between gap-4">
@@ -172,7 +172,7 @@ export default function Navbar() {
                     </button>
 
                     {dropdownOpen && (
-                      <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-[var(--line-soft)] bg-[var(--surface-card)] shadow-2xl z-50">
+                      <div className="absolute right-0 mt-2 w-56 overflow-hidden border border-[var(--line-soft)] bg-[var(--surface-card)] shadow-2xl z-50">
                         <div className="border-b border-[var(--line-soft)] bg-white/[0.02] px-4 py-3">
                           <p className="text-sm font-serif text-[var(--text-primary)]">{user.name}</p>
                           <p className="mt-0.5 text-[10px] text-[var(--text-muted)] font-sans">{user.email}</p>
@@ -258,7 +258,7 @@ export default function Navbar() {
                   <Link
                     key={link.label}
                     href={link.href}
-                    className={`block rounded-lg px-3 py-2 text-xs uppercase tracking-wider font-semibold transition-colors ${
+                    className={`block px-3 py-2 text-xs uppercase tracking-wider font-semibold transition-colors ${
                       link.href === "/#vip"
                         ? isActiveLink(link.href)
                           ? "text-[#d89a50] bg-black/[0.08] shadow-[inset_0_0_0_1px_rgba(255,210,145,0.72),0_10px_22px_-16px_rgba(216,154,80,0.95)]"

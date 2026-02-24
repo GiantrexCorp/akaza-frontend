@@ -1,5 +1,11 @@
+import type { Metadata } from 'next';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+
+export const metadata: Metadata = {
+  title: 'Terms of Service | AKAZA Travel',
+  description: 'AKAZA Travel terms of service — the terms and conditions governing your use of our platform.',
+};
 
 const sections = [
   {

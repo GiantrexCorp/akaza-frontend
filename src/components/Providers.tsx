@@ -2,14 +2,17 @@
 
 import type { ReactNode } from 'react';
 import AuthProvider from '@/lib/auth/AuthProvider';
+import { SettingsProvider } from '@/lib/settings';
 import { ToastProvider } from '@/components/ui/Toast';
 
 export default function Providers({ children }: { children: ReactNode }) {
   return (
-    <AuthProvider>
-      <ToastProvider>
-        {children}
-      </ToastProvider>
-    </AuthProvider>
+    <SettingsProvider>
+      <AuthProvider>
+        <ToastProvider>
+          {children}
+        </ToastProvider>
+      </AuthProvider>
+    </SettingsProvider>
   );
 }
