@@ -42,12 +42,15 @@ function TransferBookingDetail({ id }: { id: string }) {
     fetch();
   }, [id]);
 
+  const [cancelReason, setCancelReason] = useState('');
+
   const handleCancel = async () => {
     setCancelling(true);
     try {
-      const updated = await transfersApi.cancelBooking(id);
+      const updated = await transfersApi.cancelBooking(id, cancelReason ? { reason: cancelReason } : undefined);
       setBooking(updated);
       setCancelModal(false);
+      setCancelReason('');
       toast('success', 'Transfer cancelled');
     } catch (err) {
       if (err instanceof ApiError) toast('error', err.errors[0] || 'Cancellation failed');
@@ -192,9 +195,21 @@ function TransferBookingDetail({ id }: { id: string }) {
       </div>
 
       <Modal open={cancelModal} onClose={() => setCancelModal(false)} title="Cancel Transfer">
-        <p className="text-sm text-[var(--text-secondary)] font-sans mb-6">
+        <p className="text-sm text-[var(--text-secondary)] font-sans mb-4">
           Are you sure you want to cancel this transfer?
         </p>
+        <div className="mb-6">
+          <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-2">
+            Reason (optional)
+          </label>
+          <textarea
+            value={cancelReason}
+            onChange={(e) => setCancelReason(e.target.value)}
+            rows={3}
+            className="w-full bg-transparent border border-[var(--line-soft)] focus:border-primary text-[var(--field-text)] font-serif text-sm px-4 py-3 outline-none transition-colors duration-300 resize-y"
+            placeholder="Reason for cancellation"
+          />
+        </div>
         <div className="flex gap-3">
           <Button variant="ghost" onClick={() => setCancelModal(false)}>Keep Booking</Button>
           <Button variant="primary" onClick={handleCancel} loading={cancelling} className="bg-red-500 hover:bg-red-600">

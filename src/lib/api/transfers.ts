@@ -21,8 +21,8 @@ export const transfersApi = {
   getBooking: (id: string) =>
     api.get<TransferBooking>(`/transfers/bookings/${id}`),
 
-  cancelBooking: (id: string) =>
-    api.post<TransferBooking>(`/transfers/bookings/${id}/cancel`),
+  cancelBooking: (id: string, data?: { reason?: string }) =>
+    api.post<TransferBooking>(`/transfers/bookings/${id}/cancel`, data),
 
   downloadVoucher: (id: string) =>
     api.download(`/transfers/bookings/${id}/voucher`),

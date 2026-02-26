@@ -71,6 +71,9 @@ function TransferBookingForm() {
       const booking = await transfersApi.createBooking({
         transfer_route_id: routeId,
         transfer_vehicle_id: vehicleId,
+        transfer_type: transferType as 'airport' | 'city' | 'chauffeur',
+        pickup_location: pickup,
+        dropoff_location: dropoff,
         pickup_date: pickupDate,
         pickup_time: pickupTime,
         passengers,
@@ -80,6 +83,7 @@ function TransferBookingForm() {
         contact_phone: contactPhone,
         flight_number: flightNumber || undefined,
         special_requests: specialRequests || undefined,
+        currency,
       });
       toast('success', 'Transfer booked successfully!');
       router.push(`/transfers/bookings/${booking.id}/confirmation`);
