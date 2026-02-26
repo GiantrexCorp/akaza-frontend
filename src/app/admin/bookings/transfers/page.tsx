@@ -12,6 +12,7 @@ import { AdminProtectedRoute } from '@/lib/auth';
 import type { AdminTransferBooking } from '@/types/transfer';
 
 export default function AdminTransferBookingsPage() {
+  useEffect(() => { document.title = 'Transfer Bookings | Akaza Admin'; }, []);
   const { toast } = useToast();
   const [bookings, setBookings] = useState<AdminTransferBooking[]>([]);
   const [loading, setLoading] = useState(true);

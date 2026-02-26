@@ -40,7 +40,7 @@ export default function HotelBookingRooms({ rooms, currency }: HotelBookingRooms
               <div className="space-y-1 mt-3 pt-3 border-t border-[var(--line-soft)]">
                 <p className="text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-2">Guests</p>
                 {room.guests.map((guest, i) => (
-                  <p key={i} className="text-xs text-[var(--text-secondary)] font-sans">
+                  <p key={`${guest.name}-${guest.surname}-${i}`} className="text-xs text-[var(--text-secondary)] font-sans">
                     {guest.name} {guest.surname}
                     <span className="text-[var(--text-muted)] ml-2">
                       {guest.type === 'AD' ? 'Adult' : `Child, ${guest.age}y`}

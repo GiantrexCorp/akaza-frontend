@@ -14,6 +14,7 @@ import { AdminProtectedRoute } from '@/lib/auth';
 import type { Lead } from '@/types/customer';
 
 export default function AdminLeadsPage() {
+  useEffect(() => { document.title = 'Leads | Akaza Admin'; }, []);
   const { toast } = useToast();
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);

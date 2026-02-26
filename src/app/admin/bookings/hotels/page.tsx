@@ -12,6 +12,7 @@ import { AdminProtectedRoute } from '@/lib/auth';
 import type { AdminHotelBooking } from '@/types/hotel';
 
 export default function AdminHotelBookingsPage() {
+  useEffect(() => { document.title = 'Hotel Bookings | Akaza Admin'; }, []);
   const { toast } = useToast();
   const [bookings, setBookings] = useState<AdminHotelBooking[]>([]);
   const [loading, setLoading] = useState(true);

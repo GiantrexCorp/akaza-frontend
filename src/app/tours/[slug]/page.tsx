@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { MapPin, Clock, Users, Check, X, Calendar, ChevronLeft, ChevronRight, Minus, Plus } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { Button, Spinner, Badge } from '@/components/ui';
+import { Button, Spinner, Badge, PageError } from '@/components/ui';
 import { toursApi } from '@/lib/api/tours';
 import { useToast } from '@/components/ui/Toast';
 import { ApiError } from '@/lib/api/client';
@@ -18,31 +18,38 @@ export default function TourDetailPage({ params }: { params: Promise<{ slug: str
   const [tour, setTour] = useState<Tour | null>(null);
   const [availabilities, setAvailabilities] = useState<TourAvailability[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<ApiError | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
   const [selectedAvailability, setSelectedAvailability] = useState<TourAvailability | null>(null);
   const [guests, setGuests] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
-    const fetchTour = async () => {
+    let cancelled = false;
+    setError(null);
+    setLoading(true);
+    (async () => {
       try {
         const data = await toursApi.get(slug);
+        if (cancelled) return;
         setTour(data);
         if (data.availabilities?.length) {
           setAvailabilities(data.availabilities);
         } else {
           const avail = await toursApi.getAvailabilities(data.id);
-          setAvailabilities(avail);
+          if (!cancelled) setAvailabilities(avail);
         }
       } catch (err) {
-        if (err instanceof ApiError) {
+        if (!cancelled && err instanceof ApiError) {
+          setError(err);
           toast('error', err.errors[0] || 'Failed to load tour');
         }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
-    };
-    fetchTour();
-  }, [slug]);
+    })();
+    return () => { cancelled = true; };
+  }, [slug, retryCount]);
 
   const formatPrice = (price: number, currency: string) => {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(price);
@@ -58,13 +65,18 @@ export default function TourDetailPage({ params }: { params: Promise<{ slug: str
     );
   }
 
-  if (!tour) {
+  if (error || !tour) {
     return (
       <>
         <Navbar />
-        <div className="pt-36 pb-32 max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-2xl font-serif text-[var(--text-primary)] mb-4">Tour Not Found</h2>
-          <Link href="/tours"><Button variant="outline">Browse Tours</Button></Link>
+        <div className="pt-36 pb-32 max-w-7xl mx-auto px-6">
+          <PageError
+            status={error?.status ?? 404}
+            title={error?.status === 404 ? 'Tour Not Found' : undefined}
+            onRetry={() => setRetryCount((c) => c + 1)}
+            backHref="/tours"
+            backLabel="Browse Tours"
+          />
         </div>
         <Footer />
       </>
@@ -105,9 +117,9 @@ export default function TourDetailPage({ params }: { params: Promise<{ slug: str
                     <ChevronRight size={20} />
                   </button>
                   <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
-                    {tour.images.map((_, i) => (
+                    {tour.images.map((img, i) => (
                       <button
-                        key={i}
+                        key={img.url}
                         onClick={() => setCurrentImageIndex(i)}
                         className={`w-2 h-2 rounded-full transition-all ${i === currentImageIndex ? 'bg-primary w-6' : 'bg-white/50'}`}
                       />
@@ -164,8 +176,8 @@ export default function TourDetailPage({ params }: { params: Promise<{ slug: str
                 <div>
                   <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-4">Highlights</h2>
                   <ul className="space-y-2">
-                    {tour.highlights.map((h, i) => (
-                      <li key={i} className="flex items-start gap-2">
+                    {tour.highlights.map((h) => (
+                      <li key={h} className="flex items-start gap-2">
                         <Check size={14} className="text-primary shrink-0 mt-0.5" />
                         <span className="text-sm text-[var(--text-secondary)] font-sans">{h}</span>
                       </li>
@@ -180,8 +192,8 @@ export default function TourDetailPage({ params }: { params: Promise<{ slug: str
                   <div>
                     <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-4">What&apos;s Included</h2>
                     <ul className="space-y-2">
-                      {tour.includes.map((item, i) => (
-                        <li key={i} className="flex items-start gap-2">
+                      {tour.includes.map((item) => (
+                        <li key={item} className="flex items-start gap-2">
                           <Check size={14} className="text-emerald-400 shrink-0 mt-0.5" />
                           <span className="text-sm text-[var(--text-secondary)] font-sans">{item}</span>
                         </li>
@@ -193,8 +205,8 @@ export default function TourDetailPage({ params }: { params: Promise<{ slug: str
                   <div>
                     <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-4">Not Included</h2>
                     <ul className="space-y-2">
-                      {tour.excludes.map((item, i) => (
-                        <li key={i} className="flex items-start gap-2">
+                      {tour.excludes.map((item) => (
+                        <li key={item} className="flex items-start gap-2">
                           <X size={14} className="text-red-400 shrink-0 mt-0.5" />
                           <span className="text-sm text-[var(--text-secondary)] font-sans">{item}</span>
                         </li>

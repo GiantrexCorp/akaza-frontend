@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import TourForm from '@/components/admin/tours/TourForm';
 import { Breadcrumb } from '@/components/ui';
@@ -7,6 +8,7 @@ import { AdminProtectedRoute } from '@/lib/auth';
 import type { AdminTour } from '@/types/tour';
 
 export default function AdminCreateTourPage() {
+  useEffect(() => { document.title = 'Create Tour | Akaza Admin'; }, []);
   const router = useRouter();
 
   const handleSaved = (tour: AdminTour) => {

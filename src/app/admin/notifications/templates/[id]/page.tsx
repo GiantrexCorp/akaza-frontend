@@ -3,7 +3,7 @@
 import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import TemplateEditForm from '@/components/admin/notifications/TemplateEditForm';
-import { Spinner, Breadcrumb, Button } from '@/components/ui';
+import { Spinner, Breadcrumb, Button, PageError } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast';
 import { adminNotificationsApi } from '@/lib/api/admin-notifications';
 import { ApiError } from '@/lib/api/client';
@@ -14,22 +14,34 @@ function TemplateDetail({ id }: { id: number }) {
   const { toast } = useToast();
   const [template, setTemplate] = useState<NotificationTemplate | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<ApiError | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
-    const fetchTemplate = async () => {
+    let cancelled = false;
+    setError(null);
+    setLoading(true);
+    (async () => {
       try {
         const data = await adminNotificationsApi.getTemplate(id);
-        setTemplate(data);
+        if (!cancelled) setTemplate(data);
       } catch (err) {
-        if (err instanceof ApiError) {
+        if (!cancelled && err instanceof ApiError) {
+          setError(err);
           toast('error', err.errors[0] || 'Failed to load template');
         }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
-    };
-    fetchTemplate();
-  }, [id]);
+    })();
+    return () => { cancelled = true; };
+  }, [id, retryCount]);
+
+  useEffect(() => {
+    document.title = template
+      ? `${template.type_label} | Akaza Admin`
+      : 'Loading... | Akaza Admin';
+  }, [template]);
 
   const handleSaved = (updated: NotificationTemplate) => {
     setTemplate(updated);
@@ -43,13 +55,16 @@ function TemplateDetail({ id }: { id: number }) {
     );
   }
 
-  if (!template) {
+  if (error || !template) {
     return (
-      <div className="text-center py-16">
-        <h2 className="text-2xl font-serif text-[var(--text-primary)] mb-4">Template Not Found</h2>
-        <Link href="/admin/notifications/templates">
-          <Button variant="outline">Back to Templates</Button>
-        </Link>
+      <div className="py-16">
+        <PageError
+          status={error?.status ?? 404}
+          title={error?.status === 404 ? 'Template Not Found' : undefined}
+          onRetry={() => setRetryCount((c) => c + 1)}
+          backHref="/admin/notifications/templates"
+          backLabel="Back to Templates"
+        />
       </div>
     );
   }

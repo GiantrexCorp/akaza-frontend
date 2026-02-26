@@ -7,7 +7,7 @@ import TransferBookingHeader from '@/components/admin/transfer-bookings/Transfer
 import TransferBookingInfo from '@/components/admin/transfer-bookings/TransferBookingInfo';
 import TransferBookingStatusLogs from '@/components/admin/transfer-bookings/TransferBookingStatusLogs';
 import StatusChangeModal from '@/components/admin/transfer-bookings/StatusChangeModal';
-import { Spinner, Button, Breadcrumb } from '@/components/ui';
+import { Spinner, Button, Breadcrumb, PageError } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast';
 import { adminTransfersApi } from '@/lib/api/admin-transfers';
 import { ApiError } from '@/lib/api/client';
@@ -18,24 +18,36 @@ function TransferBookingDetail({ id }: { id: number }) {
   const { toast } = useToast();
   const [booking, setBooking] = useState<AdminTransferBooking | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<ApiError | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
   const [statusModalOpen, setStatusModalOpen] = useState(false);
   const [statusUpdating, setStatusUpdating] = useState(false);
 
   useEffect(() => {
-    const fetchBooking = async () => {
+    let cancelled = false;
+    setError(null);
+    setLoading(true);
+    (async () => {
       try {
         const data = await adminTransfersApi.getBooking(id);
-        setBooking(data);
+        if (!cancelled) setBooking(data);
       } catch (err) {
-        if (err instanceof ApiError) {
+        if (!cancelled && err instanceof ApiError) {
+          setError(err);
           toast('error', err.errors[0] || 'Failed to load booking');
         }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
-    };
-    fetchBooking();
-  }, [id]);
+    })();
+    return () => { cancelled = true; };
+  }, [id, retryCount]);
+
+  useEffect(() => {
+    document.title = booking
+      ? `${booking.booking_reference} | Akaza Admin`
+      : 'Loading... | Akaza Admin';
+  }, [booking]);
 
   const handleStatusChange = async (status: TransferBookingStatus, reason?: string) => {
     setStatusUpdating(true);
@@ -60,7 +72,9 @@ function TransferBookingDetail({ id }: { id: number }) {
       const a = document.createElement('a');
       a.href = url;
       a.download = `voucher-${booking?.booking_reference || id}.pdf`;
+      document.body.appendChild(a);
       a.click();
+      a.remove();
       URL.revokeObjectURL(url);
     } catch {
       toast('error', 'Failed to download voucher');
@@ -75,13 +89,16 @@ function TransferBookingDetail({ id }: { id: number }) {
     );
   }
 
-  if (!booking) {
+  if (error || !booking) {
     return (
-      <div className="text-center py-16">
-        <h2 className="text-2xl font-serif text-[var(--text-primary)] mb-4">Booking Not Found</h2>
-        <Link href="/admin/bookings/transfers">
-          <Button variant="outline">Back to Transfer Bookings</Button>
-        </Link>
+      <div className="py-16">
+        <PageError
+          status={error?.status ?? 404}
+          title={error?.status === 404 ? 'Booking Not Found' : undefined}
+          onRetry={() => setRetryCount((c) => c + 1)}
+          backHref="/admin/bookings/transfers"
+          backLabel="Back to Transfer Bookings"
+        />
       </div>
     );
   }

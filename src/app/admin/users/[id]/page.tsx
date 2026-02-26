@@ -8,7 +8,7 @@ import UserInfoForm from '@/components/admin/users/UserInfoForm';
 import RoleAssignment from '@/components/admin/users/RoleAssignment';
 import PermissionEditor from '@/components/admin/users/PermissionEditor';
 import DeleteUserModal from '@/components/admin/users/DeleteUserModal';
-import { Spinner, Breadcrumb, Button } from '@/components/ui';
+import { Spinner, Breadcrumb, Button, PageError } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast';
 import { adminUsersApi } from '@/lib/api/admin-users';
 import { ApiError } from '@/lib/api/client';
@@ -19,24 +19,36 @@ function UserDetail({ id }: { id: number }) {
   const { toast } = useToast();
   const [user, setUser] = useState<AdminUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<ApiError | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [statusSaving, setStatusSaving] = useState(false);
 
   useEffect(() => {
-    const fetch = async () => {
+    let cancelled = false;
+    setError(null);
+    setLoading(true);
+    (async () => {
       try {
         const data = await adminUsersApi.get(id);
-        setUser(data);
+        if (!cancelled) setUser(data);
       } catch (err) {
-        if (err instanceof ApiError) {
+        if (!cancelled && err instanceof ApiError) {
+          setError(err);
           toast('error', err.errors[0] || 'Failed to load user');
         }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
-    };
-    fetch();
-  }, [id]);
+    })();
+    return () => { cancelled = true; };
+  }, [id, retryCount]);
+
+  useEffect(() => {
+    document.title = user
+      ? `${user.name} | Akaza Admin`
+      : 'Loading... | Akaza Admin';
+  }, [user]);
 
   const handleStatusChange = async (status: 'active' | 'inactive' | 'suspended') => {
     if (!user) return;
@@ -66,13 +78,16 @@ function UserDetail({ id }: { id: number }) {
     );
   }
 
-  if (!user) {
+  if (error || !user) {
     return (
-      <div className="text-center py-16">
-        <h2 className="text-2xl font-serif text-[var(--text-primary)] mb-4">User Not Found</h2>
-        <Link href="/admin/users">
-          <Button variant="outline">Back to Users</Button>
-        </Link>
+      <div className="py-16">
+        <PageError
+          status={error?.status ?? 404}
+          title={error?.status === 404 ? 'User Not Found' : undefined}
+          onRetry={() => setRetryCount((c) => c + 1)}
+          backHref="/admin/users"
+          backLabel="Back to Users"
+        />
       </div>
     );
   }

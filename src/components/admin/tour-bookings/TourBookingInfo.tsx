@@ -42,7 +42,7 @@ export default function TourBookingInfo({ booking }: TourBookingInfoProps) {
         <div className="p-6 space-y-3">
           <h3 className="text-xs font-bold text-primary uppercase tracking-[0.2em] font-sans mb-4">Guests ({booking.guests.length})</h3>
           {booking.guests.map((guest, i) => (
-            <div key={i} className="flex justify-between items-center gap-4">
+            <div key={`${guest.name}-${guest.surname}-${i}`} className="flex justify-between items-center gap-4">
               <p className="text-sm text-[var(--text-primary)] font-sans">
                 {guest.name} {guest.surname}
               </p>

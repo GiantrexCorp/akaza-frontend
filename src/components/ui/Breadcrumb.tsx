@@ -14,7 +14,7 @@ export default function Breadcrumb({ items }: BreadcrumbProps) {
   return (
     <nav className="flex items-center gap-2 text-xs font-sans">
       {items.map((item, i) => (
-        <span key={i} className="flex items-center gap-2">
+        <span key={item.href ?? item.label} className="flex items-center gap-2">
           {i > 0 && <ChevronRight size={12} className="text-[var(--text-muted)]" />}
           {item.href ? (
             <Link href={item.href} className="text-[var(--text-muted)] hover:text-primary transition-colors uppercase tracking-wider">

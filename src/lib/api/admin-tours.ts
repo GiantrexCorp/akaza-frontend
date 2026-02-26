@@ -1,4 +1,4 @@
-import { api } from './client';
+import { api, ApiError, handleUnauthorized, BASE_URL, getUploadHeaders } from './client';
 import type {
   AdminTour,
   CreateTourRequest,
@@ -9,21 +9,6 @@ import type {
   AdminTourBooking,
   UpdateBookingStatusRequest,
 } from '@/types/tour';
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api';
-
-function getUploadHeaders(): Record<string, string> {
-  const headers: Record<string, string> = {
-    Accept: 'application/json',
-  };
-  if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('auth_token');
-    if (token) headers['Authorization'] = `Bearer ${token}`;
-    const locale = localStorage.getItem('locale') || 'en';
-    headers['Accept-Language'] = locale;
-  }
-  return headers;
-}
 
 export const adminToursApi = {
   list: (params?: string) =>
@@ -49,9 +34,10 @@ export const adminToursApi = {
       headers: getUploadHeaders(),
       body: formData,
     });
+    if (res.status === 401) handleUnauthorized(res.status);
     const json = await res.json();
     if (json?.success) return json.payload as AdminTour;
-    throw new Error(json?.errors?.[0] || 'Upload failed');
+    throw new ApiError(res.status, json?.errors, 'Upload failed');
   },
 
   deleteImage: (tourId: number, mediaId: number) =>

@@ -7,6 +7,7 @@ export { default as Spinner } from './Spinner';
 export { ToastProvider, useToast } from './Toast';
 export { default as Breadcrumb } from './Breadcrumb';
 export { default as EmptyState } from './EmptyState';
+export { default as PageError } from './PageError';
 export { default as Pagination } from './Pagination';
 export { default as Toggle } from './Toggle';
 export { default as PhoneInput } from './PhoneInput';

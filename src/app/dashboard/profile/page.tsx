@@ -37,7 +37,7 @@ export default function ProfilePage() {
     }
     setSaving(true);
     try {
-      await profileApi.update({ name, phone: phone || undefined, locale: locale as 'en' | 'ar' | 'de' | 'fr' });
+      await profileApi.update({ name, phone: phone || undefined, locale: locale as 'en' | 'de' | 'fr' });
       await refreshUser();
       toast('success', 'Profile updated');
     } catch (err) {
@@ -90,7 +90,6 @@ export default function ProfilePage() {
                   label="Language"
                   options={[
                     { value: 'en', label: 'English' },
-                    { value: 'ar', label: '\u0627\u0644\u0639\u0631\u0628\u064a\u0629' },
                     { value: 'de', label: 'Deutsch' },
                     { value: 'fr', label: 'Fran\u00e7ais' },
                   ]}

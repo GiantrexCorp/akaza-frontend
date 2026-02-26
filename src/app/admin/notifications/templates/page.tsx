@@ -12,6 +12,7 @@ import { AdminProtectedRoute } from '@/lib/auth';
 import type { NotificationTemplate } from '@/types/admin-notification';
 
 export default function AdminNotificationTemplatesPage() {
+  useEffect(() => { document.title = 'Notification Templates | Akaza Admin'; }, []);
   const { toast } = useToast();
   const [templates, setTemplates] = useState<NotificationTemplate[]>([]);
   const [loading, setLoading] = useState(true);

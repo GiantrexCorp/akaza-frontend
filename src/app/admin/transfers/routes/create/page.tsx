@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import RouteForm from '@/components/admin/transfers/RouteForm';
 import { Breadcrumb } from '@/components/ui';
@@ -7,6 +8,7 @@ import { AdminProtectedRoute } from '@/lib/auth';
 import type { AdminTransferRoute } from '@/types/transfer';
 
 export default function AdminCreateRoutePage() {
+  useEffect(() => { document.title = 'Create Route | Akaza Admin'; }, []);
   const router = useRouter();
 
   const handleSaved = (route: AdminTransferRoute) => {

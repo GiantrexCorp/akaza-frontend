@@ -53,7 +53,18 @@ export class ApiError extends Error {
   public errors: string[];
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api';
+export const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api';
+
+const REQUEST_TIMEOUT_MS = 30_000;
+
+export function handleUnauthorized(status: number): never {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('auth_token');
+    document.cookie = 'logged_in=; path=/; max-age=0';
+    window.dispatchEvent(new CustomEvent('auth:unauthorized'));
+  }
+  throw new ApiError(status, ['Unauthorized']);
+}
 
 function getHeaders(): HeadersInit {
   const headers: Record<string, string> = {
@@ -73,64 +84,142 @@ function getHeaders(): HeadersInit {
   return headers;
 }
 
-async function request<T>(method: string, endpoint: string, body?: unknown): Promise<T> {
-  const res = await fetch(`${BASE_URL}${endpoint}`, {
-    method,
-    headers: getHeaders(),
-    body: body ? JSON.stringify(body) : undefined,
-  });
+export function getUploadHeaders(): Record<string, string> {
+  const headers: Record<string, string> = {
+    Accept: 'application/json',
+  };
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('auth_token');
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    const locale = localStorage.getItem('locale') || 'en';
+    headers['Accept-Language'] = locale;
+  }
+  return headers;
+}
 
-  let json: unknown = null;
-  try {
-    json = await res.json();
-  } catch {
-    json = null;
+interface RequestOptions {
+  signal?: AbortSignal;
+}
+
+async function request<T>(
+  method: string,
+  endpoint: string,
+  body?: unknown,
+  options?: RequestOptions,
+): Promise<T> {
+  const externalSignal = options?.signal;
+  let internalController: AbortController | undefined;
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+  if (!externalSignal) {
+    internalController = new AbortController();
+    timeoutId = setTimeout(() => internalController!.abort(), REQUEST_TIMEOUT_MS);
   }
 
-  const envelope = json as Partial<ApiResponse<T>> | null;
-  if (envelope && typeof envelope === 'object' && 'success' in envelope) {
-    if (envelope.success) {
-      return envelope.payload as T;
+  const signal = externalSignal ?? internalController!.signal;
+
+  try {
+    const res = await fetch(`${BASE_URL}${endpoint}`, {
+      method,
+      headers: getHeaders(),
+      body: body ? JSON.stringify(body) : undefined,
+      signal,
+    });
+
+    if (res.status === 401) handleUnauthorized(res.status);
+
+    let json: unknown = null;
+    try {
+      json = await res.json();
+    } catch {
+      json = null;
     }
 
-    throw new ApiError(
-      typeof envelope.status === 'number' ? envelope.status : res.status,
-      envelope.errors,
-    );
-  }
+    const envelope = json as Partial<ApiResponse<T>> | null;
+    if (envelope && typeof envelope === 'object' && 'success' in envelope) {
+      if (envelope.success) {
+        return envelope.payload as T;
+      }
 
-  if (!res.ok) {
-    const fallbackMessage =
-      json && typeof json === 'object' && 'message' in (json as Record<string, unknown>) && typeof (json as Record<string, unknown>).message === 'string'
-        ? ((json as Record<string, unknown>).message as string)
-        : 'Request failed';
-    const errors =
-      json && typeof json === 'object' && 'errors' in (json as Record<string, unknown>)
-        ? (json as Record<string, unknown>).errors
-        : fallbackMessage;
-    throw new ApiError(res.status, errors, fallbackMessage);
-  }
+      throw new ApiError(
+        typeof envelope.status === 'number' ? envelope.status : res.status,
+        envelope.errors,
+      );
+    }
 
-  return json as T;
+    if (!res.ok) {
+      const fallbackMessage =
+        json && typeof json === 'object' && 'message' in (json as Record<string, unknown>) && typeof (json as Record<string, unknown>).message === 'string'
+          ? ((json as Record<string, unknown>).message as string)
+          : 'Request failed';
+      const errors =
+        json && typeof json === 'object' && 'errors' in (json as Record<string, unknown>)
+          ? (json as Record<string, unknown>).errors
+          : fallbackMessage;
+      throw new ApiError(res.status, errors, fallbackMessage);
+    }
+
+    return json as T;
+  } catch (err) {
+    if (err instanceof DOMException && err.name === 'AbortError') {
+      if (internalController) {
+        throw new ApiError(0, ['Request timed out']);
+      }
+      throw err;
+    }
+    throw err;
+  } finally {
+    if (timeoutId !== undefined) clearTimeout(timeoutId);
+  }
 }
 
 export const api = {
-  get: <T>(endpoint: string) => request<T>('GET', endpoint),
-  post: <T>(endpoint: string, body?: unknown) => request<T>('POST', endpoint, body),
-  put: <T>(endpoint: string, body?: unknown) => request<T>('PUT', endpoint, body),
-  patch: <T>(endpoint: string, body?: unknown) => request<T>('PATCH', endpoint, body),
-  delete: <T>(endpoint: string) => request<T>('DELETE', endpoint),
+  get: <T>(endpoint: string, options?: RequestOptions) =>
+    request<T>('GET', endpoint, undefined, options),
+  post: <T>(endpoint: string, body?: unknown, options?: RequestOptions) =>
+    request<T>('POST', endpoint, body, options),
+  put: <T>(endpoint: string, body?: unknown, options?: RequestOptions) =>
+    request<T>('PUT', endpoint, body, options),
+  patch: <T>(endpoint: string, body?: unknown, options?: RequestOptions) =>
+    request<T>('PATCH', endpoint, body, options),
+  delete: <T>(endpoint: string, options?: RequestOptions) =>
+    request<T>('DELETE', endpoint, undefined, options),
 
-  async download(endpoint: string): Promise<Blob> {
-    const headers = getHeaders() as Record<string, string>;
-    delete headers['Content-Type'];
+  async download(endpoint: string, options?: RequestOptions): Promise<Blob> {
+    const externalSignal = options?.signal;
+    let internalController: AbortController | undefined;
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
-    const res = await fetch(`${BASE_URL}${endpoint}`, { headers });
-
-    if (!res.ok) {
-      throw new ApiError(res.status, ['Download failed']);
+    if (!externalSignal) {
+      internalController = new AbortController();
+      timeoutId = setTimeout(() => internalController!.abort(), REQUEST_TIMEOUT_MS);
     }
 
-    return res.blob();
+    const signal = externalSignal ?? internalController!.signal;
+
+    try {
+      const headers = getHeaders() as Record<string, string>;
+      delete headers['Content-Type'];
+
+      const res = await fetch(`${BASE_URL}${endpoint}`, { headers, signal });
+
+      if (res.status === 401) handleUnauthorized(res.status);
+
+      if (!res.ok) {
+        throw new ApiError(res.status, ['Download failed']);
+      }
+
+      return await res.blob();
+    } catch (err) {
+      if (err instanceof DOMException && err.name === 'AbortError') {
+        if (internalController) {
+          throw new ApiError(0, ['Request timed out']);
+        }
+        throw err;
+      }
+      throw err;
+    } finally {
+      if (timeoutId !== undefined) clearTimeout(timeoutId);
+    }
   },
 };

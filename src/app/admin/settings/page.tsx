@@ -19,6 +19,7 @@ const GROUP_LABELS: Record<string, string> = {
 };
 
 export default function AdminSettingsPage() {
+  useEffect(() => { document.title = 'Settings | Akaza Admin'; }, []);
   const { toast } = useToast();
   const [groups, setGroups] = useState<Record<string, AdminSetting[]>>({});
   const [loading, setLoading] = useState(true);

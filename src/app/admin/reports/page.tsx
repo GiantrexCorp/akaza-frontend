@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BarChart3, Download } from 'lucide-react';
 import ReportFilters from '@/components/admin/finance/ReportFilters';
 import ReportBreakdown from '@/components/admin/finance/ReportBreakdown';
@@ -23,6 +23,7 @@ function formatCurrency(amount: number): string {
 }
 
 export default function AdminReportsPage() {
+  useEffect(() => { document.title = 'Reports | Akaza Admin'; }, []);
   const { toast } = useToast();
   const { user } = useAuth();
   const [report, setReport] = useState<FinanceReport | null>(null);

@@ -13,6 +13,7 @@ import { AdminProtectedRoute } from '@/lib/auth';
 import type { AdminUser } from '@/types/admin';
 
 export default function AdminUsersPage() {
+  useEffect(() => { document.title = 'Users | Akaza Admin'; }, []);
   const { toast } = useToast();
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [loading, setLoading] = useState(true);

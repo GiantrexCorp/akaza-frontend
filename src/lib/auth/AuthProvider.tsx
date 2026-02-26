@@ -38,17 +38,33 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       setUser(userData);
     } catch {
       localStorage.removeItem('auth_token');
+      document.cookie = 'logged_in=; path=/; max-age=0';
       setUser(null);
     }
   }, []);
 
   useEffect(() => {
-    refreshUser().finally(() => setLoading(false));
+    let cancelled = false;
+    refreshUser().finally(() => {
+      if (!cancelled) setLoading(false);
+    });
+    return () => { cancelled = true; };
   }, [refreshUser]);
+
+  useEffect(() => {
+    const onUnauthorized = () => {
+      setUser(null);
+      const redirect = window.location.pathname + window.location.search;
+      window.location.href = `/login?redirect=${encodeURIComponent(redirect)}`;
+    };
+    window.addEventListener('auth:unauthorized', onUnauthorized);
+    return () => window.removeEventListener('auth:unauthorized', onUnauthorized);
+  }, []);
 
   const login = useCallback(async (email: string, password: string) => {
     const response = await authApi.login({ email, password });
     localStorage.setItem('auth_token', response.access_token);
+    document.cookie = 'logged_in=true; path=/; max-age=31536000; SameSite=Lax';
     setUser(response.user);
     return response.user;
   }, []);
@@ -56,6 +72,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   const register = useCallback(async (data: { name: string; email: string; phone?: string; password: string; password_confirmation: string }) => {
     const response = await authApi.register(data);
     localStorage.setItem('auth_token', response.access_token);
+    document.cookie = 'logged_in=true; path=/; max-age=31536000; SameSite=Lax';
     setUser(response.user);
   }, []);
 
@@ -66,6 +83,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       if (!(e instanceof ApiError)) throw e;
     } finally {
       localStorage.removeItem('auth_token');
+      document.cookie = 'logged_in=; path=/; max-age=0';
       setUser(null);
     }
   }, []);

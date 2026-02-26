@@ -172,7 +172,7 @@ export default function Navbar() {
                     </button>
 
                     {dropdownOpen && (
-                      <div className="absolute right-0 mt-2 w-56 overflow-hidden border border-[var(--line-soft)] bg-[var(--surface-card)] shadow-2xl z-50">
+                      <div role="menu" className="absolute right-0 mt-2 w-56 overflow-hidden border border-[var(--line-soft)] bg-[var(--surface-card)] shadow-2xl z-50">
                         <div className="border-b border-[var(--line-soft)] bg-white/[0.02] px-4 py-3">
                           <p className="text-sm font-serif text-[var(--text-primary)]">{user.name}</p>
                           <p className="mt-0.5 text-[10px] text-[var(--text-muted)] font-sans">{user.email}</p>
@@ -181,6 +181,7 @@ export default function Navbar() {
                           <Link
                             href="/dashboard/bookings"
                             onClick={() => setDropdownOpen(false)}
+                            role="menuitem"
                             className="flex items-center gap-2 px-4 py-2.5 text-xs text-[var(--text-secondary)] hover:text-primary hover:bg-white/5 transition-colors uppercase tracking-wider font-sans"
                           >
                             <LayoutDashboard size={14} />
@@ -189,6 +190,7 @@ export default function Navbar() {
                           <Link
                             href="/dashboard/profile"
                             onClick={() => setDropdownOpen(false)}
+                            role="menuitem"
                             className="flex items-center gap-2 px-4 py-2.5 text-xs text-[var(--text-secondary)] hover:text-primary hover:bg-white/5 transition-colors uppercase tracking-wider font-sans"
                           >
                             <User size={14} />
@@ -196,6 +198,7 @@ export default function Navbar() {
                           </Link>
                           <button
                             onClick={handleLogout}
+                            role="menuitem"
                             className="w-full flex items-center gap-2 px-4 py-2.5 text-xs text-[var(--text-secondary)] hover:text-red-400 hover:bg-red-500/5 transition-colors uppercase tracking-wider font-sans"
                           >
                             <LogOut size={14} />

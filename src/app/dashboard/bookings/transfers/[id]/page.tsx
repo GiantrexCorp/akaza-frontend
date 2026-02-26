@@ -6,7 +6,7 @@ import { ArrowLeft, Calendar, Clock, MapPin, Car, Users, Briefcase, Plane, Downl
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import DashboardLayout from '@/components/DashboardLayout';
-import { Button, Spinner, Badge, Modal } from '@/components/ui';
+import { Button, Spinner, Badge, Modal, PageError } from '@/components/ui';
 import { transfersApi } from '@/lib/api/transfers';
 import { useToast } from '@/components/ui/Toast';
 import { ApiError } from '@/lib/api/client';
@@ -25,22 +25,30 @@ function TransferBookingDetail({ id }: { id: string }) {
   const { toast } = useToast();
   const [booking, setBooking] = useState<TransferBooking | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<ApiError | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
   const [cancelModal, setCancelModal] = useState(false);
   const [cancelling, setCancelling] = useState(false);
 
   useEffect(() => {
-    const fetch = async () => {
+    let cancelled = false;
+    setError(null);
+    setLoading(true);
+    (async () => {
       try {
         const data = await transfersApi.getBooking(id);
-        setBooking(data);
+        if (!cancelled) setBooking(data);
       } catch (err) {
-        if (err instanceof ApiError) toast('error', err.errors[0] || 'Failed to load booking');
+        if (!cancelled && err instanceof ApiError) {
+          setError(err);
+          toast('error', err.errors[0] || 'Failed to load booking');
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
-    };
-    fetch();
-  }, [id]);
+    })();
+    return () => { cancelled = true; };
+  }, [id, retryCount]);
 
   const [cancelReason, setCancelReason] = useState('');
 
@@ -66,7 +74,9 @@ function TransferBookingDetail({ id }: { id: string }) {
       const a = document.createElement('a');
       a.href = url;
       a.download = `voucher-${booking?.booking_reference || id}.pdf`;
+      document.body.appendChild(a);
       a.click();
+      a.remove();
       URL.revokeObjectURL(url);
     } catch {
       toast('error', 'Failed to download voucher');
@@ -75,11 +85,16 @@ function TransferBookingDetail({ id }: { id: string }) {
 
   if (loading) return <div className="py-16"><Spinner size="lg" /></div>;
 
-  if (!booking) {
+  if (error || !booking) {
     return (
-      <div className="text-center py-16">
-        <h2 className="text-2xl font-serif text-[var(--text-primary)] mb-4">Booking Not Found</h2>
-        <Link href="/dashboard/bookings"><Button variant="outline">Back to Bookings</Button></Link>
+      <div className="py-16">
+        <PageError
+          status={error?.status ?? 404}
+          title={error?.status === 404 ? 'Booking Not Found' : undefined}
+          onRetry={() => setRetryCount((c) => c + 1)}
+          backHref="/dashboard/bookings"
+          backLabel="Back to Bookings"
+        />
       </div>
     );
   }

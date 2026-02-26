@@ -6,7 +6,7 @@ import { ArrowLeft, Calendar, MapPin, Users, Clock, Download } from 'lucide-reac
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import DashboardLayout from '@/components/DashboardLayout';
-import { Button, Spinner, Badge, Modal } from '@/components/ui';
+import { Button, Spinner, Badge, Modal, PageError } from '@/components/ui';
 import { toursApi } from '@/lib/api/tours';
 import { useToast } from '@/components/ui/Toast';
 import { ApiError } from '@/lib/api/client';
@@ -25,22 +25,30 @@ function TourBookingDetail({ id }: { id: string }) {
   const { toast } = useToast();
   const [booking, setBooking] = useState<TourBooking | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<ApiError | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
   const [cancelModal, setCancelModal] = useState(false);
   const [cancelling, setCancelling] = useState(false);
 
   useEffect(() => {
-    const fetch = async () => {
+    let cancelled = false;
+    setError(null);
+    setLoading(true);
+    (async () => {
       try {
         const data = await toursApi.getBooking(id);
-        setBooking(data);
+        if (!cancelled) setBooking(data);
       } catch (err) {
-        if (err instanceof ApiError) toast('error', err.errors[0] || 'Failed to load booking');
+        if (!cancelled && err instanceof ApiError) {
+          setError(err);
+          toast('error', err.errors[0] || 'Failed to load booking');
+        }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
-    };
-    fetch();
-  }, [id]);
+    })();
+    return () => { cancelled = true; };
+  }, [id, retryCount]);
 
   const handleCancel = async () => {
     setCancelling(true);
@@ -63,7 +71,9 @@ function TourBookingDetail({ id }: { id: string }) {
       const a = document.createElement('a');
       a.href = url;
       a.download = `voucher-${booking?.booking_reference || id}.pdf`;
+      document.body.appendChild(a);
       a.click();
+      a.remove();
       URL.revokeObjectURL(url);
     } catch {
       toast('error', 'Failed to download voucher');
@@ -76,11 +86,16 @@ function TourBookingDetail({ id }: { id: string }) {
 
   if (loading) return <div className="py-16"><Spinner size="lg" /></div>;
 
-  if (!booking) {
+  if (error || !booking) {
     return (
-      <div className="text-center py-16">
-        <h2 className="text-2xl font-serif text-[var(--text-primary)] mb-4">Booking Not Found</h2>
-        <Link href="/dashboard/bookings"><Button variant="outline">Back to Bookings</Button></Link>
+      <div className="py-16">
+        <PageError
+          status={error?.status ?? 404}
+          title={error?.status === 404 ? 'Booking Not Found' : undefined}
+          onRetry={() => setRetryCount((c) => c + 1)}
+          backHref="/dashboard/bookings"
+          backLabel="Back to Bookings"
+        />
       </div>
     );
   }
@@ -130,7 +145,7 @@ function TourBookingDetail({ id }: { id: string }) {
             <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-3">Guests</p>
             <div className="space-y-1">
               {booking.guests.map((guest, i) => (
-                <p key={i} className="text-xs text-[var(--text-muted)] font-sans">
+                <p key={`${guest.name}-${guest.surname}-${i}`} className="text-xs text-[var(--text-muted)] font-sans">
                   {guest.name} {guest.surname} ({guest.type === 'AD' ? 'Adult' : `Child, ${guest.age}y`})
                 </p>
               ))}

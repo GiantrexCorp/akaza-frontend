@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import VehicleForm from '@/components/admin/transfers/VehicleForm';
 import { Breadcrumb } from '@/components/ui';
@@ -7,6 +8,7 @@ import { AdminProtectedRoute } from '@/lib/auth';
 import type { AdminTransferVehicle } from '@/types/transfer';
 
 export default function AdminCreateVehiclePage() {
+  useEffect(() => { document.title = 'Create Vehicle | Akaza Admin'; }, []);
   const router = useRouter();
 
   const handleSaved = (vehicle: AdminTransferVehicle) => {

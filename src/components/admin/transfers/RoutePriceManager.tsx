@@ -29,17 +29,18 @@ export default function RoutePriceManager({ routeId, prices, onPricesUpdated }: 
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    const fetchVehicles = async () => {
+    let cancelled = false;
+    (async () => {
       try {
         const data = await adminTransfersApi.listVehicles('filter[status]=active&sort=sort_order');
-        setVehicles(data);
+        if (!cancelled) setVehicles(data);
       } catch (err) {
-        if (err instanceof ApiError) toast('error', err.errors[0] || 'Failed to load vehicles');
+        if (!cancelled && err instanceof ApiError) toast('error', err.errors[0] || 'Failed to load vehicles');
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
-    };
-    fetchVehicles();
+    })();
+    return () => { cancelled = true; };
   }, []);
 
   const rows: PriceRow[] = vehicles.map((vehicle) => ({

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { CheckCircle, Download, Calendar, MapPin, Users, ArrowRight } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { Button, Spinner, Badge } from '@/components/ui';
+import { Button, Spinner, Badge, PageError } from '@/components/ui';
 import { hotelsApi } from '@/lib/api/hotels';
 import { useToast } from '@/components/ui/Toast';
 import { ApiError } from '@/lib/api/client';
@@ -26,22 +26,28 @@ function ConfirmationContent({ id }: { id: string }) {
   const { toast } = useToast();
   const [booking, setBooking] = useState<HotelBooking | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<ApiError | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
-    const fetchBooking = async () => {
+    let cancelled = false;
+    setError(null);
+    setLoading(true);
+    (async () => {
       try {
         const data = await hotelsApi.getBooking(id);
-        setBooking(data);
+        if (!cancelled) setBooking(data);
       } catch (err) {
-        if (err instanceof ApiError) {
+        if (!cancelled && err instanceof ApiError) {
+          setError(err);
           toast('error', err.errors[0] || 'Failed to load booking');
         }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
-    };
-    fetchBooking();
-  }, [id]);
+    })();
+    return () => { cancelled = true; };
+  }, [id, retryCount]);
 
   const handleDownloadVoucher = async () => {
     try {
@@ -50,7 +56,9 @@ function ConfirmationContent({ id }: { id: string }) {
       const a = document.createElement('a');
       a.href = url;
       a.download = `voucher-${booking?.booking_reference || id}.pdf`;
+      document.body.appendChild(a);
       a.click();
+      a.remove();
       URL.revokeObjectURL(url);
     } catch {
       toast('error', 'Failed to download voucher');
@@ -69,11 +77,16 @@ function ConfirmationContent({ id }: { id: string }) {
     );
   }
 
-  if (!booking) {
+  if (error || !booking) {
     return (
-      <div className="pt-36 pb-32 max-w-7xl mx-auto px-6 text-center">
-        <h2 className="text-2xl font-serif text-[var(--text-primary)] mb-4">Booking Not Found</h2>
-        <Link href="/dashboard/bookings"><Button variant="outline">My Bookings</Button></Link>
+      <div className="pt-36 pb-32 max-w-7xl mx-auto px-6">
+        <PageError
+          status={error?.status ?? 404}
+          title={error?.status === 404 ? 'Booking Not Found' : undefined}
+          onRetry={() => setRetryCount((c) => c + 1)}
+          backHref="/dashboard/bookings"
+          backLabel="My Bookings"
+        />
       </div>
     );
   }
@@ -129,7 +142,7 @@ function ConfirmationContent({ id }: { id: string }) {
               {room.guests.length > 0 && (
                 <div className="mt-2 space-y-1">
                   {room.guests.map((guest, i) => (
-                    <p key={i} className="text-xs text-[var(--text-muted)] font-sans">
+                    <p key={`${guest.name}-${guest.surname}-${i}`} className="text-xs text-[var(--text-muted)] font-sans">
                       {guest.name} {guest.surname} ({guest.type === 'AD' ? 'Adult' : `Child, ${guest.age}y`})
                     </p>
                   ))}

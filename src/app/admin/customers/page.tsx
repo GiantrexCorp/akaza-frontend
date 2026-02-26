@@ -12,6 +12,7 @@ import { AdminProtectedRoute } from '@/lib/auth';
 import type { Customer } from '@/types/customer';
 
 export default function AdminCustomersPage() {
+  useEffect(() => { document.title = 'Customers | Akaza Admin'; }, []);
   const { toast } = useToast();
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [loading, setLoading] = useState(true);

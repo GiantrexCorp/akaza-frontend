@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Trash2 } from 'lucide-react';
 import RouteForm from '@/components/admin/transfers/RouteForm';
 import RoutePriceManager from '@/components/admin/transfers/RoutePriceManager';
-import { Spinner, Breadcrumb, Button, Badge, Modal } from '@/components/ui';
+import { Spinner, Breadcrumb, Button, Badge, Modal, PageError } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast';
 import { adminTransfersApi } from '@/lib/api/admin-transfers';
 import { ApiError } from '@/lib/api/client';
@@ -27,6 +27,8 @@ function RouteDetail({ id }: { id: number }) {
   const { user: authUser } = useAuth();
   const [route, setRoute] = useState<AdminTransferRoute | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<ApiError | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
   const [activeTab, setActiveTab] = useState<Tab>('info');
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -34,20 +36,30 @@ function RouteDetail({ id }: { id: number }) {
   const canDelete = hasPermission(authUser, 'delete-transfer');
 
   useEffect(() => {
-    const fetchRoute = async () => {
+    let cancelled = false;
+    setError(null);
+    setLoading(true);
+    (async () => {
       try {
         const data = await adminTransfersApi.getRoute(id);
-        setRoute(data);
+        if (!cancelled) setRoute(data);
       } catch (err) {
-        if (err instanceof ApiError) {
+        if (!cancelled && err instanceof ApiError) {
+          setError(err);
           toast('error', err.errors[0] || 'Failed to load route');
         }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
-    };
-    fetchRoute();
-  }, [id]);
+    })();
+    return () => { cancelled = true; };
+  }, [id, retryCount]);
+
+  useEffect(() => {
+    document.title = route
+      ? `${route.translated_pickup_name} → ${route.translated_dropoff_name} | Akaza Admin`
+      : 'Loading... | Akaza Admin';
+  }, [route]);
 
   const handleSaved = (updated: AdminTransferRoute) => {
     setRoute(updated);
@@ -74,13 +86,16 @@ function RouteDetail({ id }: { id: number }) {
     );
   }
 
-  if (!route) {
+  if (error || !route) {
     return (
-      <div className="text-center py-16">
-        <h2 className="text-2xl font-serif text-[var(--text-primary)] mb-4">Route Not Found</h2>
-        <Link href="/admin/transfers">
-          <Button variant="outline">Back to Transfers</Button>
-        </Link>
+      <div className="py-16">
+        <PageError
+          status={error?.status ?? 404}
+          title={error?.status === 404 ? 'Route Not Found' : undefined}
+          onRetry={() => setRetryCount((c) => c + 1)}
+          backHref="/admin/transfers"
+          backLabel="Back to Transfers"
+        />
       </div>
     );
   }

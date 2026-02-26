@@ -17,6 +17,7 @@ import type { AdminTransferVehicle, AdminTransferRoute } from '@/types/transfer'
 type Tab = 'vehicles' | 'routes';
 
 export default function AdminTransfersPage() {
+  useEffect(() => { document.title = 'Transfers | Akaza Admin'; }, []);
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<Tab>('vehicles');
 

@@ -6,7 +6,7 @@ import { Trash2 } from 'lucide-react';
 import TourForm from '@/components/admin/tours/TourForm';
 import TourAvailabilityManager from '@/components/admin/tours/TourAvailabilityManager';
 import TourImageManager from '@/components/admin/tours/TourImageManager';
-import { Spinner, Breadcrumb, Button, Badge, Modal } from '@/components/ui';
+import { Spinner, Breadcrumb, Button, Badge, Modal, PageError } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast';
 import { adminToursApi } from '@/lib/api/admin-tours';
 import { ApiError } from '@/lib/api/client';
@@ -30,6 +30,8 @@ function TourDetail({ id }: { id: number }) {
   const { user: authUser } = useAuth();
   const [tour, setTour] = useState<AdminTour | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<ApiError | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
   const [activeTab, setActiveTab] = useState<Tab>('info');
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -38,20 +40,30 @@ function TourDetail({ id }: { id: number }) {
   const canDelete = hasPermission(authUser, 'delete-tour');
 
   useEffect(() => {
-    const fetchTour = async () => {
+    let cancelled = false;
+    setError(null);
+    setLoading(true);
+    (async () => {
       try {
         const data = await adminToursApi.get(id);
-        setTour(data);
+        if (!cancelled) setTour(data);
       } catch (err) {
-        if (err instanceof ApiError) {
+        if (!cancelled && err instanceof ApiError) {
+          setError(err);
           toast('error', err.errors[0] || 'Failed to load tour');
         }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
-    };
-    fetchTour();
-  }, [id]);
+    })();
+    return () => { cancelled = true; };
+  }, [id, retryCount]);
+
+  useEffect(() => {
+    document.title = tour
+      ? `${tour.translated_title} | Akaza Admin`
+      : 'Loading... | Akaza Admin';
+  }, [tour]);
 
   const handleSaved = (updated: AdminTour) => {
     setTour(updated);
@@ -78,13 +90,16 @@ function TourDetail({ id }: { id: number }) {
     );
   }
 
-  if (!tour) {
+  if (error || !tour) {
     return (
-      <div className="text-center py-16">
-        <h2 className="text-2xl font-serif text-[var(--text-primary)] mb-4">Tour Not Found</h2>
-        <Link href="/admin/tours">
-          <Button variant="outline">Back to Tours</Button>
-        </Link>
+      <div className="py-16">
+        <PageError
+          status={error?.status ?? 404}
+          title={error?.status === 404 ? 'Tour Not Found' : undefined}
+          onRetry={() => setRetryCount((c) => c + 1)}
+          backHref="/admin/tours"
+          backLabel="Back to Tours"
+        />
       </div>
     );
   }

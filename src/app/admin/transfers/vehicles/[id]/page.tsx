@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Trash2 } from 'lucide-react';
 import VehicleForm from '@/components/admin/transfers/VehicleForm';
 import VehicleImageManager from '@/components/admin/transfers/VehicleImageManager';
-import { Spinner, Breadcrumb, Button, Badge, Modal } from '@/components/ui';
+import { Spinner, Breadcrumb, Button, Badge, Modal, PageError } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast';
 import { adminTransfersApi } from '@/lib/api/admin-transfers';
 import { ApiError } from '@/lib/api/client';
@@ -27,6 +27,8 @@ function VehicleDetail({ id }: { id: number }) {
   const { user: authUser } = useAuth();
   const [vehicle, setVehicle] = useState<AdminTransferVehicle | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<ApiError | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
   const [activeTab, setActiveTab] = useState<Tab>('info');
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -34,20 +36,30 @@ function VehicleDetail({ id }: { id: number }) {
   const canDelete = hasPermission(authUser, 'delete-transfer');
 
   useEffect(() => {
-    const fetchVehicle = async () => {
+    let cancelled = false;
+    setError(null);
+    setLoading(true);
+    (async () => {
       try {
         const data = await adminTransfersApi.getVehicle(id);
-        setVehicle(data);
+        if (!cancelled) setVehicle(data);
       } catch (err) {
-        if (err instanceof ApiError) {
+        if (!cancelled && err instanceof ApiError) {
+          setError(err);
           toast('error', err.errors[0] || 'Failed to load vehicle');
         }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
-    };
-    fetchVehicle();
-  }, [id]);
+    })();
+    return () => { cancelled = true; };
+  }, [id, retryCount]);
+
+  useEffect(() => {
+    document.title = vehicle
+      ? `${vehicle.translated_name} | Akaza Admin`
+      : 'Loading... | Akaza Admin';
+  }, [vehicle]);
 
   const handleSaved = (updated: AdminTransferVehicle) => {
     setVehicle(updated);
@@ -74,13 +86,16 @@ function VehicleDetail({ id }: { id: number }) {
     );
   }
 
-  if (!vehicle) {
+  if (error || !vehicle) {
     return (
-      <div className="text-center py-16">
-        <h2 className="text-2xl font-serif text-[var(--text-primary)] mb-4">Vehicle Not Found</h2>
-        <Link href="/admin/transfers">
-          <Button variant="outline">Back to Transfers</Button>
-        </Link>
+      <div className="py-16">
+        <PageError
+          status={error?.status ?? 404}
+          title={error?.status === 404 ? 'Vehicle Not Found' : undefined}
+          onRetry={() => setRetryCount((c) => c + 1)}
+          backHref="/admin/transfers"
+          backLabel="Back to Transfers"
+        />
       </div>
     );
   }

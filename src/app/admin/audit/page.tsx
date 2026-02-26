@@ -13,6 +13,7 @@ import { AdminProtectedRoute } from '@/lib/auth';
 import type { AuditLog } from '@/types/audit';
 
 export default function AdminAuditPage() {
+  useEffect(() => { document.title = 'Audit Log | Akaza Admin'; }, []);
   const { toast } = useToast();
   const [logs, setLogs] = useState<AuditLog[]>([]);
   const [loading, setLoading] = useState(true);

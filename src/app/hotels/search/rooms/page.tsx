@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { ArrowLeft, Check, X as XIcon, ShieldCheck, Info } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { Button, Spinner, Badge } from '@/components/ui';
+import { Button, Spinner, Badge, PageError } from '@/components/ui';
 import { hotelsApi } from '@/lib/api/hotels';
 import { useToast } from '@/components/ui/Toast';
 import { ApiError } from '@/lib/api/client';
@@ -22,27 +22,33 @@ function RoomSelectionContent() {
 
   const [hotel, setHotel] = useState<HotelSearchResult | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<ApiError | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
   const [selectedRooms, setSelectedRooms] = useState<HotelRoom[]>([]);
 
   useEffect(() => {
     if (rateKeys.length === 0) return;
 
-    const fetchRates = async () => {
+    let cancelled = false;
+    setError(null);
+    setLoading(true);
+    (async () => {
       try {
         const results = await hotelsApi.checkRate({ rate_keys: rateKeys });
+        if (cancelled) return;
         const match = results.find((h) => h.hotel_code === hotelCode) || results[0];
         setHotel(match || null);
       } catch (err) {
-        if (err instanceof ApiError) {
+        if (!cancelled && err instanceof ApiError) {
+          setError(err);
           toast('error', err.errors[0] || 'Rate check failed');
         }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
-    };
-
-    fetchRates();
-  }, []);
+    })();
+    return () => { cancelled = true; };
+  }, [retryCount]);
 
   const toggleRoom = (room: HotelRoom) => {
     setSelectedRooms((prev) => {
@@ -67,14 +73,17 @@ function RoomSelectionContent() {
     );
   }
 
-  if (!hotel) {
+  if (error || !hotel) {
     return (
-      <div className="pt-36 pb-32 max-w-7xl mx-auto px-6 text-center">
-        <h2 className="text-2xl font-serif text-[var(--text-primary)] mb-4">Rates Unavailable</h2>
-        <p className="text-sm text-[var(--text-muted)] font-sans mb-8">The selected hotel rates are no longer available. Please search again.</p>
-        <Link href="/hotels/search">
-          <Button variant="outline">Back to Search</Button>
-        </Link>
+      <div className="pt-36 pb-32 max-w-7xl mx-auto px-6">
+        <PageError
+          status={error?.status ?? 404}
+          title={error?.status === 404 ? 'Rates Unavailable' : undefined}
+          description={error?.status === 404 ? 'The selected hotel rates are no longer available. Please search again.' : undefined}
+          onRetry={() => setRetryCount((c) => c + 1)}
+          backHref="/hotels/search"
+          backLabel="Back to Search"
+        />
       </div>
     );
   }

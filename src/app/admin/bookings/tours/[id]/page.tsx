@@ -7,7 +7,7 @@ import TourBookingHeader from '@/components/admin/tour-bookings/TourBookingHeade
 import TourBookingInfo from '@/components/admin/tour-bookings/TourBookingInfo';
 import TourBookingStatusLogs from '@/components/admin/tour-bookings/TourBookingStatusLogs';
 import StatusChangeModal from '@/components/admin/tour-bookings/StatusChangeModal';
-import { Spinner, Button, Breadcrumb } from '@/components/ui';
+import { Spinner, Button, Breadcrumb, PageError } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast';
 import { adminToursApi } from '@/lib/api/admin-tours';
 import { ApiError } from '@/lib/api/client';
@@ -18,24 +18,36 @@ function TourBookingDetail({ id }: { id: number }) {
   const { toast } = useToast();
   const [booking, setBooking] = useState<AdminTourBooking | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<ApiError | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
   const [statusModalOpen, setStatusModalOpen] = useState(false);
   const [statusUpdating, setStatusUpdating] = useState(false);
 
   useEffect(() => {
-    const fetchBooking = async () => {
+    let cancelled = false;
+    setError(null);
+    setLoading(true);
+    (async () => {
       try {
         const data = await adminToursApi.getBooking(id);
-        setBooking(data);
+        if (!cancelled) setBooking(data);
       } catch (err) {
-        if (err instanceof ApiError) {
+        if (!cancelled && err instanceof ApiError) {
+          setError(err);
           toast('error', err.errors[0] || 'Failed to load booking');
         }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
-    };
-    fetchBooking();
-  }, [id]);
+    })();
+    return () => { cancelled = true; };
+  }, [id, retryCount]);
+
+  useEffect(() => {
+    document.title = booking
+      ? `${booking.booking_reference} | Akaza Admin`
+      : 'Loading... | Akaza Admin';
+  }, [booking]);
 
   const handleStatusChange = async (status: TourBookingStatus, reason?: string) => {
     setStatusUpdating(true);
@@ -60,7 +72,9 @@ function TourBookingDetail({ id }: { id: number }) {
       const a = document.createElement('a');
       a.href = url;
       a.download = `voucher-${booking?.booking_reference || id}.pdf`;
+      document.body.appendChild(a);
       a.click();
+      a.remove();
       URL.revokeObjectURL(url);
     } catch {
       toast('error', 'Failed to download voucher');
@@ -75,13 +89,16 @@ function TourBookingDetail({ id }: { id: number }) {
     );
   }
 
-  if (!booking) {
+  if (error || !booking) {
     return (
-      <div className="text-center py-16">
-        <h2 className="text-2xl font-serif text-[var(--text-primary)] mb-4">Booking Not Found</h2>
-        <Link href="/admin/bookings/tours">
-          <Button variant="outline">Back to Tour Bookings</Button>
-        </Link>
+      <div className="py-16">
+        <PageError
+          status={error?.status ?? 404}
+          title={error?.status === 404 ? 'Booking Not Found' : undefined}
+          onRetry={() => setRetryCount((c) => c + 1)}
+          backHref="/admin/bookings/tours"
+          backLabel="Back to Tour Bookings"
+        />
       </div>
     );
   }

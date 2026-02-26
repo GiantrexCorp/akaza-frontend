@@ -8,7 +8,7 @@ import HotelBookingInfo from '@/components/admin/hotel-bookings/HotelBookingInfo
 import HotelBookingRooms from '@/components/admin/hotel-bookings/HotelBookingRooms';
 import HotelBookingStatusLogs from '@/components/admin/hotel-bookings/HotelBookingStatusLogs';
 import ReconcileModal from '@/components/admin/hotel-bookings/ReconcileModal';
-import { Spinner, Button, Breadcrumb } from '@/components/ui';
+import { Spinner, Button, Breadcrumb, PageError } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast';
 import { adminHotelBookingsApi } from '@/lib/api/admin-hotel-bookings';
 import { ApiError } from '@/lib/api/client';
@@ -19,24 +19,36 @@ function HotelBookingDetail({ id }: { id: number }) {
   const { toast } = useToast();
   const [booking, setBooking] = useState<AdminHotelBooking | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<ApiError | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
   const [reconcileOpen, setReconcileOpen] = useState(false);
   const [reconciling, setReconciling] = useState(false);
 
   useEffect(() => {
-    const fetchBooking = async () => {
+    let cancelled = false;
+    setError(null);
+    setLoading(true);
+    (async () => {
       try {
         const data = await adminHotelBookingsApi.get(id);
-        setBooking(data);
+        if (!cancelled) setBooking(data);
       } catch (err) {
-        if (err instanceof ApiError) {
+        if (!cancelled && err instanceof ApiError) {
+          setError(err);
           toast('error', err.errors[0] || 'Failed to load booking');
         }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
-    };
-    fetchBooking();
-  }, [id]);
+    })();
+    return () => { cancelled = true; };
+  }, [id, retryCount]);
+
+  useEffect(() => {
+    document.title = booking
+      ? `${booking.booking_reference} | Akaza Admin`
+      : 'Loading... | Akaza Admin';
+  }, [booking]);
 
   const handleReconcile = async (action: ReconcileAction, reason?: string) => {
     setReconciling(true);
@@ -61,7 +73,9 @@ function HotelBookingDetail({ id }: { id: number }) {
       const a = document.createElement('a');
       a.href = url;
       a.download = `voucher-${booking?.booking_reference || id}.pdf`;
+      document.body.appendChild(a);
       a.click();
+      a.remove();
       URL.revokeObjectURL(url);
     } catch {
       toast('error', 'Failed to download voucher');
@@ -76,13 +90,16 @@ function HotelBookingDetail({ id }: { id: number }) {
     );
   }
 
-  if (!booking) {
+  if (error || !booking) {
     return (
-      <div className="text-center py-16">
-        <h2 className="text-2xl font-serif text-[var(--text-primary)] mb-4">Booking Not Found</h2>
-        <Link href="/admin/bookings/hotels">
-          <Button variant="outline">Back to Hotel Bookings</Button>
-        </Link>
+      <div className="py-16">
+        <PageError
+          status={error?.status ?? 404}
+          title={error?.status === 404 ? 'Booking Not Found' : undefined}
+          onRetry={() => setRetryCount((c) => c + 1)}
+          backHref="/admin/bookings/hotels"
+          backLabel="Back to Hotel Bookings"
+        />
       </div>
     );
   }

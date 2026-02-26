@@ -33,8 +33,8 @@ function TourBookingForm() {
   const [contactEmail, setContactEmail] = useState('');
   const [contactPhone, setContactPhone] = useState<E164Number | undefined>(undefined);
   const [specialRequests, setSpecialRequests] = useState('');
-  const [guests, setGuests] = useState<TourBookingGuest[]>(() =>
-    Array.from({ length: guestsCount }, () => ({ name: '', surname: '', type: 'AD' as const, age: null }))
+  const [guests, setGuests] = useState<(TourBookingGuest & { _key: string })[]>(() =>
+    Array.from({ length: guestsCount }, () => ({ name: '', surname: '', type: 'AD' as const, age: null, _key: crypto.randomUUID() }))
   );
   const [loading, setLoading] = useState(false);
   const [agreed, setAgreed] = useState(false);
@@ -50,7 +50,7 @@ function TourBookingForm() {
   };
 
   const addGuest = () => {
-    setGuests((prev) => [...prev, { name: '', surname: '', type: 'AD', age: null }]);
+    setGuests((prev) => [...prev, { name: '', surname: '', type: 'AD', age: null, _key: crypto.randomUUID() }]);
   };
 
   const removeGuest = (idx: number) => {
@@ -130,7 +130,7 @@ function TourBookingForm() {
                 </div>
                 <div className="space-y-4">
                   {guests.map((guest, idx) => (
-                    <div key={idx} className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
+                    <div key={guest._key} className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
                       <Input label={`Guest ${idx + 1} First Name`} placeholder="First name" value={guest.name} onChange={(e) => updateGuest(idx, 'name', e.target.value)} size="sm" />
                       <Input label="Last Name" placeholder="Last name" value={guest.surname} onChange={(e) => updateGuest(idx, 'surname', e.target.value)} size="sm" />
                       <Select

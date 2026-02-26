@@ -6,7 +6,7 @@ import CustomerDetailHeader from '@/components/admin/customers/CustomerDetailHea
 import CustomerInfoForm from '@/components/admin/customers/CustomerInfoForm';
 import CustomerNotesTab from '@/components/admin/customers/CustomerNotesTab';
 import CustomerBookingHistory from '@/components/admin/customers/CustomerBookingHistory';
-import { Spinner, Breadcrumb, Button } from '@/components/ui';
+import { Spinner, Breadcrumb, Button, PageError } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast';
 import { adminCustomersApi } from '@/lib/api/admin-customers';
 import { ApiError } from '@/lib/api/client';
@@ -22,26 +22,38 @@ function CustomerDetail({ id }: { id: number }) {
   const { user: authUser } = useAuth();
   const [customer, setCustomer] = useState<Customer | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<ApiError | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
   const [statusSaving, setStatusSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>('info');
 
   const canManageNotes = hasPermission(authUser, 'add-customer-notes');
 
   useEffect(() => {
-    const fetchCustomer = async () => {
+    let cancelled = false;
+    setError(null);
+    setLoading(true);
+    (async () => {
       try {
         const data = await adminCustomersApi.get(id);
-        setCustomer(data);
+        if (!cancelled) setCustomer(data);
       } catch (err) {
-        if (err instanceof ApiError) {
+        if (!cancelled && err instanceof ApiError) {
+          setError(err);
           toast('error', err.errors[0] || 'Failed to load customer');
         }
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
-    };
-    fetchCustomer();
-  }, [id]);
+    })();
+    return () => { cancelled = true; };
+  }, [id, retryCount]);
+
+  useEffect(() => {
+    document.title = customer
+      ? `${customer.full_name} | Akaza Admin`
+      : 'Loading... | Akaza Admin';
+  }, [customer]);
 
   const handleStatusChange = async (status: CustomerStatus) => {
     if (!customer) return;
@@ -71,13 +83,16 @@ function CustomerDetail({ id }: { id: number }) {
     );
   }
 
-  if (!customer) {
+  if (error || !customer) {
     return (
-      <div className="text-center py-16">
-        <h2 className="text-2xl font-serif text-[var(--text-primary)] mb-4">Customer Not Found</h2>
-        <Link href="/admin/customers">
-          <Button variant="outline">Back to Customers</Button>
-        </Link>
+      <div className="py-16">
+        <PageError
+          status={error?.status ?? 404}
+          title={error?.status === 404 ? 'Customer Not Found' : undefined}
+          onRetry={() => setRetryCount((c) => c + 1)}
+          backHref="/admin/customers"
+          backLabel="Back to Customers"
+        />
       </div>
     );
   }

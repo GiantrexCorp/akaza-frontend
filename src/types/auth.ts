@@ -5,7 +5,7 @@ export interface User {
   phone: string | null;
   type: 'customer' | 'admin';
   status: 'active' | 'inactive' | 'suspended';
-  locale: 'en' | 'ar' | 'de' | 'fr';
+  locale: 'en' | 'de' | 'fr';
   last_active_at: string | null;
   roles: Role[];
   permissions: string[];
@@ -55,5 +55,5 @@ export interface ChangePasswordRequest {
 export interface UpdateProfileRequest {
   name?: string;
   phone?: string;
-  locale?: 'en' | 'ar' | 'de' | 'fr';
+  locale?: 'en' | 'de' | 'fr';
 }

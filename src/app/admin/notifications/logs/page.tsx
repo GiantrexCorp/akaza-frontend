@@ -13,6 +13,7 @@ import { AdminProtectedRoute } from '@/lib/auth';
 import type { AdminNotificationLog } from '@/types/admin-notification';
 
 export default function AdminNotificationLogsPage() {
+  useEffect(() => { document.title = 'Notification Logs | Akaza Admin'; }, []);
   const { toast } = useToast();
   const [logs, setLogs] = useState<AdminNotificationLog[]>([]);
   const [loading, setLoading] = useState(true);

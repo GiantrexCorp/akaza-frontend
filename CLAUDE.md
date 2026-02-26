@@ -1,5 +1,9 @@
 # Akaza Travel — AI Development Guidelines
 
+## Commits
+
+- **Do NOT add `Co-Authored-By` trailers** — no AI attribution in commits
+
 ## Project Overview
 
 Akaza Travel is a luxury Egypt travel platform. The Next.js frontend connects to a Laravel backend API via a fully integrated API client layer. The design language is dark, elegant, and editorial — sharp edges, warm gold/teal accents, serif headings, no rounded corners.

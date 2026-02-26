@@ -14,6 +14,7 @@ import { AdminProtectedRoute } from '@/lib/auth';
 import type { FinanceDashboard } from '@/types/finance';
 
 export default function AdminFinancePage() {
+  useEffect(() => { document.title = 'Finance | Akaza Admin'; }, []);
   const { toast } = useToast();
   const [dashboard, setDashboard] = useState<FinanceDashboard | null>(null);
   const [loading, setLoading] = useState(true);
