@@ -1,0 +1,226 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
+import Link from 'next/link';
+import {
+  Users,
+  Hotel,
+  Ship,
+  Car,
+  DollarSign,
+  BarChart3,
+  Settings,
+  Bell,
+  PanelLeftClose,
+  PanelLeftOpen,
+  LogOut,
+  ChevronRight,
+  LayoutDashboard,
+} from 'lucide-react';
+import AkazaLogo from '@/components/AkazaLogo';
+import { useAuth } from '@/lib/auth';
+import { hasPermission } from '@/lib/permissions';
+import type { ReactNode } from 'react';
+import type { User } from '@/types/auth';
+
+interface NavSection {
+  title: string;
+  links: NavLink[];
+}
+
+interface NavLink {
+  label: string;
+  href: string;
+  icon: typeof Users;
+  permission?: string;
+  active?: boolean;
+}
+
+function getNavSections(): NavSection[] {
+  return [
+    {
+      title: 'Management',
+      links: [
+        { label: 'Users', href: '/admin/users', icon: Users, permission: 'users.view' },
+        { label: 'Hotels', href: '/admin/hotels', icon: Hotel, permission: 'hotels.view' },
+        { label: 'Tours', href: '/admin/tours', icon: Ship, permission: 'tours.view' },
+        { label: 'Transfers', href: '/admin/transfers', icon: Car, permission: 'transfers.view' },
+      ],
+    },
+    {
+      title: 'Bookings',
+      links: [
+        { label: 'Hotel Bookings', href: '/admin/bookings/hotels', icon: Hotel, permission: 'hotels.bookings.view' },
+        { label: 'Tour Bookings', href: '/admin/bookings/tours', icon: Ship, permission: 'tours.bookings.view' },
+        { label: 'Transfer Bookings', href: '/admin/bookings/transfers', icon: Car, permission: 'transfers.bookings.view' },
+      ],
+    },
+    {
+      title: 'Finance',
+      links: [
+        { label: 'Transactions', href: '/admin/finance', icon: DollarSign, permission: 'finance.view' },
+        { label: 'Reports', href: '/admin/reports', icon: BarChart3, permission: 'reports.view' },
+      ],
+    },
+    {
+      title: 'System',
+      links: [
+        { label: 'Notifications', href: '/admin/notifications', icon: Bell, permission: 'notifications.view' },
+        { label: 'Settings', href: '/admin/settings', icon: Settings, permission: 'settings.view' },
+      ],
+    },
+  ];
+}
+
+function filterSections(sections: NavSection[], user: User): NavSection[] {
+  return sections
+    .map((section) => ({
+      ...section,
+      links: section.links.filter(
+        (link) => !link.permission || hasPermission(user, link.permission)
+      ),
+    }))
+    .filter((section) => section.links.length > 0);
+}
+
+interface AdminLayoutProps {
+  children: ReactNode;
+}
+
+const SIDEBAR_KEY = 'admin_sidebar_collapsed';
+
+export default function AdminLayout({ children }: AdminLayoutProps) {
+  const pathname = usePathname();
+  const { user, logout } = useAuth();
+  const [collapsed, setCollapsed] = useState(false);
+
+  useEffect(() => {
+    const stored = localStorage.getItem(SIDEBAR_KEY);
+    if (stored === 'true') setCollapsed(true);
+  }, []);
+
+  const toggleCollapsed = () => {
+    const next = !collapsed;
+    setCollapsed(next);
+    localStorage.setItem(SIDEBAR_KEY, String(next));
+  };
+
+  if (!user) return null;
+
+  const sections = filterSections(getNavSections(), user);
+
+  return (
+    <div className="min-h-screen bg-[var(--surface-page)] flex">
+      {/* Sidebar */}
+      <aside
+        className={`fixed top-0 left-0 h-screen bg-[var(--surface-card)] border-r border-[var(--line-soft)] flex flex-col transition-all duration-300 z-40 ${
+          collapsed ? 'w-[68px]' : 'w-[260px]'
+        }`}
+      >
+        {/* Logo area */}
+        <div className="flex items-center justify-between px-4 h-16 border-b border-[var(--line-soft)] shrink-0">
+          {!collapsed && (
+            <Link href="/admin" className="flex items-center">
+              <AkazaLogo className="!w-[120px]" />
+            </Link>
+          )}
+          <button
+            onClick={toggleCollapsed}
+            className="p-2 text-[var(--text-muted)] hover:text-primary transition-colors"
+            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            {collapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}
+          </button>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-6">
+          {sections.map((section) => (
+            <div key={section.title}>
+              {!collapsed && (
+                <p className="px-3 mb-2 text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans">
+                  {section.title}
+                </p>
+              )}
+              <div className="space-y-0.5">
+                {section.links.map((link) => {
+                  const Icon = link.icon;
+                  const isActive = pathname.startsWith(link.href);
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      title={collapsed ? link.label : undefined}
+                      className={`flex items-center gap-3 px-3 py-2.5 text-xs font-sans font-medium transition-all duration-200 ${
+                        collapsed ? 'justify-center' : ''
+                      } ${
+                        isActive
+                          ? 'bg-primary/10 text-primary border-l-2 border-primary'
+                          : 'text-[var(--text-muted)] hover:text-primary hover:bg-white/5 border-l-2 border-transparent'
+                      }`}
+                    >
+                      <Icon size={16} className="shrink-0" />
+                      {!collapsed && (
+                        <>
+                          <span className="truncate">{link.label}</span>
+                          {isActive && <ChevronRight size={12} className="ml-auto shrink-0" />}
+                        </>
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </nav>
+
+        {/* User card + logout */}
+        <div className="border-t border-[var(--line-soft)] p-3 shrink-0">
+          {!collapsed ? (
+            <div className="flex items-center gap-3 mb-3 px-2">
+              <div className="w-8 h-8 bg-primary/20 flex items-center justify-center shrink-0">
+                <span className="text-xs font-bold text-primary font-sans">
+                  {user.name.charAt(0).toUpperCase()}
+                </span>
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-serif text-[var(--text-primary)] truncate">{user.name}</p>
+                <p className="text-[10px] text-[var(--text-muted)] font-sans truncate">{user.email}</p>
+              </div>
+            </div>
+          ) : (
+            <div className="flex justify-center mb-3">
+              <div className="w-8 h-8 bg-primary/20 flex items-center justify-center">
+                <span className="text-xs font-bold text-primary font-sans">
+                  {user.name.charAt(0).toUpperCase()}
+                </span>
+              </div>
+            </div>
+          )}
+          <button
+            onClick={() => logout()}
+            title={collapsed ? 'Logout' : undefined}
+            className={`w-full flex items-center gap-3 px-3 py-2.5 text-xs font-sans font-medium text-[var(--text-muted)] hover:text-red-400 hover:bg-red-500/5 transition-all duration-200 ${
+              collapsed ? 'justify-center' : ''
+            }`}
+          >
+            <LogOut size={16} className="shrink-0" />
+            {!collapsed && <span>Logout</span>}
+          </button>
+        </div>
+      </aside>
+
+      {/* Main content */}
+      <main
+        className={`flex-1 transition-all duration-300 ${
+          collapsed ? 'ml-[68px]' : 'ml-[260px]'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          {children}
+        </div>
+      </main>
+    </div>
+  );
+}

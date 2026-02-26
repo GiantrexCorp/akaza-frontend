@@ -5,3 +5,4 @@ export * from './tour';
 export * from './transfer';
 export * from './notification';
 export * from './settings';
+export * from './admin';
