@@ -36,9 +36,19 @@ function LoginForm() {
 
     setLoading(true);
     try {
-      await login(email, password);
+      const authenticatedUser = await login(email, password);
       toast('success', 'Welcome back!');
-      router.push(redirect);
+      const isAdminPath = redirect.startsWith('/admin');
+      const isCustomerPath = redirect.startsWith('/dashboard') || redirect.startsWith('/hotels/book') || redirect.startsWith('/tours/book') || redirect.startsWith('/transfers/book');
+      if (authenticatedUser.type !== 'customer') {
+        router.push('/admin');
+      } else if (isAdminPath) {
+        router.push('/dashboard/bookings');
+      } else if (isCustomerPath || redirect === '/') {
+        router.push(redirect);
+      } else {
+        router.push('/dashboard/bookings');
+      }
     } catch (err) {
       if (err instanceof ApiError) {
         toast('error', err.errors[0] || 'Invalid credentials');

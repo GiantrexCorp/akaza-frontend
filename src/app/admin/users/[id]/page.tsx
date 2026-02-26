@@ -115,7 +115,7 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
   const { id } = use(params);
 
   return (
-    <AdminProtectedRoute permission="users.view">
+    <AdminProtectedRoute permission="show-user">
       <AdminLayout>
         <UserDetail id={Number(id)} />
       </AdminLayout>

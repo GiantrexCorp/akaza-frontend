@@ -9,7 +9,7 @@ import { ApiError } from '@/lib/api/client';
 interface AuthContextValue {
   user: User | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<User>;
   register: (data: { name: string; email: string; phone?: string; password: string; password_confirmation: string }) => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
@@ -50,6 +50,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     const response = await authApi.login({ email, password });
     localStorage.setItem('auth_token', response.access_token);
     setUser(response.user);
+    return response.user;
   }, []);
 
   const register = useCallback(async (data: { name: string; email: string; phone?: string; password: string; password_confirmation: string }) => {

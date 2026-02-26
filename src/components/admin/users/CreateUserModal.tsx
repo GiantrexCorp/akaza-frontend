@@ -16,6 +16,7 @@ interface CreateUserModalProps {
 
 const localeOptions = [
   { value: 'en', label: 'English' },
+  { value: 'ar', label: 'Arabic' },
   { value: 'de', label: 'German' },
   { value: 'fr', label: 'French' },
 ];
@@ -43,7 +44,7 @@ export default function CreateUserModal({ open, onClose, onCreated }: CreateUser
   const [phone, setPhone] = useState('');
   const [type, setType] = useState<'customer' | 'admin'>('customer');
   const [status, setStatus] = useState<'active' | 'inactive' | 'suspended'>('active');
-  const [locale, setLocale] = useState<'en' | 'de' | 'fr'>('en');
+  const [locale, setLocale] = useState<'en' | 'ar' | 'de' | 'fr'>('en');
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
 
   const resetForm = () => {
@@ -163,7 +164,7 @@ export default function CreateUserModal({ open, onClose, onCreated }: CreateUser
             label="Locale"
             options={localeOptions}
             value={locale}
-            onChange={(e) => setLocale(e.target.value as 'en' | 'de' | 'fr')}
+            onChange={(e) => setLocale(e.target.value as 'en' | 'ar' | 'de' | 'fr')}
             error={fieldErrors.locale?.[0]}
           />
         </div>

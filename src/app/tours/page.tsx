@@ -28,8 +28,8 @@ export default function ToursPage() {
       const data = await toursApi.list(params.toString());
       const normalizedTours = Array.isArray(data?.data) ? data.data : [];
       setTours(normalizedTours);
-      setCurrentPage(typeof data?.current_page === 'number' ? data.current_page : 1);
-      setLastPage(typeof data?.last_page === 'number' ? data.last_page : 1);
+      setCurrentPage(data?.meta?.current_page ?? 1);
+      setLastPage(data?.meta?.last_page ?? 1);
     } catch (err) {
       if (err instanceof ApiError) {
         toast('error', err.errors[0] || 'Failed to load tours');

@@ -14,8 +14,15 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   const router = useRouter();
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (loading) return;
+
+    if (!user) {
       router.push(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
+      return;
+    }
+
+    if (user.type !== 'customer') {
+      router.push('/admin');
     }
   }, [user, loading, router]);
 
@@ -28,6 +35,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   }
 
   if (!user) return null;
+  if (user.type !== 'customer') return null;
 
   return <>{children}</>;
 }

@@ -36,8 +36,8 @@ export default function NotificationsPage() {
     try {
       const data = await notificationsApi.list(`page=${page}`);
       setNotifications(data.data);
-      setCurrentPage(data.current_page);
-      setLastPage(data.last_page);
+      setCurrentPage(data.meta.current_page);
+      setLastPage(data.meta.last_page);
     } catch (err) {
       if (err instanceof ApiError) toast('error', err.errors[0] || 'Failed to load notifications');
     } finally {

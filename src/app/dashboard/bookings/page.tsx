@@ -56,18 +56,18 @@ export default function BookingsPage() {
       if (tab === 'hotels') {
         const data = await hotelsApi.listBookings(params);
         setHotelBookings(data.data);
-        setHotelPage(data.current_page);
-        setHotelLastPage(data.last_page);
+        setHotelPage(data.meta.current_page);
+        setHotelLastPage(data.meta.last_page);
       } else if (tab === 'tours') {
         const data = await toursApi.listBookings(params);
         setTourBookings(data.data);
-        setTourPage(data.current_page);
-        setTourLastPage(data.last_page);
+        setTourPage(data.meta.current_page);
+        setTourLastPage(data.meta.last_page);
       } else {
         const data = await transfersApi.listBookings(params);
         setTransferBookings(data.data);
-        setTransferPage(data.current_page);
-        setTransferLastPage(data.last_page);
+        setTransferPage(data.meta.current_page);
+        setTransferLastPage(data.meta.last_page);
       }
     } catch (err) {
       if (err instanceof ApiError) {

@@ -4,7 +4,7 @@ import type { PaginatedPayload } from '@/types/api';
 
 export const adminUsersApi = {
   list: (params?: string) =>
-    api.get<PaginatedPayload<AdminUser>>(`/admin/users${params ? `?${params}` : ''}`),
+    api.get<PaginatedPayload<AdminUser> | AdminUser[]>(`/admin/users${params ? `?${params}` : ''}`),
 
   get: (id: number) =>
     api.get<AdminUser>(`/admin/users/${id}`),

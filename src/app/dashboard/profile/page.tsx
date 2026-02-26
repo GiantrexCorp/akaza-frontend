@@ -30,7 +30,7 @@ export default function ProfilePage() {
     e.preventDefault();
     setSaving(true);
     try {
-      await profileApi.update({ name, phone: phone || undefined, locale: locale as 'en' | 'de' | 'fr' });
+      await profileApi.update({ name, phone: phone || undefined, locale: locale as 'en' | 'ar' | 'de' | 'fr' });
       await refreshUser();
       toast('success', 'Profile updated');
     } catch (err) {
@@ -77,12 +77,13 @@ export default function ProfilePage() {
               <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-6">Personal Information</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <Input label="Full Name" value={name} onChange={(e) => setName(e.target.value)} icon={<User size={18} />} />
-                <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} icon={<Mail size={18} />} />
+                <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} icon={<Mail size={18} />} disabled />
                 <Input label="Phone" type="tel" placeholder="+20 123 456 789" value={phone} onChange={(e) => setPhone(e.target.value)} icon={<Phone size={18} />} />
                 <Select
                   label="Language"
                   options={[
                     { value: 'en', label: 'English' },
+                    { value: 'ar', label: '\u0627\u0644\u0639\u0631\u0628\u064a\u0629' },
                     { value: 'de', label: 'Deutsch' },
                     { value: 'fr', label: 'Fran\u00e7ais' },
                   ]}

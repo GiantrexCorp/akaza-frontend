@@ -7,7 +7,7 @@ export interface AdminUser {
   phone: string | null;
   type: 'customer' | 'admin';
   status: 'active' | 'inactive' | 'suspended';
-  locale: 'en' | 'de' | 'fr';
+  locale: 'en' | 'ar' | 'de' | 'fr';
   last_active_at: string | null;
   created_at: string;
   updated_at: string;
@@ -23,17 +23,18 @@ export interface CreateUserRequest {
   phone?: string;
   type: 'customer' | 'admin';
   status: 'active' | 'inactive' | 'suspended';
-  locale: 'en' | 'de' | 'fr';
+  locale: 'en' | 'ar' | 'de' | 'fr';
   roles?: string[];
 }
 
 export interface UpdateUserRequest {
   name?: string;
   email?: string;
+  password?: string;
   phone?: string | null;
   type?: 'customer' | 'admin';
   status?: 'active' | 'inactive' | 'suspended';
-  locale?: 'en' | 'de' | 'fr';
+  locale?: 'en' | 'ar' | 'de' | 'fr';
   roles?: string[];
   permissions?: string[];
 }

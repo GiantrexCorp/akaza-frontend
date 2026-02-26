@@ -26,12 +26,27 @@ export default function AdminUsersPage() {
   const fetchUsers = useCallback(async (page: number, filterParams: Record<string, string>) => {
     setLoading(true);
     try {
-      const params = new URLSearchParams({ page: String(page), ...filterParams });
-      const data = await adminUsersApi.list(params.toString());
-      setUsers(data?.data ?? []);
-      setCurrentPage(data?.current_page ?? 1);
-      setLastPage(data?.last_page ?? 1);
-      setTotal(data?.total ?? 0);
+      const params = new URLSearchParams();
+      params.set('page', String(page));
+      params.set('per_page', '15');
+      params.set('include', 'roles');
+      params.set('sort', '-created_at');
+      if (filterParams.search) params.set('filter[name]', filterParams.search);
+      if (filterParams.status) params.set('filter[status]', filterParams.status);
+      if (filterParams.type) params.set('filter[type]', filterParams.type);
+      if (filterParams.role) params.set('filter[hasRole]', filterParams.role);
+      const raw = await adminUsersApi.list(params.toString());
+      if (Array.isArray(raw)) {
+        setUsers(raw);
+        setCurrentPage(1);
+        setLastPage(1);
+        setTotal(raw.length);
+      } else {
+        setUsers(raw?.data ?? []);
+        setCurrentPage(raw?.meta?.current_page ?? 1);
+        setLastPage(raw?.meta?.last_page ?? 1);
+        setTotal(raw?.meta?.total ?? 0);
+      }
     } catch (err) {
       setUsers([]);
       if (err instanceof ApiError) {
@@ -60,7 +75,7 @@ export default function AdminUsersPage() {
   };
 
   return (
-    <AdminProtectedRoute permission="users.view">
+    <AdminProtectedRoute permission="list-users">
       <AdminLayout>
         <div>
           {/* Header */}

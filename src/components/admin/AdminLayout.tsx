@@ -42,32 +42,32 @@ function getNavSections(): NavSection[] {
     {
       title: 'Management',
       links: [
-        { label: 'Users', href: '/admin/users', icon: Users, permission: 'users.view' },
-        { label: 'Hotels', href: '/admin/hotels', icon: Hotel, permission: 'hotels.view' },
-        { label: 'Tours', href: '/admin/tours', icon: Ship, permission: 'tours.view' },
-        { label: 'Transfers', href: '/admin/transfers', icon: Car, permission: 'transfers.view' },
+        { label: 'Users', href: '/admin/users', icon: Users, permission: 'list-users' },
+        { label: 'Hotels', href: '/admin/hotels', icon: Hotel, permission: 'manage-hotel-bookings' },
+        { label: 'Tours', href: '/admin/tours', icon: Ship, permission: 'create-tour' },
+        { label: 'Transfers', href: '/admin/transfers', icon: Car, permission: 'create-transfer' },
       ],
     },
     {
       title: 'Bookings',
       links: [
-        { label: 'Hotel Bookings', href: '/admin/bookings/hotels', icon: Hotel, permission: 'hotels.bookings.view' },
-        { label: 'Tour Bookings', href: '/admin/bookings/tours', icon: Ship, permission: 'tours.bookings.view' },
-        { label: 'Transfer Bookings', href: '/admin/bookings/transfers', icon: Car, permission: 'transfers.bookings.view' },
+        { label: 'Hotel Bookings', href: '/admin/bookings/hotels', icon: Hotel, permission: 'manage-hotel-bookings' },
+        { label: 'Tour Bookings', href: '/admin/bookings/tours', icon: Ship, permission: 'manage-tour-bookings' },
+        { label: 'Transfer Bookings', href: '/admin/bookings/transfers', icon: Car, permission: 'manage-transfer-bookings' },
       ],
     },
     {
       title: 'Finance',
       links: [
-        { label: 'Transactions', href: '/admin/finance', icon: DollarSign, permission: 'finance.view' },
-        { label: 'Reports', href: '/admin/reports', icon: BarChart3, permission: 'reports.view' },
+        { label: 'Transactions', href: '/admin/finance', icon: DollarSign, permission: 'view-financial-dashboard' },
+        { label: 'Reports', href: '/admin/reports', icon: BarChart3, permission: 'view-financial-reports' },
       ],
     },
     {
       title: 'System',
       links: [
         { label: 'Notifications', href: '/admin/notifications', icon: Bell, permission: 'notifications.view' },
-        { label: 'Settings', href: '/admin/settings', icon: Settings, permission: 'settings.view' },
+        { label: 'Settings', href: '/admin/settings', icon: Settings, permission: 'manage-settings' },
       ],
     },
   ];

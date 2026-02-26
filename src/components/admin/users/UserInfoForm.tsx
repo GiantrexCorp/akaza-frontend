@@ -14,6 +14,7 @@ interface UserInfoFormProps {
 
 const localeOptions = [
   { value: 'en', label: 'English' },
+  { value: 'ar', label: 'Arabic' },
   { value: 'de', label: 'German' },
   { value: 'fr', label: 'French' },
 ];
@@ -96,7 +97,7 @@ export default function UserInfoForm({ user, onUpdated }: UserInfoFormProps) {
             label="Locale"
             options={localeOptions}
             value={locale}
-            onChange={(e) => setLocale(e.target.value as 'en' | 'de' | 'fr')}
+            onChange={(e) => setLocale(e.target.value as 'en' | 'ar' | 'de' | 'fr')}
             error={fieldErrors.locale?.[0]}
           />
         </div>
