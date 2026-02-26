@@ -6,3 +6,5 @@ export * from './transfer';
 export * from './notification';
 export * from './settings';
 export * from './admin';
+export * from './audit';
+export * from './customer';

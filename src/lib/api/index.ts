@@ -7,3 +7,6 @@ export { profileApi } from './profile';
 export { notificationsApi } from './notifications';
 export { settingsApi } from './settings';
 export { adminUsersApi } from './admin-users';
+export { adminAuditApi } from './admin-audit';
+export { adminCustomersApi } from './admin-customers';
+export { adminLeadsApi } from './admin-leads';

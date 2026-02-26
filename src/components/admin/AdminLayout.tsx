@@ -5,6 +5,8 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import {
   Users,
+  Users2,
+  Target,
   Hotel,
   Ship,
   Car,
@@ -12,6 +14,7 @@ import {
   BarChart3,
   Settings,
   Bell,
+  ScrollText,
   PanelLeftClose,
   PanelLeftOpen,
   LogOut,
@@ -43,6 +46,8 @@ function getNavSections(): NavSection[] {
       title: 'Management',
       links: [
         { label: 'Users', href: '/admin/users', icon: Users, permission: 'list-users' },
+        { label: 'Customers', href: '/admin/customers', icon: Users2, permission: 'list-customers' },
+        { label: 'Leads', href: '/admin/leads', icon: Target, permission: 'manage-leads' },
         { label: 'Hotels', href: '/admin/hotels', icon: Hotel, permission: 'manage-hotel-bookings' },
         { label: 'Tours', href: '/admin/tours', icon: Ship, permission: 'create-tour' },
         { label: 'Transfers', href: '/admin/transfers', icon: Car, permission: 'create-transfer' },
@@ -68,6 +73,7 @@ function getNavSections(): NavSection[] {
       links: [
         { label: 'Notifications', href: '/admin/notifications', icon: Bell, permission: 'notifications.view' },
         { label: 'Settings', href: '/admin/settings', icon: Settings, permission: 'manage-settings' },
+        { label: 'Audit Log', href: '/admin/audit', icon: ScrollText, permission: 'view-audit-logs' },
       ],
     },
   ];

@@ -26,6 +26,14 @@ export const PERMISSION_GROUPS: PermissionGroup[] = [
     permissions: [
       { key: 'list-customers', label: 'List Customers', description: 'View the customer list' },
       { key: 'show-customer', label: 'View Customer', description: 'View individual customer details' },
+      { key: 'add-customer-notes', label: 'Manage Notes', description: 'Create, edit, and delete customer notes' },
+    ],
+  },
+  {
+    domain: 'leads',
+    label: 'Lead Management',
+    permissions: [
+      { key: 'manage-leads', label: 'Manage Leads', description: 'Create, view, edit, and convert leads' },
     ],
   },
   {
