@@ -10,3 +10,4 @@ export { adminUsersApi } from './admin-users';
 export { adminAuditApi } from './admin-audit';
 export { adminCustomersApi } from './admin-customers';
 export { adminLeadsApi } from './admin-leads';
+export { adminFinanceApi } from './admin-finance';
