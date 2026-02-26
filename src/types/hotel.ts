@@ -154,3 +154,36 @@ export interface CancellationCost {
   cancellation_cost: number;
   currency: string;
 }
+
+export interface HotelBookingStatusLog {
+  id: number;
+  from_status: HotelBookingStatus | null;
+  to_status: HotelBookingStatus;
+  reason: string | null;
+  metadata: Record<string, unknown> | null;
+  changed_by: { id: number; name: string };
+  created_at: string;
+}
+
+export interface AdminHotelBooking extends HotelBooking {
+  holder_surname: string;
+  hotel_address: string | null;
+  hotel_phone: string | null;
+  hotel_category_code: string | null;
+  hotel_category_name: string | null;
+  destination_code: string;
+  destination_name: string;
+  cancelled_at: string | null;
+  cancellation_reason: string | null;
+  refund_amount: number | null;
+  status_logs: HotelBookingStatusLog[];
+  status_logs_count: number;
+  user?: { id: number; name: string; email: string };
+}
+
+export type ReconcileAction = 'retry' | 'refund';
+
+export interface ReconcileRequest {
+  action: ReconcileAction;
+  reason?: string;
+}
