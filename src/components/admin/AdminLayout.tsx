@@ -14,6 +14,7 @@ import {
   BarChart3,
   Settings,
   Bell,
+  FileText,
   ScrollText,
   PanelLeftClose,
   PanelLeftOpen,
@@ -71,7 +72,8 @@ function getNavSections(): NavSection[] {
     {
       title: 'System',
       links: [
-        { label: 'Notifications', href: '/admin/notifications', icon: Bell, permission: 'notifications.view' },
+        { label: 'Templates', href: '/admin/notifications/templates', icon: FileText, permission: 'manage-notification-templates' },
+        { label: 'Notification Logs', href: '/admin/notifications/logs', icon: Bell, permission: 'view-notification-logs' },
         { label: 'Settings', href: '/admin/settings', icon: Settings, permission: 'manage-settings' },
         { label: 'Audit Log', href: '/admin/audit', icon: ScrollText, permission: 'view-audit-logs' },
       ],

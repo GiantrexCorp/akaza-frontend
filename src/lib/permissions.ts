@@ -84,8 +84,8 @@ export const PERMISSION_GROUPS: PermissionGroup[] = [
     domain: 'notifications',
     label: 'Notifications',
     permissions: [
-      { key: 'notifications.view', label: 'View Notifications', description: 'View system notifications' },
-      { key: 'notifications.manage', label: 'Manage Notifications', description: 'Send and manage notifications' },
+      { key: 'manage-notification-templates', label: 'Manage Templates', description: 'View and edit notification templates' },
+      { key: 'view-notification-logs', label: 'View Notification Logs', description: 'View notification delivery logs' },
     ],
   },
   {

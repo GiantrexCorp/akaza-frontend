@@ -12,3 +12,4 @@ export { adminCustomersApi } from './admin-customers';
 export { adminLeadsApi } from './admin-leads';
 export { adminFinanceApi } from './admin-finance';
 export { adminHotelBookingsApi } from './admin-hotel-bookings';
+export { adminNotificationsApi } from './admin-notifications';
