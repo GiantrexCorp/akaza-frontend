@@ -249,3 +249,12 @@ h1, h2, h3, h4, .font-serif {
 :root[data-theme="light"] .theme-light-only {
   display: block;
 }
+
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.animate-slide-in-right {
+  animation: slide-in-right 0.25s ease-out;
+}
