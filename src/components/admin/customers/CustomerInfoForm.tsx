@@ -1,7 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Button, Input, Select } from '@/components/ui';
+import { Button, Input, Select, PhoneInput } from '@/components/ui';
+import type { E164Number } from '@/components/ui';
+import { validatePhone } from '@/lib/validation/phone';
 import { adminCustomersApi } from '@/lib/api/admin-customers';
 import { ApiError } from '@/lib/api/client';
 import { useToast } from '@/components/ui/Toast';
@@ -26,12 +28,17 @@ export default function CustomerInfoForm({ customer, onUpdated }: CustomerInfoFo
 
   const [name, setName] = useState(customer.name);
   const [surname, setSurname] = useState(customer.surname);
-  const [phone, setPhone] = useState(customer.phone || '');
+  const [phone, setPhone] = useState<E164Number | undefined>((customer.phone as E164Number) || undefined);
   const [nationality, setNationality] = useState(customer.nationality || '');
   const [language, setLanguage] = useState(customer.language || '');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const phoneErr = validatePhone(phone);
+    if (phoneErr) {
+      setFieldErrors({ phone: [phoneErr] });
+      return;
+    }
     setSaving(true);
     setFieldErrors({});
 
@@ -39,7 +46,7 @@ export default function CustomerInfoForm({ customer, onUpdated }: CustomerInfoFo
       const updated = await adminCustomersApi.update(customer.id, {
         name,
         surname,
-        phone: phone || null,
+        phone: (phone as string) || null,
         nationality: nationality || null,
         language: language || null,
       });
@@ -74,10 +81,10 @@ export default function CustomerInfoForm({ customer, onUpdated }: CustomerInfoFo
             error={fieldErrors.surname?.[0]}
             required
           />
-          <Input
+          <PhoneInput
             label="Phone"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={setPhone}
             error={fieldErrors.phone?.[0]}
           />
           <Input

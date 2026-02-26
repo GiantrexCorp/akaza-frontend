@@ -1,11 +1,13 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
-import { User, Mail, Phone, Lock } from 'lucide-react';
+import { User, Mail, Lock } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import DashboardLayout from '@/components/DashboardLayout';
-import { Input, Button, Select } from '@/components/ui';
+import { Input, Button, Select, PhoneInput } from '@/components/ui';
+import type { E164Number } from '@/components/ui';
+import { validatePhone } from '@/lib/validation/phone';
 import { profileApi } from '@/lib/api/profile';
 import { useToast } from '@/components/ui/Toast';
 import { ApiError } from '@/lib/api/client';
@@ -17,7 +19,7 @@ export default function ProfilePage() {
 
   const [name, setName] = useState(user?.name || '');
   const [email, setEmail] = useState(user?.email || '');
-  const [phone, setPhone] = useState(user?.phone || '');
+  const [phone, setPhone] = useState<E164Number | undefined>((user?.phone as E164Number) || undefined);
   const [locale, setLocale] = useState<string>(user?.locale || 'en');
   const [saving, setSaving] = useState(false);
 
@@ -28,6 +30,11 @@ export default function ProfilePage() {
 
   const handleUpdateProfile = async (e: FormEvent) => {
     e.preventDefault();
+    const phoneErr = validatePhone(phone);
+    if (phoneErr) {
+      toast('error', phoneErr);
+      return;
+    }
     setSaving(true);
     try {
       await profileApi.update({ name, phone: phone || undefined, locale: locale as 'en' | 'ar' | 'de' | 'fr' });
@@ -78,7 +85,7 @@ export default function ProfilePage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <Input label="Full Name" value={name} onChange={(e) => setName(e.target.value)} icon={<User size={18} />} />
                 <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} icon={<Mail size={18} />} disabled />
-                <Input label="Phone" type="tel" placeholder="+20 123 456 789" value={phone} onChange={(e) => setPhone(e.target.value)} icon={<Phone size={18} />} />
+                <PhoneInput label="Phone" value={phone} onChange={setPhone} />
                 <Select
                   label="Language"
                   options={[

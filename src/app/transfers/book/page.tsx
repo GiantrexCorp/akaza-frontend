@@ -3,10 +3,12 @@
 import { useState, Suspense, type FormEvent } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, User, Mail, Phone, Car, Plane, Calendar, Clock, Users, Briefcase } from 'lucide-react';
+import { ArrowLeft, User, Mail, Car, Plane, Calendar, Clock, Users, Briefcase } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { Input, Button, Spinner } from '@/components/ui';
+import { Input, Button, Spinner, PhoneInput } from '@/components/ui';
+import type { E164Number } from '@/components/ui';
+import { validatePhone } from '@/lib/validation/phone';
 import { transfersApi } from '@/lib/api/transfers';
 import { useToast } from '@/components/ui/Toast';
 import { ApiError } from '@/lib/api/client';
@@ -30,7 +32,7 @@ function TransferBookingForm() {
 
   const [contactName, setContactName] = useState('');
   const [contactEmail, setContactEmail] = useState('');
-  const [contactPhone, setContactPhone] = useState('');
+  const [contactPhone, setContactPhone] = useState<E164Number | undefined>(undefined);
   const [pickupDate, setPickupDate] = useState('');
   const [pickupTime, setPickupTime] = useState('');
   const [passengers, setPassengers] = useState(1);
@@ -48,6 +50,11 @@ function TransferBookingForm() {
     e.preventDefault();
     if (!contactName || !contactEmail || !contactPhone) {
       toast('error', 'Please fill in contact information');
+      return;
+    }
+    const phoneErr = validatePhone(contactPhone);
+    if (phoneErr) {
+      toast('error', phoneErr);
       return;
     }
     if (!pickupDate || !pickupTime) {
@@ -105,7 +112,7 @@ function TransferBookingForm() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <Input label="Full Name" placeholder="John Doe" value={contactName} onChange={(e) => setContactName(e.target.value)} icon={<User size={18} />} />
                   <Input label="Email" type="email" placeholder="your@email.com" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} icon={<Mail size={18} />} />
-                  <Input label="Phone" type="tel" placeholder="+20 123 456 789" value={contactPhone} onChange={(e) => setContactPhone(e.target.value)} icon={<Phone size={18} />} />
+                  <PhoneInput label="Phone" value={contactPhone} onChange={setContactPhone} required />
                 </div>
               </div>
 

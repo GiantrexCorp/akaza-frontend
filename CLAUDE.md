@@ -220,6 +220,10 @@ The API client is fully built in `src/lib/api/`. Key patterns:
 4. Export as default from a single file in `src/components/`
 5. No rounded corners, use design token colors, correct font family
 
+### Phone Input
+
+All phone fields MUST use the `PhoneInput` component (`src/components/ui/PhoneInput.tsx`), never a plain `<Input type="tel">`. It provides a country picker and outputs E.164 format strings that the backend validates with `phone:INTERNATIONAL`. Default country is `"EG"`. Use `validatePhone()` from `src/lib/validation/phone.ts` for client-side validation before submission.
+
 ## Do NOT
 
 - Add new dependencies without explicit approval (especially UI libraries, CSS frameworks, or icon packs)

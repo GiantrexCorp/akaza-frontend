@@ -3,10 +3,12 @@
 import { useState, Suspense, type FormEvent } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, User, Mail, Phone, Plus, Trash2 } from 'lucide-react';
+import { ArrowLeft, User, Mail, Plus, Trash2 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { Input, Button, Spinner, Select, Badge } from '@/components/ui';
+import { Input, Button, Spinner, Select, Badge, PhoneInput } from '@/components/ui';
+import type { E164Number } from '@/components/ui';
+import { validatePhone } from '@/lib/validation/phone';
 import { hotelsApi } from '@/lib/api/hotels';
 import { useToast } from '@/components/ui/Toast';
 import { ApiError } from '@/lib/api/client';
@@ -43,7 +45,7 @@ function BookingFormContent() {
   const [holderName, setHolderName] = useState('');
   const [holderSurname, setHolderSurname] = useState('');
   const [holderEmail, setHolderEmail] = useState('');
-  const [holderPhone, setHolderPhone] = useState('');
+  const [holderPhone, setHolderPhone] = useState<E164Number | undefined>(undefined);
   const [roomGuests, setRoomGuests] = useState<RoomGuests[]>(() =>
     (bookingData?.rooms || []).map((room) => ({
       guests: Array.from({ length: room.adults + room.children }, (_, i) => ({
@@ -90,6 +92,11 @@ function BookingFormContent() {
       toast('error', 'Please fill in holder information');
       return;
     }
+    const phoneErr = validatePhone(holderPhone);
+    if (phoneErr) {
+      toast('error', phoneErr);
+      return;
+    }
     if (!agreed) {
       toast('error', 'Please accept the terms');
       return;
@@ -104,7 +111,7 @@ function BookingFormContent() {
         holder_name: holderName,
         holder_surname: holderSurname,
         holder_email: holderEmail,
-        holder_phone: holderPhone,
+        holder_phone: holderPhone || '',
         rooms: bookingData!.rooms.map((room, i) => ({
           room_code: room.room_code,
           room_name: room.room_name,
@@ -157,7 +164,7 @@ function BookingFormContent() {
                   <Input label="First Name" placeholder="John" value={holderName} onChange={(e) => setHolderName(e.target.value)} icon={<User size={18} />} />
                   <Input label="Last Name" placeholder="Doe" value={holderSurname} onChange={(e) => setHolderSurname(e.target.value)} icon={<User size={18} />} />
                   <Input label="Email" type="email" placeholder="your@email.com" value={holderEmail} onChange={(e) => setHolderEmail(e.target.value)} icon={<Mail size={18} />} />
-                  <Input label="Phone" type="tel" placeholder="+20 123 456 789" value={holderPhone} onChange={(e) => setHolderPhone(e.target.value)} icon={<Phone size={18} />} />
+                  <PhoneInput label="Phone" value={holderPhone} onChange={setHolderPhone} />
                 </div>
               </div>
 

@@ -1,7 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Button, Input, Select, Modal } from '@/components/ui';
+import { Button, Input, Select, Modal, PhoneInput } from '@/components/ui';
+import type { E164Number } from '@/components/ui';
+import { validatePhone } from '@/lib/validation/phone';
 import { adminLeadsApi } from '@/lib/api/admin-leads';
 import { ApiError } from '@/lib/api/client';
 import { useToast } from '@/components/ui/Toast';
@@ -28,14 +30,14 @@ export default function CreateLeadModal({ open, onClose, onCreated }: CreateLead
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
+  const [phone, setPhone] = useState<E164Number | undefined>(undefined);
   const [source, setSource] = useState<LeadSource>('website');
   const [notes, setNotes] = useState('');
 
   const resetForm = () => {
     setName('');
     setEmail('');
-    setPhone('');
+    setPhone(undefined);
     setSource('website');
     setNotes('');
     setFieldErrors({});
@@ -48,6 +50,11 @@ export default function CreateLeadModal({ open, onClose, onCreated }: CreateLead
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const phoneErr = validatePhone(phone);
+    if (phoneErr) {
+      setFieldErrors({ phone: [phoneErr] });
+      return;
+    }
     setSubmitting(true);
     setFieldErrors({});
 
@@ -55,7 +62,7 @@ export default function CreateLeadModal({ open, onClose, onCreated }: CreateLead
       await adminLeadsApi.create({
         name,
         email,
-        phone: phone || undefined,
+        phone: (phone as string) || undefined,
         source,
         notes: notes || undefined,
       });
@@ -91,10 +98,10 @@ export default function CreateLeadModal({ open, onClose, onCreated }: CreateLead
             error={fieldErrors.email?.[0]}
             required
           />
-          <Input
+          <PhoneInput
             label="Phone"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={setPhone}
             error={fieldErrors.phone?.[0]}
           />
           <Select

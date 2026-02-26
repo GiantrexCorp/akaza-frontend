@@ -258,3 +258,50 @@ h1, h2, h3, h4, .font-serif {
 .animate-slide-in-right {
   animation: slide-in-right 0.25s ease-out;
 }
+
+/* PhoneInput overrides — matches Input component (py-2, text-lg, border-b only) */
+.akaza-phone-input.PhoneInput {
+  display: flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--line-strong);
+  border-radius: 0;
+  transition: border-color 0.3s;
+}
+
+.akaza-phone-input.PhoneInput:focus-within {
+  border-bottom-color: var(--color-primary);
+}
+
+.akaza-phone-input--error.PhoneInput,
+.akaza-phone-input--error.PhoneInput:focus-within {
+  border-bottom-color: #ef4444;
+}
+
+.akaza-phone-input .PhoneInputInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  color: var(--field-text);
+  font-family: var(--font-serif), Georgia, serif;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  padding: 0.5rem 0;
+  outline: none;
+}
+
+.akaza-phone-input .PhoneInputInput::placeholder {
+  color: var(--field-placeholder);
+}
+
+.akaza-phone-input .PhoneInputCountryIcon {
+  width: 1.25rem;
+  height: auto;
+}
+
+.akaza-phone-input .PhoneInputCountryIcon--border {
+  box-shadow: none;
+  border-radius: 0;
+}

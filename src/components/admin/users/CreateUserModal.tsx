@@ -1,7 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Button, Input, Select, Modal } from '@/components/ui';
+import { Button, Input, Select, Modal, PhoneInput } from '@/components/ui';
+import type { E164Number } from '@/components/ui';
+import { validatePhone } from '@/lib/validation/phone';
 import { adminUsersApi } from '@/lib/api/admin-users';
 import { ApiError } from '@/lib/api/client';
 import { ALL_ROLES } from '@/lib/permissions';
@@ -41,7 +43,7 @@ export default function CreateUserModal({ open, onClose, onCreated }: CreateUser
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
-  const [phone, setPhone] = useState('');
+  const [phone, setPhone] = useState<E164Number | undefined>(undefined);
   const [type, setType] = useState<'customer' | 'admin'>('customer');
   const [status, setStatus] = useState<'active' | 'inactive' | 'suspended'>('active');
   const [locale, setLocale] = useState<'en' | 'ar' | 'de' | 'fr'>('en');
@@ -52,7 +54,7 @@ export default function CreateUserModal({ open, onClose, onCreated }: CreateUser
     setEmail('');
     setPassword('');
     setPasswordConfirmation('');
-    setPhone('');
+    setPhone(undefined);
     setType('customer');
     setStatus('active');
     setLocale('en');
@@ -75,6 +77,11 @@ export default function CreateUserModal({ open, onClose, onCreated }: CreateUser
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const phoneErr = validatePhone(phone);
+    if (phoneErr) {
+      setFieldErrors({ phone: [phoneErr] });
+      return;
+    }
     setSubmitting(true);
     setFieldErrors({});
 
@@ -88,7 +95,7 @@ export default function CreateUserModal({ open, onClose, onCreated }: CreateUser
         status,
         locale,
       };
-      if (phone) data.phone = phone;
+      if (phone) data.phone = phone as string;
       if (selectedRoles.length > 0) data.roles = selectedRoles;
 
       await adminUsersApi.create(data);
@@ -140,10 +147,10 @@ export default function CreateUserModal({ open, onClose, onCreated }: CreateUser
             error={fieldErrors.password_confirmation?.[0]}
             required
           />
-          <Input
+          <PhoneInput
             label="Phone"
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={setPhone}
             error={fieldErrors.phone?.[0]}
           />
           <Select

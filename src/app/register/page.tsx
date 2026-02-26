@@ -3,11 +3,13 @@
 import { useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Mail, Lock, User, Phone } from 'lucide-react';
+import { Mail, Lock, User } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import { useToast } from '@/components/ui/Toast';
 import { ApiError } from '@/lib/api/client';
-import { Input, Button } from '@/components/ui';
+import { Input, Button, PhoneInput } from '@/components/ui';
+import type { E164Number } from '@/components/ui';
+import { validatePhone } from '@/lib/validation/phone';
 import AkazaLogo from '@/components/AkazaLogo';
 
 export default function RegisterPage() {
@@ -15,10 +17,16 @@ export default function RegisterPage() {
   const { register } = useAuth();
   const { toast } = useToast();
 
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<{
+    name: string;
+    email: string;
+    phone: E164Number | undefined;
+    password: string;
+    password_confirmation: string;
+  }>({
     name: '',
     email: '',
-    phone: '',
+    phone: undefined,
     password: '',
     password_confirmation: '',
   });
@@ -35,6 +43,8 @@ export default function RegisterPage() {
     const errs: Record<string, string> = {};
     if (!form.name.trim()) errs.name = 'Name is required';
     if (!form.email.trim()) errs.email = 'Email is required';
+    const phoneErr = validatePhone(form.phone);
+    if (phoneErr) errs.phone = phoneErr;
     if (!form.password) errs.password = 'Password is required';
     if (form.password.length < 8) errs.password = 'Password must be at least 8 characters';
     if (form.password !== form.password_confirmation) errs.password_confirmation = 'Passwords do not match';
@@ -107,14 +117,11 @@ export default function RegisterPage() {
               icon={<Mail size={18} />}
             />
 
-            <Input
+            <PhoneInput
               label="Phone (optional)"
-              type="tel"
-              placeholder="+20 123 456 789"
               value={form.phone}
-              onChange={(e) => update('phone', e.target.value)}
+              onChange={(value) => { setForm((prev) => ({ ...prev, phone: value })); setErrors((prev) => ({ ...prev, phone: '' })); }}
               error={errors.phone}
-              icon={<Phone size={18} />}
             />
 
             <Input

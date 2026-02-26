@@ -3,10 +3,12 @@
 import { useState, Suspense, type FormEvent } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, User, Mail, Phone, Plus, Trash2 } from 'lucide-react';
+import { ArrowLeft, User, Mail, Plus, Trash2 } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { Input, Button, Spinner, Select } from '@/components/ui';
+import { Input, Button, Spinner, Select, PhoneInput } from '@/components/ui';
+import type { E164Number } from '@/components/ui';
+import { validatePhone } from '@/lib/validation/phone';
 import { toursApi } from '@/lib/api/tours';
 import { useToast } from '@/components/ui/Toast';
 import { ApiError } from '@/lib/api/client';
@@ -29,7 +31,7 @@ function TourBookingForm() {
 
   const [contactName, setContactName] = useState('');
   const [contactEmail, setContactEmail] = useState('');
-  const [contactPhone, setContactPhone] = useState('');
+  const [contactPhone, setContactPhone] = useState<E164Number | undefined>(undefined);
   const [specialRequests, setSpecialRequests] = useState('');
   const [guests, setGuests] = useState<TourBookingGuest[]>(() =>
     Array.from({ length: guestsCount }, () => ({ name: '', surname: '', type: 'AD' as const, age: null }))
@@ -62,6 +64,11 @@ function TourBookingForm() {
       toast('error', 'Please fill in contact information');
       return;
     }
+    const phoneErr = validatePhone(contactPhone);
+    if (phoneErr) {
+      toast('error', phoneErr);
+      return;
+    }
     if (!agreed) {
       toast('error', 'Please accept the terms');
       return;
@@ -74,7 +81,7 @@ function TourBookingForm() {
         availability_id: availabilityId,
         contact_name: contactName,
         contact_email: contactEmail,
-        contact_phone: contactPhone,
+        contact_phone: contactPhone || '',
         special_requests: specialRequests || undefined,
         guests,
       });
@@ -109,7 +116,7 @@ function TourBookingForm() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <Input label="Full Name" placeholder="John Doe" value={contactName} onChange={(e) => setContactName(e.target.value)} icon={<User size={18} />} />
                   <Input label="Email" type="email" placeholder="your@email.com" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} icon={<Mail size={18} />} />
-                  <Input label="Phone" type="tel" placeholder="+20 123 456 789" value={contactPhone} onChange={(e) => setContactPhone(e.target.value)} icon={<Phone size={18} />} />
+                  <PhoneInput label="Phone" value={contactPhone} onChange={setContactPhone} />
                 </div>
               </div>
 
