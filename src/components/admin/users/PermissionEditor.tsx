@@ -32,12 +32,12 @@ export default function PermissionEditor({ user, onUpdated }: PermissionEditorPr
   const { toast } = useToast();
   const [saving, setSaving] = useState(false);
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
-  const [directPermissions, setDirectPermissions] = useState<string[]>(user.permissions);
+  const [directPermissions, setDirectPermissions] = useState<string[]>(user.permissions ?? []);
 
   const userIsSuperAdmin = isSuperAdmin(user);
   const inheritedPermissions = getRolePermissions(user);
 
-  const hasChanges = JSON.stringify([...directPermissions].sort()) !== JSON.stringify([...user.permissions].sort());
+  const hasChanges = JSON.stringify([...directPermissions].sort()) !== JSON.stringify([...(user.permissions ?? [])].sort());
 
   const toggleGroup = (domain: string) => {
     setExpandedGroups((prev) => {
