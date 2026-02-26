@@ -98,3 +98,85 @@ export interface StatusLog {
   notes: string | null;
   created_at: string;
 }
+
+export type TourStatus = 'draft' | 'active' | 'inactive';
+
+import type { LocaleMap } from './admin-notification';
+
+export interface AdminTour {
+  id: number;
+  title: LocaleMap;
+  translated_title: string;
+  description: LocaleMap;
+  translated_description: string;
+  slug: string;
+  location: string;
+  latitude: number | null;
+  longitude: number | null;
+  duration_hours: number | null;
+  duration_days: number | null;
+  price_per_person: string;
+  formatted_price: string;
+  max_capacity: number;
+  status: TourStatus;
+  status_label: string;
+  status_color: string;
+  currency: string;
+  highlights: string[];
+  includes: string[];
+  excludes: string[];
+  images: TourImage[];
+  availabilities: TourAvailability[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateTourRequest {
+  title: LocaleMap;
+  description: LocaleMap;
+  location: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  duration_hours?: number | null;
+  duration_days?: number | null;
+  price_per_person: number;
+  max_capacity: number;
+  currency?: string;
+  highlights?: string[];
+  includes?: string[];
+  excludes?: string[];
+}
+
+export interface UpdateTourRequest extends Partial<CreateTourRequest> {
+  status?: TourStatus;
+}
+
+export interface CreateAvailabilityRequest {
+  date: string;
+  start_time?: string;
+  total_spots: number;
+  price_override?: number | null;
+}
+
+export interface UpdateAvailabilityRequest {
+  date?: string;
+  start_time?: string;
+  total_spots?: number;
+  price_override?: number | null;
+}
+
+export interface AdminTourBooking extends TourBooking {
+  formatted_total_price: string;
+  status_color: string;
+  cancelled_at: string | null;
+  cancellation_reason: string | null;
+  refund_amount: string | null;
+  user?: { id: number; name: string; email: string };
+  created_at: string;
+  updated_at: string;
+}
+
+export interface UpdateBookingStatusRequest {
+  status: TourBookingStatus;
+  reason?: string;
+}
