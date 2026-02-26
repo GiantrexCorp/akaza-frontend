@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Users2 } from 'lucide-react';
-import AdminLayout from '@/components/admin/AdminLayout';
 import CustomerListFilters from '@/components/admin/customers/CustomerListFilters';
 import CustomerTable from '@/components/admin/customers/CustomerTable';
 import { Spinner, EmptyState, Pagination } from '@/components/ui';
@@ -67,7 +66,6 @@ export default function AdminCustomersPage() {
 
   return (
     <AdminProtectedRoute permission="list-customers">
-      <AdminLayout>
         <div>
           {/* Header */}
           <div className="mb-8">
@@ -106,7 +104,6 @@ export default function AdminCustomersPage() {
             </>
           )}
         </div>
-      </AdminLayout>
     </AdminProtectedRoute>
   );
 }

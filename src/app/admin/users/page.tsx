@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Plus, Users } from 'lucide-react';
-import AdminLayout from '@/components/admin/AdminLayout';
 import UserListFilters from '@/components/admin/users/UserListFilters';
 import UserTable from '@/components/admin/users/UserTable';
 import CreateUserModal from '@/components/admin/users/CreateUserModal';
@@ -76,7 +75,6 @@ export default function AdminUsersPage() {
 
   return (
     <AdminProtectedRoute permission="list-users">
-      <AdminLayout>
         <div>
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
@@ -129,7 +127,6 @@ export default function AdminUsersPage() {
           onClose={() => setCreateModalOpen(false)}
           onCreated={handleUserCreated}
         />
-      </AdminLayout>
     </AdminProtectedRoute>
   );
 }

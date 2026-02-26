@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Ship } from 'lucide-react';
-import AdminLayout from '@/components/admin/AdminLayout';
 import TourBookingFilters from '@/components/admin/tour-bookings/TourBookingFilters';
 import TourBookingTable from '@/components/admin/tour-bookings/TourBookingTable';
 import { Spinner, EmptyState } from '@/components/ui';
@@ -52,7 +51,6 @@ export default function AdminTourBookingsPage() {
 
   return (
     <AdminProtectedRoute permission="manage-tour-bookings">
-      <AdminLayout>
         <div>
           <div className="mb-8">
             <h1 className="text-2xl font-serif text-[var(--text-primary)]">Tour Bookings</h1>
@@ -79,7 +77,6 @@ export default function AdminTourBookingsPage() {
             <TourBookingTable bookings={bookings} />
           )}
         </div>
-      </AdminLayout>
     </AdminProtectedRoute>
   );
 }

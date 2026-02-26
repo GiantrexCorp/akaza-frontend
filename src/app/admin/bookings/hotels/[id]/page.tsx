@@ -3,7 +3,6 @@
 import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import { Download, ShieldAlert } from 'lucide-react';
-import AdminLayout from '@/components/admin/AdminLayout';
 import HotelBookingHeader from '@/components/admin/hotel-bookings/HotelBookingHeader';
 import HotelBookingInfo from '@/components/admin/hotel-bookings/HotelBookingInfo';
 import HotelBookingRooms from '@/components/admin/hotel-bookings/HotelBookingRooms';
@@ -134,9 +133,7 @@ export default function AdminHotelBookingDetailPage({ params }: { params: Promis
 
   return (
     <AdminProtectedRoute permission="manage-hotel-bookings">
-      <AdminLayout>
-        <HotelBookingDetail id={Number(id)} />
-      </AdminLayout>
+      <HotelBookingDetail id={Number(id)} />
     </AdminProtectedRoute>
   );
 }

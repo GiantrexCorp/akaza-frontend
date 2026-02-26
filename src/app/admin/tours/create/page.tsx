@@ -1,7 +1,6 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import AdminLayout from '@/components/admin/AdminLayout';
 import TourForm from '@/components/admin/tours/TourForm';
 import { Breadcrumb } from '@/components/ui';
 import { AdminProtectedRoute } from '@/lib/auth';
@@ -16,19 +15,17 @@ export default function AdminCreateTourPage() {
 
   return (
     <AdminProtectedRoute permission="create-tour">
-      <AdminLayout>
-        <div>
-          <Breadcrumb
-            items={[
-              { label: 'Tours', href: '/admin/tours' },
-              { label: 'New Tour' },
-            ]}
-          />
-          <div className="mt-6">
-            <TourForm onSaved={handleSaved} />
-          </div>
+      <div>
+        <Breadcrumb
+          items={[
+            { label: 'Tours', href: '/admin/tours' },
+            { label: 'New Tour' },
+          ]}
+        />
+        <div className="mt-6">
+          <TourForm onSaved={handleSaved} />
         </div>
-      </AdminLayout>
+      </div>
     </AdminProtectedRoute>
   );
 }

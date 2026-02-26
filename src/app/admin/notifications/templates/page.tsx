@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { FileText } from 'lucide-react';
-import AdminLayout from '@/components/admin/AdminLayout';
 import TemplateFilters from '@/components/admin/notifications/TemplateFilters';
 import TemplateTable from '@/components/admin/notifications/TemplateTable';
 import { Spinner, EmptyState } from '@/components/ui';
@@ -47,7 +46,6 @@ export default function AdminNotificationTemplatesPage() {
 
   return (
     <AdminProtectedRoute permission="manage-notification-templates">
-      <AdminLayout>
         <div>
           {/* Header */}
           <div className="mb-8">
@@ -77,7 +75,6 @@ export default function AdminNotificationTemplatesPage() {
             <TemplateTable templates={templates} />
           )}
         </div>
-      </AdminLayout>
     </AdminProtectedRoute>
   );
 }

@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Car } from 'lucide-react';
-import AdminLayout from '@/components/admin/AdminLayout';
 import TransferBookingFilters from '@/components/admin/transfer-bookings/TransferBookingFilters';
 import TransferBookingTable from '@/components/admin/transfer-bookings/TransferBookingTable';
 import { Spinner, EmptyState } from '@/components/ui';
@@ -52,7 +51,6 @@ export default function AdminTransferBookingsPage() {
 
   return (
     <AdminProtectedRoute permission="manage-transfer-bookings">
-      <AdminLayout>
         <div>
           <div className="mb-8">
             <h1 className="text-2xl font-serif text-[var(--text-primary)]">Transfer Bookings</h1>
@@ -79,7 +77,6 @@ export default function AdminTransferBookingsPage() {
             <TransferBookingTable bookings={bookings} />
           )}
         </div>
-      </AdminLayout>
     </AdminProtectedRoute>
   );
 }

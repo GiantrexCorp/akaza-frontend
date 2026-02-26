@@ -3,7 +3,6 @@
 import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import { Trash2 } from 'lucide-react';
-import AdminLayout from '@/components/admin/AdminLayout';
 import TourForm from '@/components/admin/tours/TourForm';
 import TourAvailabilityManager from '@/components/admin/tours/TourAvailabilityManager';
 import TourImageManager from '@/components/admin/tours/TourImageManager';
@@ -186,9 +185,7 @@ export default function AdminTourDetailPage({ params }: { params: Promise<{ id: 
 
   return (
     <AdminProtectedRoute permission="create-tour">
-      <AdminLayout>
-        <TourDetail id={Number(id)} />
-      </AdminLayout>
+      <TourDetail id={Number(id)} />
     </AdminProtectedRoute>
   );
 }

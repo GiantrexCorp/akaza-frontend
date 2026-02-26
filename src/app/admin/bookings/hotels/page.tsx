@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Hotel } from 'lucide-react';
-import AdminLayout from '@/components/admin/AdminLayout';
 import HotelBookingFilters from '@/components/admin/hotel-bookings/HotelBookingFilters';
 import HotelBookingTable from '@/components/admin/hotel-bookings/HotelBookingTable';
 import { Spinner, EmptyState, Pagination } from '@/components/ui';
@@ -63,7 +62,6 @@ export default function AdminHotelBookingsPage() {
 
   return (
     <AdminProtectedRoute permission="manage-hotel-bookings">
-      <AdminLayout>
         <div>
           <div className="mb-8">
             <h1 className="text-2xl font-serif text-[var(--text-primary)]">Hotel Bookings</h1>
@@ -99,7 +97,6 @@ export default function AdminHotelBookingsPage() {
             </>
           )}
         </div>
-      </AdminLayout>
     </AdminProtectedRoute>
   );
 }

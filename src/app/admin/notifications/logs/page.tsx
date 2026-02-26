@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Bell } from 'lucide-react';
-import AdminLayout from '@/components/admin/AdminLayout';
 import NotificationLogFilters from '@/components/admin/notifications/NotificationLogFilters';
 import NotificationLogTable from '@/components/admin/notifications/NotificationLogTable';
 import NotificationLogDetail from '@/components/admin/notifications/NotificationLogDetail';
@@ -55,7 +54,6 @@ export default function AdminNotificationLogsPage() {
 
   return (
     <AdminProtectedRoute permission="view-notification-logs">
-      <AdminLayout>
         <div>
           {/* Header */}
           <div className="mb-8">
@@ -87,7 +85,6 @@ export default function AdminNotificationLogsPage() {
         </div>
 
         <NotificationLogDetail log={selectedLog} onClose={() => setSelectedLog(null)} />
-      </AdminLayout>
     </AdminProtectedRoute>
   );
 }

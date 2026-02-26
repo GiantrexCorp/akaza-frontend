@@ -3,7 +3,6 @@
 import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import { Download, RefreshCw } from 'lucide-react';
-import AdminLayout from '@/components/admin/AdminLayout';
 import TourBookingHeader from '@/components/admin/tour-bookings/TourBookingHeader';
 import TourBookingInfo from '@/components/admin/tour-bookings/TourBookingInfo';
 import TourBookingStatusLogs from '@/components/admin/tour-bookings/TourBookingStatusLogs';
@@ -137,9 +136,7 @@ export default function AdminTourBookingDetailPage({ params }: { params: Promise
 
   return (
     <AdminProtectedRoute permission="manage-tour-bookings">
-      <AdminLayout>
-        <TourBookingDetail id={Number(id)} />
-      </AdminLayout>
+      <TourBookingDetail id={Number(id)} />
     </AdminProtectedRoute>
   );
 }

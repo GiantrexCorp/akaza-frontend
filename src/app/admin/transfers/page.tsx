@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Car, Route, Plus } from 'lucide-react';
-import AdminLayout from '@/components/admin/AdminLayout';
 import VehicleFilters from '@/components/admin/transfers/VehicleFilters';
 import VehicleTable from '@/components/admin/transfers/VehicleTable';
 import RouteFilters from '@/components/admin/transfers/RouteFilters';
@@ -80,7 +79,6 @@ export default function AdminTransfersPage() {
 
   return (
     <AdminProtectedRoute permission="create-transfer">
-      <AdminLayout>
         <div>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
             <div>
@@ -153,7 +151,6 @@ export default function AdminTransfersPage() {
             </>
           )}
         </div>
-      </AdminLayout>
     </AdminProtectedRoute>
   );
 }

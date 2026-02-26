@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { ScrollText } from 'lucide-react';
-import AdminLayout from '@/components/admin/AdminLayout';
 import AuditLogFilters from '@/components/admin/audit/AuditLogFilters';
 import AuditLogTable from '@/components/admin/audit/AuditLogTable';
 import AuditLogDetail from '@/components/admin/audit/AuditLogDetail';
@@ -73,7 +72,6 @@ export default function AdminAuditPage() {
 
   return (
     <AdminProtectedRoute permission="view-audit-logs">
-      <AdminLayout>
         <div>
           {/* Header */}
           <div className="mb-8">
@@ -114,7 +112,6 @@ export default function AdminAuditPage() {
         </div>
 
         <AuditLogDetail log={selectedLog} onClose={() => setSelectedLog(null)} />
-      </AdminLayout>
     </AdminProtectedRoute>
   );
 }

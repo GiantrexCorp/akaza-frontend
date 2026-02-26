@@ -3,7 +3,6 @@
 import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import { Trash2 } from 'lucide-react';
-import AdminLayout from '@/components/admin/AdminLayout';
 import VehicleForm from '@/components/admin/transfers/VehicleForm';
 import VehicleImageManager from '@/components/admin/transfers/VehicleImageManager';
 import { Spinner, Breadcrumb, Button, Badge, Modal } from '@/components/ui';
@@ -168,9 +167,7 @@ export default function AdminVehicleDetailPage({ params }: { params: Promise<{ i
 
   return (
     <AdminProtectedRoute permission="create-transfer">
-      <AdminLayout>
-        <VehicleDetail id={Number(id)} />
-      </AdminLayout>
+      <VehicleDetail id={Number(id)} />
     </AdminProtectedRoute>
   );
 }

@@ -3,7 +3,6 @@
 import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import AdminLayout from '@/components/admin/AdminLayout';
 import UserDetailHeader from '@/components/admin/users/UserDetailHeader';
 import UserInfoForm from '@/components/admin/users/UserInfoForm';
 import RoleAssignment from '@/components/admin/users/RoleAssignment';
@@ -116,9 +115,7 @@ export default function AdminUserDetailPage({ params }: { params: Promise<{ id: 
 
   return (
     <AdminProtectedRoute permission="show-user">
-      <AdminLayout>
-        <UserDetail id={Number(id)} />
-      </AdminLayout>
+      <UserDetail id={Number(id)} />
     </AdminProtectedRoute>
   );
 }

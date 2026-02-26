@@ -2,7 +2,6 @@
 
 import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
-import AdminLayout from '@/components/admin/AdminLayout';
 import TemplateEditForm from '@/components/admin/notifications/TemplateEditForm';
 import { Spinner, Breadcrumb, Button } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast';
@@ -76,9 +75,7 @@ export default function AdminTemplateEditPage({ params }: { params: Promise<{ id
 
   return (
     <AdminProtectedRoute permission="manage-notification-templates">
-      <AdminLayout>
-        <TemplateDetail id={Number(id)} />
-      </AdminLayout>
+      <TemplateDetail id={Number(id)} />
     </AdminProtectedRoute>
   );
 }

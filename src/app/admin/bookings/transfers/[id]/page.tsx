@@ -3,7 +3,6 @@
 import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import { Download, RefreshCw } from 'lucide-react';
-import AdminLayout from '@/components/admin/AdminLayout';
 import TransferBookingHeader from '@/components/admin/transfer-bookings/TransferBookingHeader';
 import TransferBookingInfo from '@/components/admin/transfer-bookings/TransferBookingInfo';
 import TransferBookingStatusLogs from '@/components/admin/transfer-bookings/TransferBookingStatusLogs';
@@ -137,9 +136,7 @@ export default function AdminTransferBookingDetailPage({ params }: { params: Pro
 
   return (
     <AdminProtectedRoute permission="manage-transfer-bookings">
-      <AdminLayout>
-        <TransferBookingDetail id={Number(id)} />
-      </AdminLayout>
+      <TransferBookingDetail id={Number(id)} />
     </AdminProtectedRoute>
   );
 }

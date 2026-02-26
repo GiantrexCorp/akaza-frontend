@@ -2,7 +2,6 @@
 
 import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
-import AdminLayout from '@/components/admin/AdminLayout';
 import CustomerDetailHeader from '@/components/admin/customers/CustomerDetailHeader';
 import CustomerInfoForm from '@/components/admin/customers/CustomerInfoForm';
 import CustomerNotesTab from '@/components/admin/customers/CustomerNotesTab';
@@ -144,9 +143,7 @@ export default function AdminCustomerDetailPage({ params }: { params: Promise<{ 
 
   return (
     <AdminProtectedRoute permission="show-customer">
-      <AdminLayout>
-        <CustomerDetail id={Number(id)} />
-      </AdminLayout>
+      <CustomerDetail id={Number(id)} />
     </AdminProtectedRoute>
   );
 }

@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Settings } from 'lucide-react';
-import AdminLayout from '@/components/admin/AdminLayout';
 import SettingsGroupForm from '@/components/admin/settings/SettingsGroupForm';
 import { Spinner, EmptyState } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast';
@@ -53,7 +52,6 @@ export default function AdminSettingsPage() {
 
   return (
     <AdminProtectedRoute permission="manage-settings">
-      <AdminLayout>
         <div>
           {/* Header */}
           <div className="mb-8">
@@ -104,7 +102,6 @@ export default function AdminSettingsPage() {
             </div>
           )}
         </div>
-      </AdminLayout>
     </AdminProtectedRoute>
   );
 }

@@ -3,7 +3,6 @@
 import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import { Trash2 } from 'lucide-react';
-import AdminLayout from '@/components/admin/AdminLayout';
 import RouteForm from '@/components/admin/transfers/RouteForm';
 import RoutePriceManager from '@/components/admin/transfers/RoutePriceManager';
 import { Spinner, Breadcrumb, Button, Badge, Modal } from '@/components/ui';
@@ -174,9 +173,7 @@ export default function AdminRouteDetailPage({ params }: { params: Promise<{ id:
 
   return (
     <AdminProtectedRoute permission="create-transfer">
-      <AdminLayout>
-        <RouteDetail id={Number(id)} />
-      </AdminLayout>
+      <RouteDetail id={Number(id)} />
     </AdminProtectedRoute>
   );
 }

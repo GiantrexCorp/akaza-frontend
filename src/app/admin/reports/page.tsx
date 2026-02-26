@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { BarChart3, Download } from 'lucide-react';
-import AdminLayout from '@/components/admin/AdminLayout';
 import ReportFilters from '@/components/admin/finance/ReportFilters';
 import ReportBreakdown from '@/components/admin/finance/ReportBreakdown';
 import RevenueTable from '@/components/admin/finance/RevenueTable';
@@ -73,7 +72,6 @@ export default function AdminReportsPage() {
 
   return (
     <AdminProtectedRoute permission="view-financial-reports">
-      <AdminLayout>
         <div>
           <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
@@ -137,7 +135,6 @@ export default function AdminReportsPage() {
             </div>
           )}
         </div>
-      </AdminLayout>
     </AdminProtectedRoute>
   );
 }

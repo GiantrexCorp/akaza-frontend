@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Plus, Target } from 'lucide-react';
-import AdminLayout from '@/components/admin/AdminLayout';
 import LeadListFilters from '@/components/admin/leads/LeadListFilters';
 import LeadTable from '@/components/admin/leads/LeadTable';
 import CreateLeadModal from '@/components/admin/leads/CreateLeadModal';
@@ -82,7 +81,6 @@ export default function AdminLeadsPage() {
 
   return (
     <AdminProtectedRoute permission="manage-leads">
-      <AdminLayout>
         <div>
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
@@ -141,7 +139,6 @@ export default function AdminLeadsPage() {
           onClose={() => setSelectedLead(null)}
           onUpdated={handleLeadUpdated}
         />
-      </AdminLayout>
     </AdminProtectedRoute>
   );
 }

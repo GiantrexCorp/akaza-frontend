@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { DollarSign } from 'lucide-react';
-import AdminLayout from '@/components/admin/AdminLayout';
 import FinanceStatCards from '@/components/admin/finance/FinanceStatCards';
 import MonthlyTrendTable from '@/components/admin/finance/MonthlyTrendTable';
 import RecentBookingsTable from '@/components/admin/finance/RecentBookingsTable';
@@ -38,7 +37,6 @@ export default function AdminFinancePage() {
 
   return (
     <AdminProtectedRoute permission="view-financial-dashboard">
-      <AdminLayout>
         <div>
           <div className="mb-8">
             <h1 className="text-2xl font-serif text-[var(--text-primary)]">Financial Overview</h1>
@@ -66,7 +64,6 @@ export default function AdminFinancePage() {
             </div>
           )}
         </div>
-      </AdminLayout>
     </AdminProtectedRoute>
   );
 }

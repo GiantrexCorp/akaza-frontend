@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Ship, Plus } from 'lucide-react';
-import AdminLayout from '@/components/admin/AdminLayout';
 import TourFilters from '@/components/admin/tours/TourFilters';
 import TourTable from '@/components/admin/tours/TourTable';
 import { Spinner, EmptyState, Button } from '@/components/ui';
@@ -48,7 +47,6 @@ export default function AdminToursPage() {
 
   return (
     <AdminProtectedRoute permission="create-tour">
-      <AdminLayout>
         <div>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
             <div>
@@ -82,7 +80,6 @@ export default function AdminToursPage() {
             <TourTable tours={tours} />
           )}
         </div>
-      </AdminLayout>
     </AdminProtectedRoute>
   );
 }
