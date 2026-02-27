@@ -37,7 +37,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${playfair.variable} ${jakarta.variable} antialiased selection:bg-primary selection:text-white`}>
+      <body className={`${playfair.variable} ${jakarta.variable} antialiased selection:bg-primary selection:text-white`} suppressHydrationWarning>
         <Providers>{children}</Providers>
       </body>
     </html>
