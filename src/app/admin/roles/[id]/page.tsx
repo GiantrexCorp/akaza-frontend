@@ -36,8 +36,6 @@ function RoleDetail({ id }: { id: number }) {
     setLoading(true);
     (async () => {
       try {
-        const params = new URLSearchParams();
-        params.set('include', 'permissions');
         const data = await adminRolesApi.get(id);
         if (!cancelled) {
           setRole(data);
@@ -178,7 +176,7 @@ function RoleDetail({ id }: { id: number }) {
         <RolePermissionEditor
           role={role}
           onUpdated={handlePermissionsUpdated}
-          disabled={isSuperAdmin}
+          disabled={isSuperAdmin || !canUpdate}
         />
       </div>
 

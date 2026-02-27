@@ -8,12 +8,15 @@ import { Button, Spinner, EmptyState } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast';
 import { adminRolesApi } from '@/lib/api/admin-roles';
 import { ApiError } from '@/lib/api/client';
-import { AdminProtectedRoute } from '@/lib/auth';
+import { AdminProtectedRoute, useAuth } from '@/lib/auth';
+import { hasPermission } from '@/lib/permissions';
 import type { AdminRole } from '@/types/admin';
 
 export default function AdminRolesPage() {
   useEffect(() => { document.title = 'Roles | Akaza Admin'; }, []);
+  const { user } = useAuth();
   const { toast } = useToast();
+  const canCreate = hasPermission(user, 'create-role');
   const [roles, setRoles] = useState<AdminRole[]>([]);
   const [loading, setLoading] = useState(true);
   const [createModalOpen, setCreateModalOpen] = useState(false);
@@ -59,12 +62,14 @@ export default function AdminRolesPage() {
               {roles.length} role{roles.length !== 1 ? 's' : ''} total
             </p>
           </div>
-          <Button
-            icon={<Plus size={14} />}
-            onClick={() => setCreateModalOpen(true)}
-          >
-            Create Role
-          </Button>
+          {canCreate && (
+            <Button
+              icon={<Plus size={14} />}
+              onClick={() => setCreateModalOpen(true)}
+            >
+              Create Role
+            </Button>
+          )}
         </div>
 
         {loading ? (

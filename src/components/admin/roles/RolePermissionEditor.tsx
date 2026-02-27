@@ -1,13 +1,14 @@
 'use client';
 
-import { useState } from 'react';
-import { ChevronDown, ChevronRight, Shield } from 'lucide-react';
-import { Button, Toggle } from '@/components/ui';
+import { useState, useEffect } from 'react';
+import { Shield } from 'lucide-react';
+import { Button } from '@/components/ui';
+import PermissionGroupAccordion from '@/components/admin/roles/PermissionGroupAccordion';
 import { adminRolesApi } from '@/lib/api/admin-roles';
 import { ApiError } from '@/lib/api/client';
 import { PERMISSION_GROUPS } from '@/lib/permissions';
 import { useToast } from '@/components/ui/Toast';
-import type { AdminRole, PermissionGroup } from '@/types/admin';
+import type { AdminRole } from '@/types/admin';
 
 interface RolePermissionEditorProps {
   role: AdminRole;
@@ -22,6 +23,10 @@ export default function RolePermissionEditor({ role, onUpdated, disabled }: Role
 
   const currentPermissionNames = (role.permissions ?? []).map((p) => p.name);
   const [selectedPermissions, setSelectedPermissions] = useState<string[]>(currentPermissionNames);
+
+  useEffect(() => {
+    setSelectedPermissions((role.permissions ?? []).map((p) => p.name));
+  }, [role]);
 
   const hasChanges =
     JSON.stringify([...selectedPermissions].sort()) !==
@@ -79,7 +84,7 @@ export default function RolePermissionEditor({ role, onUpdated, disabled }: Role
 
       <div className="space-y-1">
         {PERMISSION_GROUPS.map((group) => (
-          <PermissionGroupRow
+          <PermissionGroupAccordion
             key={group.domain}
             group={group}
             expanded={expandedGroups.has(group.domain)}
@@ -90,69 +95,6 @@ export default function RolePermissionEditor({ role, onUpdated, disabled }: Role
           />
         ))}
       </div>
-    </div>
-  );
-}
-
-interface PermissionGroupRowProps {
-  group: PermissionGroup;
-  expanded: boolean;
-  onToggleGroup: () => void;
-  selectedPermissions: string[];
-  onTogglePermission: (key: string) => void;
-  disabled: boolean;
-}
-
-function PermissionGroupRow({
-  group,
-  expanded,
-  onToggleGroup,
-  selectedPermissions,
-  onTogglePermission,
-  disabled,
-}: PermissionGroupRowProps) {
-  const selectedCount = group.permissions.filter((p) => selectedPermissions.includes(p.key)).length;
-
-  return (
-    <div className="border border-[var(--line-soft)]">
-      <button
-        type="button"
-        onClick={onToggleGroup}
-        className="w-full flex items-center justify-between px-4 py-3 hover:bg-white/[0.02] transition-colors"
-      >
-        <div className="flex items-center gap-3">
-          {expanded ? (
-            <ChevronDown size={14} className="text-[var(--text-muted)]" />
-          ) : (
-            <ChevronRight size={14} className="text-[var(--text-muted)]" />
-          )}
-          <span className="text-sm font-sans font-medium text-[var(--text-primary)]">
-            {group.label}
-          </span>
-        </div>
-        <span className="text-[10px] font-sans text-[var(--text-muted)]">
-          {selectedCount}/{group.permissions.length}
-        </span>
-      </button>
-
-      {expanded && (
-        <div className="border-t border-[var(--line-soft)] divide-y divide-[var(--line-soft)]">
-          {group.permissions.map((perm) => (
-            <div key={perm.key} className="flex items-center justify-between px-4 py-3 pl-10">
-              <div className="flex-1 min-w-0 mr-4">
-                <span className="text-sm font-sans text-[var(--text-primary)]">{perm.label}</span>
-                <p className="text-xs text-[var(--text-muted)] font-sans mt-0.5">{perm.description}</p>
-              </div>
-              <Toggle
-                checked={selectedPermissions.includes(perm.key)}
-                onChange={() => onTogglePermission(perm.key)}
-                disabled={disabled}
-                size="sm"
-              />
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   );
 }

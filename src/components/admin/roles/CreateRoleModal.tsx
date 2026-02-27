@@ -1,13 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronDown, ChevronRight } from 'lucide-react';
-import { Button, Input, Modal, Toggle } from '@/components/ui';
+import { Button, Input, Modal } from '@/components/ui';
+import PermissionGroupAccordion from '@/components/admin/roles/PermissionGroupAccordion';
 import { adminRolesApi } from '@/lib/api/admin-roles';
 import { ApiError } from '@/lib/api/client';
 import { PERMISSION_GROUPS } from '@/lib/permissions';
 import { useToast } from '@/components/ui/Toast';
-import type { PermissionGroup } from '@/types/admin';
 
 interface CreateRoleModalProps {
   open: boolean;
@@ -91,7 +90,7 @@ export default function CreateRoleModal({ open, onClose, onCreated }: CreateRole
           </p>
           <div className="space-y-1 max-h-[400px] overflow-y-auto">
             {PERMISSION_GROUPS.map((group) => (
-              <PermissionGroupToggle
+              <PermissionGroupAccordion
                 key={group.domain}
                 group={group}
                 expanded={expandedGroups.has(group.domain)}
@@ -113,65 +112,5 @@ export default function CreateRoleModal({ open, onClose, onCreated }: CreateRole
         </div>
       </form>
     </Modal>
-  );
-}
-
-interface PermissionGroupToggleProps {
-  group: PermissionGroup;
-  expanded: boolean;
-  onToggleGroup: () => void;
-  selectedPermissions: string[];
-  onTogglePermission: (key: string) => void;
-}
-
-function PermissionGroupToggle({
-  group,
-  expanded,
-  onToggleGroup,
-  selectedPermissions,
-  onTogglePermission,
-}: PermissionGroupToggleProps) {
-  const selectedCount = group.permissions.filter((p) => selectedPermissions.includes(p.key)).length;
-
-  return (
-    <div className="border border-[var(--line-soft)]">
-      <button
-        type="button"
-        onClick={onToggleGroup}
-        className="w-full flex items-center justify-between px-4 py-3 hover:bg-white/[0.02] transition-colors"
-      >
-        <div className="flex items-center gap-3">
-          {expanded ? (
-            <ChevronDown size={14} className="text-[var(--text-muted)]" />
-          ) : (
-            <ChevronRight size={14} className="text-[var(--text-muted)]" />
-          )}
-          <span className="text-sm font-sans font-medium text-[var(--text-primary)]">
-            {group.label}
-          </span>
-        </div>
-        <span className="text-[10px] font-sans text-[var(--text-muted)]">
-          {selectedCount}/{group.permissions.length}
-        </span>
-      </button>
-
-      {expanded && (
-        <div className="border-t border-[var(--line-soft)] divide-y divide-[var(--line-soft)]">
-          {group.permissions.map((perm) => (
-            <div key={perm.key} className="flex items-center justify-between px-4 py-3 pl-10">
-              <div className="flex-1 min-w-0 mr-4">
-                <span className="text-sm font-sans text-[var(--text-primary)]">{perm.label}</span>
-                <p className="text-xs text-[var(--text-muted)] font-sans mt-0.5">{perm.description}</p>
-              </div>
-              <Toggle
-                checked={selectedPermissions.includes(perm.key)}
-                onChange={() => onTogglePermission(perm.key)}
-                size="sm"
-              />
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
   );
 }
