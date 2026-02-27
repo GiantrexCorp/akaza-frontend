@@ -48,6 +48,32 @@ export interface UserListParams {
   per_page?: number;
 }
 
+export interface AdminRole {
+  id: number;
+  name: string;
+  guard_name: string;
+  created_at: string;
+  updated_at: string;
+  permissions?: { id: number; name: string }[];
+  users_count?: number;
+}
+
+export interface CreateRoleRequest {
+  name: string;
+  permissions?: string[];
+}
+
+export interface UpdateRoleRequest {
+  name?: string;
+  permissions?: string[];
+}
+
+export interface AdminPermission {
+  id: number;
+  name: string;
+  guard_name: string;
+}
+
 export interface PermissionDefinition {
   key: string;
   label: string;

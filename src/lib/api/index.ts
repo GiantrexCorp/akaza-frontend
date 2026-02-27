@@ -16,3 +16,4 @@ export { adminNotificationsApi } from './admin-notifications';
 export { adminSettingsApi } from './admin-settings';
 export { adminToursApi } from './admin-tours';
 export { adminTransfersApi } from './admin-transfers';
+export { adminRolesApi } from './admin-roles';

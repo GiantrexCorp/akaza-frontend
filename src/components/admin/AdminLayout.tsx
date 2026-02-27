@@ -21,6 +21,7 @@ import {
   LogOut,
   ChevronRight,
   LayoutDashboard,
+  Shield,
 } from 'lucide-react';
 import AkazaLogo from '@/components/AkazaLogo';
 import { useAuth } from '@/lib/auth';
@@ -47,6 +48,7 @@ function getNavSections(): NavSection[] {
       title: 'Management',
       links: [
         { label: 'Users', href: '/admin/users', icon: Users, permission: 'list-users' },
+        { label: 'Roles', href: '/admin/roles', icon: Shield, permission: 'list-roles' },
         { label: 'Customers', href: '/admin/customers', icon: Users2, permission: 'list-customers' },
         { label: 'Leads', href: '/admin/leads', icon: Target, permission: 'manage-leads' },
         { label: 'Hotels', href: '/admin/hotels', icon: Hotel, permission: 'manage-hotel-bookings' },

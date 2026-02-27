@@ -21,6 +21,16 @@ export const PERMISSION_GROUPS: PermissionGroup[] = [
     ],
   },
   {
+    domain: 'roles',
+    label: 'Role Management',
+    permissions: [
+      { key: 'list-roles', label: 'List Roles', description: 'View the roles list' },
+      { key: 'create-role', label: 'Create Roles', description: 'Create new roles' },
+      { key: 'update-role', label: 'Update Roles', description: 'Edit role names and permissions' },
+      { key: 'delete-role', label: 'Delete Roles', description: 'Remove roles from the system' },
+    ],
+  },
+  {
     domain: 'customers',
     label: 'Customer Management',
     permissions: [
