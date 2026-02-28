@@ -20,7 +20,7 @@ interface DataTableProps<T> {
 export default function DataTable<T>({ columns, data, keyExtractor, onRowClick, emptyMessage = 'No data found' }: DataTableProps<T>) {
   return (
     <div className="overflow-x-auto border border-[var(--line-soft)]">
-      <table className="w-full">
+      <table className="w-full min-w-[640px]">
         <thead>
           <tr className="border-b border-[var(--line-soft)]">
             {columns.map((col) => (

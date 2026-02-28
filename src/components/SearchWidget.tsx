@@ -146,7 +146,7 @@ export default function SearchWidget({
         </div>
 
         <div id="search-tabpanel" role="tabpanel" aria-labelledby={`tab-${activeTab}`} className="p-5 md:p-7">
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 md:gap-6 items-end">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6 items-end">
             {fields.map((field) => {
               const Icon = field.icon;
               return (
@@ -172,7 +172,7 @@ export default function SearchWidget({
               );
             })}
 
-            <div className="flex items-end h-full md:col-span-1">
+            <div className="flex items-end h-full sm:col-span-2 lg:col-span-1">
               <button
                 onClick={handleSearch}
                 className="w-full border border-primary/60 bg-gradient-to-r from-primary to-primary-gradient-end text-white h-[50px] px-4 font-bold transition-all duration-300 flex items-center justify-center gap-2 uppercase tracking-[0.14em] text-[11px] shadow-[0_14px_28px_-18px_rgba(185,117,50,0.85)] hover:-translate-y-0.5 hover:brightness-105"

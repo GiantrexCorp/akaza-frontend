@@ -34,7 +34,7 @@ export default function ReconcileModal({ open, onClose, onReconcile, loading }: 
         This booking is pending reconciliation. Choose an action to resolve it.
       </p>
 
-      <div className="flex gap-3 mb-6">
+      <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <button
           onClick={() => setSelectedAction('retry')}
           className={`flex-1 p-4 border text-left transition-colors ${
@@ -81,7 +81,7 @@ export default function ReconcileModal({ open, onClose, onReconcile, loading }: 
         </div>
       )}
 
-      <div className="flex gap-3 justify-end">
+      <div className="flex flex-col-reverse sm:flex-row gap-3 sm:justify-end">
         <Button variant="ghost" onClick={handleClose}>Cancel</Button>
         <Button
           variant="primary"

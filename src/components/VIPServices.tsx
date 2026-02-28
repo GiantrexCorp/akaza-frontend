@@ -34,7 +34,7 @@ export default function VIPServices() {
           <h2 className="text-primary font-bold uppercase tracking-[0.4em] text-xs mb-6 font-sans">
             Premium Service Model
           </h2>
-          <h3 className="text-4xl md:text-7xl font-serif text-[var(--text-primary)] mb-8 tracking-tight">
+          <h3 className="text-3xl sm:text-4xl lg:text-7xl font-serif text-[var(--text-primary)] mb-8 tracking-tight">
             Private Handling, End To End
           </h3>
           <div className="w-24 h-[1px] bg-gradient-to-r from-transparent via-primary to-transparent mx-auto mb-10" />

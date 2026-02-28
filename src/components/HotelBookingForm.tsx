@@ -169,7 +169,7 @@ export default function HotelBookingForm() {
                   </div>
                   <div className="space-y-4">
                     {roomGuests[roomIdx]?.guests.map((guest, guestIdx) => (
-                      <div key={`${roomIdx}-${guestIdx}-${guest.type}`} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                      <div key={`${roomIdx}-${guestIdx}-${guest.type}`} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 items-end">
                         <Input label={`Guest ${guestIdx + 1} First Name`} placeholder="First name" value={guest.name} onChange={(e) => updateGuest(roomIdx, guestIdx, 'name', e.target.value)} size="sm" />
                         <Input label="Last Name" placeholder="Last name" value={guest.surname} onChange={(e) => updateGuest(roomIdx, guestIdx, 'surname', e.target.value)} size="sm" />
                         <Select
@@ -197,7 +197,7 @@ export default function HotelBookingForm() {
             </div>
 
             <div className="lg:col-span-1">
-              <div className="sticky top-28 bg-[var(--surface-card)] border border-[var(--line-soft)] p-6">
+              <div className="lg:sticky lg:top-28 bg-[var(--surface-card)] border border-[var(--line-soft)] p-6">
                 <h3 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-6">Price Summary</h3>
                 <div className="space-y-3 mb-6">
                   {bookingData.rooms.map((room) => (

@@ -53,7 +53,7 @@ export default function BookingsPage() {
           <h1 className="text-2xl font-serif text-[var(--text-primary)] mb-6">My Bookings</h1>
 
           {/* Tabs */}
-          <div className="flex border-b border-[var(--line-soft)] mb-8">
+          <div className="flex overflow-x-auto border-b border-[var(--line-soft)] mb-8">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.key;
@@ -61,7 +61,7 @@ export default function BookingsPage() {
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
-                  className={`flex items-center gap-2 px-6 py-3 text-xs uppercase tracking-widest font-sans font-bold transition-all border-b-2 -mb-[1px] ${
+                  className={`flex items-center gap-2 px-4 sm:px-6 py-3 text-xs uppercase tracking-widest font-sans font-bold whitespace-nowrap transition-all border-b-2 -mb-[1px] ${
                     isActive
                       ? 'border-primary text-primary'
                       : 'border-transparent text-[var(--text-muted)] hover:text-primary'

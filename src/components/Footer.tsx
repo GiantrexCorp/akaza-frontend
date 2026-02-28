@@ -69,9 +69,9 @@ export default function Footer() {
               <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-primary">
                 Global Concierge Network
               </p>
-              <h3 className="mt-3 text-3xl font-serif text-[var(--text-primary)] md:text-5xl">
+              <h3 className="mt-3 text-2xl sm:text-3xl font-serif text-[var(--text-primary)] md:text-5xl">
                 Built For Discreet
-                <span className="ml-2 italic text-[var(--color-accent-light)]">Cross-Border Execution</span>
+                <span className="ml-0 sm:ml-2 block sm:inline italic text-[var(--color-accent-light)]">Cross-Border Execution</span>
               </h3>
               <p className="mt-3 text-sm leading-relaxed text-[var(--text-secondary)]">
                 From executive schedules to private leisure circuits, Akaza orchestrates every detail with precision.
@@ -148,7 +148,7 @@ export default function Footer() {
                     aria-label={social.label}
                     target={isExternal ? "_blank" : undefined}
                     rel={isExternal ? "noopener noreferrer" : undefined}
-                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[var(--line-soft)] bg-[var(--surface-card)]/55 text-[var(--text-muted)] transition-all hover:-translate-y-0.5 hover:border-primary/55 hover:text-primary"
+                    className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--line-soft)] bg-[var(--surface-card)]/55 text-[var(--text-muted)] transition-all hover:-translate-y-0.5 hover:border-primary/55 hover:text-primary"
                   >
                     <Icon size={15} />
                   </a>

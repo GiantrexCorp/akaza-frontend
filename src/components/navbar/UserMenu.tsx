@@ -58,7 +58,7 @@ export default function UserMenu({ user, isLight, onLogout }: UserMenuProps) {
               href="/dashboard/bookings"
               onClick={() => setOpen(false)}
               role="menuitem"
-              className="flex items-center gap-2 px-4 py-2.5 text-xs text-[var(--text-secondary)] hover:text-primary hover:bg-white/5 transition-colors uppercase tracking-wider font-sans"
+              className="flex items-center gap-2 px-4 py-3 text-xs text-[var(--text-secondary)] hover:text-primary hover:bg-white/5 transition-colors uppercase tracking-wider font-sans"
             >
               <LayoutDashboard size={14} />
               Dashboard
@@ -67,7 +67,7 @@ export default function UserMenu({ user, isLight, onLogout }: UserMenuProps) {
               href="/dashboard/profile"
               onClick={() => setOpen(false)}
               role="menuitem"
-              className="flex items-center gap-2 px-4 py-2.5 text-xs text-[var(--text-secondary)] hover:text-primary hover:bg-white/5 transition-colors uppercase tracking-wider font-sans"
+              className="flex items-center gap-2 px-4 py-3 text-xs text-[var(--text-secondary)] hover:text-primary hover:bg-white/5 transition-colors uppercase tracking-wider font-sans"
             >
               <User size={14} />
               Profile
@@ -75,7 +75,7 @@ export default function UserMenu({ user, isLight, onLogout }: UserMenuProps) {
             <button
               onClick={() => { setOpen(false); onLogout(); }}
               role="menuitem"
-              className="w-full flex items-center gap-2 px-4 py-2.5 text-xs text-[var(--text-secondary)] hover:text-red-400 hover:bg-red-500/5 transition-colors uppercase tracking-wider font-sans"
+              className="w-full flex items-center gap-2 px-4 py-3 text-xs text-[var(--text-secondary)] hover:text-red-400 hover:bg-red-500/5 transition-colors uppercase tracking-wider font-sans"
             >
               <LogOut size={14} />
               Logout

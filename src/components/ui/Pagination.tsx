@@ -27,7 +27,7 @@ export default function Pagination({ currentPage, lastPage, onPageChange }: Pagi
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="p-2 text-[var(--text-muted)] hover:text-primary disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        className="p-2.5 text-[var(--text-muted)] hover:text-primary disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
       >
         <ChevronLeft size={16} />
       </button>
@@ -41,7 +41,7 @@ export default function Pagination({ currentPage, lastPage, onPageChange }: Pagi
           <button
             key={page}
             onClick={() => onPageChange(page)}
-            className={`min-w-[36px] h-9 text-xs font-sans font-bold uppercase tracking-wider transition-all duration-300 ${page === currentPage ? 'bg-primary text-white' : 'text-[var(--text-muted)] hover:text-primary hover:bg-white/5'}`}
+            className={`min-w-[40px] h-10 sm:min-w-[36px] sm:h-9 text-xs font-sans font-bold uppercase tracking-wider transition-all duration-300 ${page === currentPage ? 'bg-primary text-white' : 'text-[var(--text-muted)] hover:text-primary hover:bg-white/5'}`}
           >
             {page}
           </button>
@@ -51,7 +51,7 @@ export default function Pagination({ currentPage, lastPage, onPageChange }: Pagi
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === lastPage}
-        className="p-2 text-[var(--text-muted)] hover:text-primary disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        className="p-2.5 text-[var(--text-muted)] hover:text-primary disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
       >
         <ChevronRight size={16} />
       </button>

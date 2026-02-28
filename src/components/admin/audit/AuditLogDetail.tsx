@@ -45,9 +45,11 @@ export default function AuditLogDetail({ log, onClose }: AuditLogDetailProps) {
 
   useEffect(() => {
     if (!log) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- resetting on prop change
       setFullLog(null);
       return;
     }
+     
     setFullLog(log);
     adminAuditApi.get(log.id).then(setFullLog).catch(() => {});
   }, [log]);
@@ -84,9 +86,9 @@ export default function AuditLogDetail({ log, onClose }: AuditLogDetailProps) {
           <h2 className="text-lg font-serif text-[var(--text-primary)]">Audit Entry</h2>
           <button
             onClick={onClose}
-            className="p-2 text-[var(--text-muted)] hover:text-primary transition-colors"
+            className="p-3 text-[var(--text-muted)] hover:text-primary transition-colors"
           >
-            <X size={18} />
+            <X size={20} />
           </button>
         </div>
 

@@ -45,11 +45,11 @@ export default function SubpageHero({
             {badge}
           </span>
 
-          <h1 className="text-5xl md:text-7xl font-serif text-white leading-[0.9] tracking-tight mb-4">
+          <h1 className="text-3xl sm:text-5xl md:text-7xl font-serif text-white leading-[0.9] tracking-tight mb-4">
             {title}
           </h1>
 
-          <p className="text-2xl md:text-4xl font-serif italic text-slate-200/90 mb-10">{subtitle}</p>
+          <p className="text-xl sm:text-2xl md:text-4xl font-serif italic text-slate-200/90 mb-10">{subtitle}</p>
 
           <div className="flex flex-col sm:flex-row items-center gap-4">
             <Link

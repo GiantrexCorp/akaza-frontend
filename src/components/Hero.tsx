@@ -25,7 +25,7 @@ export default function Hero() {
             Travel, handled.
           </span>
 
-          <h1 className="text-5xl md:text-7xl font-serif text-white mb-7 tracking-[0.01em] leading-[0.95] drop-shadow-[0_10px_28px_rgba(0,0,0,0.55)]">
+          <h1 className="text-3xl sm:text-5xl md:text-7xl font-serif text-white mb-7 tracking-[0.01em] leading-[0.95] drop-shadow-[0_10px_28px_rgba(0,0,0,0.55)]">
             Your journey,
             <br />
             <span className="italic bg-gradient-to-r from-[#B97532] to-[#753F20] bg-clip-text text-transparent">privately handled.</span>

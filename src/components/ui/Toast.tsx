@@ -50,7 +50,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={{ toast: addToast }}>
       {children}
-      <div className="fixed top-28 right-6 z-[200] flex flex-col gap-3 pointer-events-none">
+      <div className="fixed top-20 right-3 left-3 sm:left-auto sm:right-6 sm:top-28 z-[200] flex flex-col gap-3 pointer-events-none">
         {toasts.map((t) => (
           <ToastItem key={t.id} toast={t} onRemove={removeToast} />
         ))}
@@ -68,7 +68,7 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
   }, [toast.id, onRemove]);
 
   return (
-    <div className={`pointer-events-auto flex items-center gap-3 px-5 py-3 bg-[var(--surface-card)] border ${typeStyles[toast.type]} shadow-2xl min-w-[300px] max-w-[420px]`}>
+    <div className={`pointer-events-auto flex items-center gap-3 px-5 py-3 bg-[var(--surface-card)] border ${typeStyles[toast.type]} shadow-2xl w-full sm:min-w-[300px] sm:max-w-[420px]`}>
       <Icon size={18} className="shrink-0" />
       <p className="text-sm font-sans text-[var(--text-secondary)] flex-1">{toast.message}</p>
       <button onClick={() => onRemove(toast.id)} className="text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-colors shrink-0">

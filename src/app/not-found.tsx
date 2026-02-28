@@ -11,7 +11,7 @@ export default function NotFound() {
           <p className="text-primary text-xs font-bold uppercase tracking-[0.3em] font-sans mb-4">
             Page Not Found
           </p>
-          <h1 className="text-6xl md:text-8xl font-serif text-[var(--text-primary)] mb-6">404</h1>
+          <h1 className="text-5xl sm:text-6xl md:text-8xl font-serif text-[var(--text-primary)] mb-6">404</h1>
           <p className="text-[var(--text-secondary)] text-lg font-sans mb-10">
             The page you are looking for does not exist or has been moved.
           </p>

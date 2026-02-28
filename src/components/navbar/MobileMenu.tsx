@@ -33,7 +33,7 @@ export default function MobileMenu({ links, isActiveLink, isLight, theme, onTogg
           <Link
             key={link.label}
             href={link.href}
-            className={`block px-3 py-2 text-xs uppercase tracking-wider font-semibold transition-colors ${
+            className={`block px-3 py-3 text-xs uppercase tracking-wider font-semibold transition-colors ${
               link.href === '/#vip'
                 ? isActiveLink(link.href)
                   ? 'text-[var(--nav-vip-text)] bg-black/[0.08] shadow-[inset_0_0_0_1px_rgba(255,210,145,0.72),0_10px_22px_-16px_rgba(216,154,80,0.95)]'
@@ -59,13 +59,13 @@ export default function MobileMenu({ links, isActiveLink, isLight, theme, onTogg
               <Link
                 href="/dashboard/bookings"
                 onClick={onClose}
-                className="text-[var(--text-secondary)] hover:text-primary transition-colors text-xs uppercase tracking-widest font-medium"
+                className="block px-3 py-3 text-[var(--text-secondary)] hover:text-primary transition-colors text-xs uppercase tracking-widest font-medium"
               >
                 Dashboard
               </Link>
               <button
                 onClick={() => { onClose(); onLogout(); }}
-                className="text-[var(--text-secondary)] hover:text-red-400 transition-colors text-xs uppercase tracking-widest font-medium text-left"
+                className="block px-3 py-3 text-[var(--text-secondary)] hover:text-red-400 transition-colors text-xs uppercase tracking-widest font-medium text-left w-full"
               >
                 Logout
               </button>
@@ -74,7 +74,7 @@ export default function MobileMenu({ links, isActiveLink, isLight, theme, onTogg
             <Link
               href="/login"
               onClick={onClose}
-              className="text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors text-xs uppercase tracking-widest font-medium"
+              className="block px-3 py-3 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors text-xs uppercase tracking-widest font-medium"
             >
               Login / Register
             </Link>

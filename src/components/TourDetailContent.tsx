@@ -147,7 +147,7 @@ export default function TourDetailContent({ tour, availabilities }: TourDetailCo
               {availabilities.length > 0 && (
                 <div>
                   <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-4">Available Dates</h2>
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                     {availabilities.map((avail) => {
                       const isSelected = selectedAvailability?.id === avail.id;
                       const isSoldOut = avail.status === 'sold_out';
@@ -188,7 +188,7 @@ export default function TourDetailContent({ tour, availabilities }: TourDetailCo
             </div>
 
             <div className="lg:col-span-1">
-              <div className="sticky top-28 bg-[var(--surface-card)] border border-[var(--line-soft)] p-6">
+              <div className="lg:sticky lg:top-28 bg-[var(--surface-card)] border border-[var(--line-soft)] p-6">
                 <h3 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-6">Book This Tour</h3>
                 <div className="mb-6">
                   <p className="text-[10px] text-[var(--text-muted)] font-sans uppercase tracking-wider">Price per person</p>
@@ -209,14 +209,14 @@ export default function TourDetailContent({ tour, availabilities }: TourDetailCo
                   <div className="flex items-center gap-4">
                     <button
                       onClick={() => setGuests((g) => Math.max(1, g - 1))}
-                      className="w-9 h-9 border border-[var(--line-strong)] flex items-center justify-center text-[var(--text-muted)] hover:text-primary hover:border-primary transition-colors"
+                      className="w-11 h-11 border border-[var(--line-strong)] flex items-center justify-center text-[var(--text-muted)] hover:text-primary hover:border-primary transition-colors"
                     >
                       <Minus size={14} />
                     </button>
                     <span className="text-xl font-serif text-[var(--text-primary)] w-8 text-center">{guests}</span>
                     <button
                       onClick={() => setGuests((g) => Math.min(selectedAvailability?.remaining_spots || tour.max_capacity, g + 1))}
-                      className="w-9 h-9 border border-[var(--line-strong)] flex items-center justify-center text-[var(--text-muted)] hover:text-primary hover:border-primary transition-colors"
+                      className="w-11 h-11 border border-[var(--line-strong)] flex items-center justify-center text-[var(--text-muted)] hover:text-primary hover:border-primary transition-colors"
                     >
                       <Plus size={14} />
                     </button>

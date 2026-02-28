@@ -11,7 +11,7 @@ import type { MarketPoint } from '@/components/MarketsGlobe';
 const MarketsGlobe = dynamic(() => import('@/components/MarketsGlobe'), {
   ssr: false,
   loading: () => (
-    <div className="flex h-[430px] w-full items-center justify-center border border-[var(--line-soft)] bg-[linear-gradient(140deg,rgba(18,38,46,0.75),rgba(8,17,22,0.9))] text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)] md:h-[590px]">
+    <div className="flex h-[300px] sm:h-[430px] w-full items-center justify-center border border-[var(--line-soft)] bg-[linear-gradient(140deg,rgba(18,38,46,0.75),rgba(8,17,22,0.9))] text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)] md:h-[590px]">
       Initializing Global Interface
     </div>
   ),
@@ -194,7 +194,7 @@ export default function MarketsContent() {
 
       <section className="bg-[var(--surface-page)] px-6 pb-24">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-8 flex items-end justify-between gap-4">
+          <div className="mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
             <h3 className="text-3xl md:text-4xl font-serif">Priority Markets</h3>
             <span className="text-[11px] uppercase tracking-[0.2em] text-[var(--text-muted)]">
               Click a market to focus on the globe

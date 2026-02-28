@@ -20,8 +20,8 @@ import {
   PanelLeftOpen,
   LogOut,
   ChevronRight,
-  LayoutDashboard,
   Shield,
+  Menu,
 } from 'lucide-react';
 import AkazaLogo from '@/components/AkazaLogo';
 import { useAuth } from '@/lib/auth';
@@ -103,12 +103,16 @@ const SIDEBAR_KEY = 'admin_sidebar_collapsed';
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return localStorage.getItem(SIDEBAR_KEY) === 'true';
+  });
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem(SIDEBAR_KEY);
-    if (stored === 'true') setCollapsed(true);
-  }, []);
+    document.body.style.overflow = mobileOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileOpen]);
 
   const toggleCollapsed = () => {
     const next = !collapsed;
@@ -122,19 +126,40 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
   return (
     <div className="min-h-screen bg-[var(--surface-page)] flex">
+      {/* Mobile header bar */}
+      <div className="fixed top-0 left-0 right-0 h-16 bg-[var(--surface-card)] border-b border-[var(--line-soft)] flex items-center justify-between px-4 z-50 lg:hidden">
+        <button
+          onClick={() => setMobileOpen(true)}
+          className="p-2 text-[var(--text-muted)] hover:text-primary transition-colors"
+          aria-label="Open sidebar"
+        >
+          <Menu size={20} />
+        </button>
+        <Link href="/admin" className="flex items-center">
+          <AkazaLogo className="!w-[120px]" />
+        </Link>
+        <div className="w-10" />
+      </div>
+
+      {/* Mobile backdrop */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-screen bg-[var(--surface-card)] border-r border-[var(--line-soft)] flex flex-col transition-all duration-300 z-40 ${
-          collapsed ? 'w-[68px]' : 'w-[260px]'
-        }`}
+        className={`fixed top-0 left-0 h-screen bg-[var(--surface-card)] border-r border-[var(--line-soft)] flex flex-col transition-all duration-300 z-50 ${
+          collapsed ? 'lg:w-[68px]' : 'lg:w-[260px]'
+        } w-[260px] ${mobileOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}
       >
         {/* Logo area */}
         <div className="flex items-center justify-between px-4 h-16 border-b border-[var(--line-soft)] shrink-0">
-          {!collapsed && (
-            <Link href="/admin" className="flex items-center">
-              <AkazaLogo className="!w-[120px]" />
-            </Link>
-          )}
+          <Link href="/admin" className={`flex items-center ${collapsed ? 'lg:hidden' : ''}`}>
+            <AkazaLogo className="!w-[120px]" />
+          </Link>
           <button
             onClick={toggleCollapsed}
             className="p-2 text-[var(--text-muted)] hover:text-primary transition-colors"
@@ -148,11 +173,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-6">
           {sections.map((section) => (
             <div key={section.title}>
-              {!collapsed && (
-                <p className="px-3 mb-2 text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans">
-                  {section.title}
-                </p>
-              )}
+              <p className={`px-3 mb-2 text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans ${collapsed ? 'lg:hidden' : ''}`}>
+                {section.title}
+              </p>
               <div className="space-y-0.5">
                 {section.links.map((link) => {
                   const Icon = link.icon;
@@ -162,8 +185,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                       key={link.href}
                       href={link.href}
                       title={collapsed ? link.label : undefined}
+                      onClick={() => setMobileOpen(false)}
                       className={`flex items-center gap-3 px-3 py-2.5 text-xs font-sans font-medium transition-all duration-200 ${
-                        collapsed ? 'justify-center' : ''
+                        collapsed ? 'lg:justify-center' : ''
                       } ${
                         isActive
                           ? 'bg-primary/10 text-primary border-l-2 border-primary'
@@ -171,12 +195,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
                       }`}
                     >
                       <Icon size={16} className="shrink-0" />
-                      {!collapsed && (
-                        <>
-                          <span className="truncate">{link.label}</span>
-                          {isActive && <ChevronRight size={12} className="ml-auto shrink-0" />}
-                        </>
-                      )}
+                      <span className={`truncate ${collapsed ? 'lg:hidden' : ''}`}>{link.label}</span>
+                      {isActive && <ChevronRight size={12} className={`ml-auto shrink-0 ${collapsed ? 'lg:hidden' : ''}`} />}
                     </Link>
                   );
                 })}
@@ -187,44 +207,34 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
 
         {/* User card + logout */}
         <div className="border-t border-[var(--line-soft)] p-3 shrink-0">
-          {!collapsed ? (
-            <div className="flex items-center gap-3 mb-3 px-2">
-              <div className="w-8 h-8 bg-primary/20 flex items-center justify-center shrink-0">
-                <span className="text-xs font-bold text-primary font-sans">
-                  {user.name.charAt(0).toUpperCase()}
-                </span>
-              </div>
-              <div className="min-w-0">
-                <p className="text-sm font-serif text-[var(--text-primary)] truncate">{user.name}</p>
-                <p className="text-[10px] text-[var(--text-muted)] font-sans truncate">{user.email}</p>
-              </div>
+          <div className={`flex items-center gap-3 mb-3 px-2 ${collapsed ? 'lg:justify-center' : ''}`}>
+            <div className="w-8 h-8 bg-primary/20 flex items-center justify-center shrink-0">
+              <span className="text-xs font-bold text-primary font-sans">
+                {user.name.charAt(0).toUpperCase()}
+              </span>
             </div>
-          ) : (
-            <div className="flex justify-center mb-3">
-              <div className="w-8 h-8 bg-primary/20 flex items-center justify-center">
-                <span className="text-xs font-bold text-primary font-sans">
-                  {user.name.charAt(0).toUpperCase()}
-                </span>
-              </div>
+            <div className={`min-w-0 ${collapsed ? 'lg:hidden' : ''}`}>
+              <p className="text-sm font-serif text-[var(--text-primary)] truncate">{user.name}</p>
+              <p className="text-[10px] text-[var(--text-muted)] font-sans truncate">{user.email}</p>
             </div>
-          )}
+          </div>
           <button
             onClick={() => logout()}
             title={collapsed ? 'Logout' : undefined}
             className={`w-full flex items-center gap-3 px-3 py-2.5 text-xs font-sans font-medium text-[var(--text-muted)] hover:text-red-400 hover:bg-red-500/5 transition-all duration-200 ${
-              collapsed ? 'justify-center' : ''
+              collapsed ? 'lg:justify-center' : ''
             }`}
           >
             <LogOut size={16} className="shrink-0" />
-            {!collapsed && <span>Logout</span>}
+            <span className={collapsed ? 'lg:hidden' : ''}>Logout</span>
           </button>
         </div>
       </aside>
 
       {/* Main content */}
       <main
-        className={`flex-1 transition-all duration-300 ${
-          collapsed ? 'ml-[68px]' : 'ml-[260px]'
+        className={`flex-1 transition-all duration-300 pt-20 lg:pt-0 ${
+          collapsed ? 'lg:ml-[68px]' : 'lg:ml-[260px]'
         }`}
       >
         <div className="max-w-7xl mx-auto px-6 py-8">

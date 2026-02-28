@@ -77,7 +77,7 @@ export default function ContactInfo() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.label}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--line-soft)] text-[var(--text-muted)] transition-all hover:-translate-y-0.5 hover:border-primary/55 hover:text-primary"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--line-soft)] text-[var(--text-muted)] transition-all hover:-translate-y-0.5 hover:border-primary/55 hover:text-primary"
                 >
                   <Icon size={14} />
                 </a>

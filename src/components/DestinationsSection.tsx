@@ -181,7 +181,7 @@ export default function DestinationsSection({
             <span className="inline-flex items-center px-4 py-2 rounded-full border border-primary/40 bg-primary/10 text-primary font-semibold uppercase tracking-[0.24em] text-[10px] mb-6">
               {section.label}
             </span>
-            <h3 className="text-4xl md:text-7xl font-serif text-[var(--destinations-title)] leading-[0.95] tracking-tight">
+            <h3 className="text-3xl sm:text-4xl lg:text-7xl font-serif text-[var(--destinations-title)] leading-[0.95] tracking-tight">
               {section.heading}
               <br />
               <span className="italic text-[var(--destinations-body)]">{section.subheading}</span>

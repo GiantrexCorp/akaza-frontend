@@ -84,7 +84,7 @@ export default function ProcessTimeline() {
                 >
                   {reverse ? (
                     <>
-                      <div className="relative overflow-hidden border border-[var(--line-soft)] bg-[var(--surface-card)] shadow-[0_20px_45px_-30px_rgba(0,0,0,0.6)] transition-all duration-500 group-hover/step:-translate-y-1 group-hover/step:border-primary/45 group-hover/step:shadow-[0_28px_50px_-28px_rgba(185,117,50,0.85)]">
+                      <div className="relative overflow-hidden border border-[var(--line-soft)] bg-[var(--surface-card)] shadow-[0_20px_45px_-30px_rgba(0,0,0,0.6)] transition-all duration-500 group-hover/step:-translate-y-1 group-hover/step:border-primary/45 group-hover/step:shadow-[0_28px_50px_-28px_rgba(185,117,50,0.85)] order-2 lg:order-none">
                         <Image
                           src={step.image}
                           alt={step.alt}
@@ -101,7 +101,7 @@ export default function ProcessTimeline() {
                         </span>
                       </div>
 
-                      <div className="lg:pr-8">
+                      <div className="lg:pr-8 order-1 lg:order-none">
                         <span className="text-primary text-[11px] font-bold uppercase tracking-[0.2em]">
                           {step.number}
                         </span>

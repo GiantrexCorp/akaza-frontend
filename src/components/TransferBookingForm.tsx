@@ -119,18 +119,18 @@ export default function TransferBookingForm() {
                   <div>
                     <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-3">Passengers</p>
                     <div className="flex items-center gap-4">
-                      <button type="button" onClick={() => setPassengers((p) => Math.max(1, p - 1))} className="w-9 h-9 border border-[var(--line-strong)] flex items-center justify-center text-[var(--text-muted)] hover:text-primary hover:border-primary transition-colors text-lg">-</button>
+                      <button type="button" onClick={() => setPassengers((p) => Math.max(1, p - 1))} className="w-11 h-11 border border-[var(--line-strong)] flex items-center justify-center text-[var(--text-muted)] hover:text-primary hover:border-primary transition-colors text-lg">-</button>
                       <span className="text-xl font-serif text-[var(--text-primary)] w-8 text-center">{passengers}</span>
-                      <button type="button" onClick={() => setPassengers((p) => Math.min(maxPax, p + 1))} className="w-9 h-9 border border-[var(--line-strong)] flex items-center justify-center text-[var(--text-muted)] hover:text-primary hover:border-primary transition-colors text-lg">+</button>
+                      <button type="button" onClick={() => setPassengers((p) => Math.min(maxPax, p + 1))} className="w-11 h-11 border border-[var(--line-strong)] flex items-center justify-center text-[var(--text-muted)] hover:text-primary hover:border-primary transition-colors text-lg">+</button>
                       <span className="text-[10px] text-[var(--text-muted)] font-sans">Max {maxPax}</span>
                     </div>
                   </div>
                   <div>
                     <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-3">Luggage</p>
                     <div className="flex items-center gap-4">
-                      <button type="button" onClick={() => setLuggageCount((l) => Math.max(0, l - 1))} className="w-9 h-9 border border-[var(--line-strong)] flex items-center justify-center text-[var(--text-muted)] hover:text-primary hover:border-primary transition-colors text-lg">-</button>
+                      <button type="button" onClick={() => setLuggageCount((l) => Math.max(0, l - 1))} className="w-11 h-11 border border-[var(--line-strong)] flex items-center justify-center text-[var(--text-muted)] hover:text-primary hover:border-primary transition-colors text-lg">-</button>
                       <span className="text-xl font-serif text-[var(--text-primary)] w-8 text-center">{luggageCount}</span>
-                      <button type="button" onClick={() => setLuggageCount((l) => Math.min(maxLuggage, l + 1))} className="w-9 h-9 border border-[var(--line-strong)] flex items-center justify-center text-[var(--text-muted)] hover:text-primary hover:border-primary transition-colors text-lg">+</button>
+                      <button type="button" onClick={() => setLuggageCount((l) => Math.min(maxLuggage, l + 1))} className="w-11 h-11 border border-[var(--line-strong)] flex items-center justify-center text-[var(--text-muted)] hover:text-primary hover:border-primary transition-colors text-lg">+</button>
                       <span className="text-[10px] text-[var(--text-muted)] font-sans">Max {maxLuggage}</span>
                     </div>
                   </div>
@@ -165,7 +165,7 @@ export default function TransferBookingForm() {
             </div>
 
             <div className="lg:col-span-1">
-              <div className="sticky top-28 bg-[var(--surface-card)] border border-[var(--line-soft)] p-6">
+              <div className="lg:sticky lg:top-28 bg-[var(--surface-card)] border border-[var(--line-soft)] p-6">
                 <h3 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-6">Booking Summary</h3>
                 <div className="space-y-3 mb-6">
                   <div className="flex justify-between">

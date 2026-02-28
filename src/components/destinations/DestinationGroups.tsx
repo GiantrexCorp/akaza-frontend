@@ -144,7 +144,7 @@ function MosaicLayout({ group }: { group: DestinationGroup }) {
           >
             <article
               className={`relative overflow-hidden border border-[var(--destinations-card-border)] bg-black/30 transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-primary/75 hover:shadow-[0_28px_70px_rgba(0,0,0,0.56)] ${
-                isCairo ? 'h-[540px] md:h-[620px] xl:h-full' : 'h-[300px] xl:h-full'
+                isCairo ? 'h-[400px] sm:h-[540px] md:h-[620px] xl:h-full' : 'h-[280px] sm:h-[300px] xl:h-full'
               }`}
             >
               <Image
@@ -168,7 +168,7 @@ function MosaicLayout({ group }: { group: DestinationGroup }) {
                     {destination.eyebrow}
                   </p>
                 )}
-                <h4 className={`font-serif text-white leading-[0.95] ${isCairo ? 'text-5xl md:text-6xl' : 'text-[2.2rem]'}`}>
+                <h4 className={`font-serif text-white leading-[0.95] ${isCairo ? 'text-4xl sm:text-5xl md:text-6xl' : 'text-[2.2rem]'}`}>
                   {destination.name}
                 </h4>
               </div>
@@ -200,7 +200,7 @@ function GridLayout({ group }: { group: DestinationGroup }) {
               <div className="absolute inset-0 ring-1 ring-inset ring-white/10 transition-colors duration-500 group-hover/destination:ring-primary/70" />
 
               <div className="absolute left-5 bottom-5 z-10 pr-5 transition-transform duration-500 group-hover/destination:-translate-y-1">
-                <h4 className="text-5xl font-serif text-white leading-[0.95]">{destination.name}</h4>
+                <h4 className="text-3xl sm:text-5xl font-serif text-white leading-[0.95]">{destination.name}</h4>
               </div>
             </article>
           </Link>
@@ -274,7 +274,7 @@ export default function DestinationGroups() {
             <article key={group.title} className="space-y-8">
               <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-5 pb-6 border-b border-[var(--destinations-divider)]">
                 <div>
-                  <h3 className="text-4xl md:text-6xl font-serif text-[var(--destinations-title)] leading-tight">{group.title}</h3>
+                  <h3 className="text-3xl sm:text-4xl md:text-6xl font-serif text-[var(--destinations-title)] leading-tight">{group.title}</h3>
                   <p className="mt-2 text-primary text-lg font-sans">{group.subtitle}</p>
                 </div>
 

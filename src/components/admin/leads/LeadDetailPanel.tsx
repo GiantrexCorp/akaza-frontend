@@ -141,9 +141,9 @@ export default function LeadDetailPanel({ lead, onClose, onUpdated }: LeadDetail
           <h2 className="text-lg font-serif text-[var(--text-primary)]">Lead Details</h2>
           <button
             onClick={onClose}
-            className="p-2 text-[var(--text-muted)] hover:text-primary transition-colors"
+            className="p-3 text-[var(--text-muted)] hover:text-primary transition-colors"
           >
-            <X size={18} />
+            <X size={20} />
           </button>
         </div>
 

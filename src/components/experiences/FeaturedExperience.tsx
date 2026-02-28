@@ -54,7 +54,7 @@ export default function FeaturedExperience() {
         id="experience-categories"
         className="border-y border-[var(--line-soft)] bg-[var(--experiences-section)]/85"
       >
-        <div className="mx-auto max-w-7xl overflow-x-auto px-6">
+        <div className="relative mx-auto max-w-7xl overflow-x-auto px-6">
           <div className="flex min-w-max items-center gap-3 py-5">
             {categories.map((category, index) => (
               <button
@@ -70,6 +70,7 @@ export default function FeaturedExperience() {
               </button>
             ))}
           </div>
+          <span className="pointer-events-none absolute right-0 top-0 h-full w-10 bg-gradient-to-l from-[var(--experiences-section)] to-transparent sm:hidden" />
         </div>
       </section>
 

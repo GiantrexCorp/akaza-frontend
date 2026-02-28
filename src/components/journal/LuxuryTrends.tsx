@@ -45,7 +45,7 @@ export default function LuxuryTrends() {
                 data-reveal
                 className="reveal-item group flex gap-4 border border-[var(--line-soft)] bg-[var(--surface-card)]/45 p-4 transition-all duration-500 hover:border-primary/55 hover:-translate-y-0.5"
               >
-                <div className="relative h-18 w-28 shrink-0 overflow-hidden border border-[var(--line-soft)]">
+                <div className="relative h-20 w-20 sm:h-18 sm:w-28 shrink-0 overflow-hidden border border-[var(--line-soft)]">
                   <Image
                     src={trend.image}
                     alt={trend.title}
