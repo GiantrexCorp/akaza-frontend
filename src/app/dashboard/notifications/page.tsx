@@ -33,7 +33,7 @@ export default function NotificationsPage() {
   const markAllReadMutation = useMarkAllRead();
 
   const notifications = data?.data ?? [];
-  const lastPage = data?.meta.last_page ?? 1;
+  const lastPage = data?.meta?.last_page ?? 1;
 
   const handleMarkAsRead = (id: string) => {
     markReadMutation.mutate(id, {

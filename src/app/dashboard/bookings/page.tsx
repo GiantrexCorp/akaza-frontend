@@ -43,9 +43,9 @@ export default function BookingsPage() {
   const tourBookings = tourQuery.data?.data ?? [];
   const transferBookings = transferQuery.data?.data ?? [];
 
-  const hotelLastPage = hotelQuery.data?.meta.last_page ?? 1;
-  const tourLastPage = tourQuery.data?.meta.last_page ?? 1;
-  const transferLastPage = transferQuery.data?.meta.last_page ?? 1;
+  const hotelLastPage = hotelQuery.data?.meta?.last_page ?? 1;
+  const tourLastPage = tourQuery.data?.meta?.last_page ?? 1;
+  const transferLastPage = transferQuery.data?.meta?.last_page ?? 1;
 
   const loading = activeTab === 'hotels' ? hotelQuery.isLoading : activeTab === 'tours' ? tourQuery.isLoading : transferQuery.isLoading;
 
