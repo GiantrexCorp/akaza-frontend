@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { Button, Input, Select, Modal, PhoneInput } from '@/components/ui';
 import type { E164Number } from '@/components/ui';
 import { validatePhone } from '@/lib/validation/phone';
+import { useFormValidation } from '@/hooks/useFormValidation';
+import { createLeadSchema } from '@/lib/validation/schemas/admin';
 import { adminLeadsApi } from '@/lib/api/admin-leads';
 import { ApiError } from '@/lib/api/client';
 import { useToast } from '@/components/ui/Toast';
@@ -26,7 +28,8 @@ const sourceOptions = [
 export default function CreateLeadModal({ open, onClose, onCreated }: CreateLeadModalProps) {
   const { toast } = useToast();
   const [submitting, setSubmitting] = useState(false);
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
+  const [apiFieldErrors, setApiFieldErrors] = useState<Record<string, string[]>>({});
+  const { errors: validationErrors, validate, clearError, clearErrors } = useFormValidation(createLeadSchema);
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -40,7 +43,8 @@ export default function CreateLeadModal({ open, onClose, onCreated }: CreateLead
     setPhone(undefined);
     setSource('website');
     setNotes('');
-    setFieldErrors({});
+    setApiFieldErrors({});
+    clearErrors();
   };
 
   const handleClose = () => {
@@ -48,15 +52,24 @@ export default function CreateLeadModal({ open, onClose, onCreated }: CreateLead
     onClose();
   };
 
+  const fieldError = (field: string): string | undefined =>
+    validationErrors[field] || apiFieldErrors[field]?.[0];
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const phoneErr = validatePhone(phone);
-    if (phoneErr) {
-      setFieldErrors({ phone: [phoneErr] });
+    setApiFieldErrors({});
+
+    if (!validate({ name, email, source, notes })) {
       return;
     }
+
+    const phoneErr = validatePhone(phone);
+    if (phoneErr) {
+      setApiFieldErrors({ phone: [phoneErr] });
+      return;
+    }
+
     setSubmitting(true);
-    setFieldErrors({});
 
     try {
       await adminLeadsApi.create({
@@ -71,7 +84,7 @@ export default function CreateLeadModal({ open, onClose, onCreated }: CreateLead
       onCreated();
     } catch (err) {
       if (err instanceof ApiError) {
-        setFieldErrors(err.fieldErrors);
+        setApiFieldErrors(err.fieldErrors);
         toast('error', err.errors[0] || 'Failed to create lead');
       }
     } finally {
@@ -86,30 +99,30 @@ export default function CreateLeadModal({ open, onClose, onCreated }: CreateLead
           <Input
             label="Name"
             value={name}
-            onChange={(e) => setName(e.target.value)}
-            error={fieldErrors.name?.[0]}
+            onChange={(e) => { setName(e.target.value); clearError('name'); }}
+            error={fieldError('name')}
             required
           />
           <Input
             label="Email"
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            error={fieldErrors.email?.[0]}
+            onChange={(e) => { setEmail(e.target.value); clearError('email'); }}
+            error={fieldError('email')}
             required
           />
           <PhoneInput
             label="Phone"
             value={phone}
-            onChange={setPhone}
-            error={fieldErrors.phone?.[0]}
+            onChange={(val) => { setPhone(val); setApiFieldErrors((prev) => { const next = { ...prev }; delete next.phone; return next; }); }}
+            error={fieldError('phone')}
           />
           <Select
             label="Source"
             options={sourceOptions}
             value={source}
-            onChange={(e) => setSource(e.target.value as LeadSource)}
-            error={fieldErrors.source?.[0]}
+            onChange={(e) => { setSource(e.target.value as LeadSource); clearError('source'); }}
+            error={fieldError('source')}
           />
         </div>
         <div>
@@ -118,12 +131,12 @@ export default function CreateLeadModal({ open, onClose, onCreated }: CreateLead
           </label>
           <textarea
             value={notes}
-            onChange={(e) => setNotes(e.target.value)}
+            onChange={(e) => { setNotes(e.target.value); clearError('notes'); }}
             rows={3}
             className="w-full bg-transparent border border-[var(--line-strong)] focus:border-primary text-[var(--field-text)] placeholder-[var(--field-placeholder)] font-sans text-sm p-3 outline-none transition-colors duration-300 resize-none"
           />
-          {fieldErrors.notes && (
-            <p className="text-red-400 text-xs font-sans mt-1">{fieldErrors.notes[0]}</p>
+          {fieldError('notes') && (
+            <p className="text-red-400 text-xs font-sans mt-1">{fieldError('notes')}</p>
           )}
         </div>
 

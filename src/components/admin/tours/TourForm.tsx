@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { Input, Select, Button } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast';
+import { useFormValidation } from '@/hooks/useFormValidation';
+import { tourFormSchema } from '@/lib/validation/schemas/admin';
 import { adminToursApi } from '@/lib/api/admin-tours';
 import { ApiError } from '@/lib/api/client';
 import type { AdminTour, CreateTourRequest, UpdateTourRequest, TourStatus } from '@/types/tour';
@@ -54,7 +56,8 @@ export default function TourForm({ tour, onSaved }: TourFormProps) {
   const [includes, setIncludes] = useState(tour?.includes?.join(', ') || '');
   const [excludes, setExcludes] = useState(tour?.excludes?.join(', ') || '');
   const [saving, setSaving] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [apiErrors, setApiErrors] = useState<Record<string, string>>({});
+  const { errors: validationErrors, validate, clearError, clearErrors } = useFormValidation(tourFormSchema);
 
   const handleLocaleChange = (
     setter: React.Dispatch<React.SetStateAction<LocaleMap>>,
@@ -67,13 +70,22 @@ export default function TourForm({ tour, onSaved }: TourFormProps) {
   const parseList = (str: string): string[] =>
     str.split(',').map((s) => s.trim()).filter(Boolean);
 
+  const fieldError = (field: string): string | undefined =>
+    validationErrors[field] || apiErrors[field];
+
   const handleSubmit = async () => {
-    setErrors({});
-    if (!title.en) { setErrors({ 'title.en': 'English title is required' }); return; }
-    if (!description.en) { setErrors({ 'description.en': 'English description is required' }); return; }
-    if (!location) { setErrors({ location: 'Location is required' }); return; }
-    if (!pricePerPerson) { setErrors({ price_per_person: 'Price is required' }); return; }
-    if (!maxCapacity) { setErrors({ max_capacity: 'Capacity is required' }); return; }
+    setApiErrors({});
+
+    if (!validate({
+      title: { en: title.en || '', de: title.de || '', fr: title.fr || '' },
+      description: { en: description.en || '', de: description.de || '', fr: description.fr || '' },
+      location,
+      price_per_person: pricePerPerson,
+      max_capacity: maxCapacity,
+      currency,
+    })) {
+      return;
+    }
 
     setSaving(true);
     try {
@@ -109,7 +121,7 @@ export default function TourForm({ tour, onSaved }: TourFormProps) {
           for (const [k, v] of Object.entries(err.fieldErrors)) {
             mapped[k] = v[0];
           }
-          setErrors(mapped);
+          setApiErrors(mapped);
         }
       }
     } finally {
@@ -142,8 +154,8 @@ export default function TourForm({ tour, onSaved }: TourFormProps) {
           label={`Title (${activeLocale})`}
           size="sm"
           value={title[activeLocale] || ''}
-          onChange={(e) => handleLocaleChange(setTitle, activeLocale, e.target.value)}
-          error={errors[`title.${activeLocale}`] || (activeLocale === 'en' ? errors['title.en'] : undefined)}
+          onChange={(e) => { handleLocaleChange(setTitle, activeLocale, e.target.value); clearError(`title.${activeLocale}`); }}
+          error={fieldError(`title.${activeLocale}`)}
         />
         <div>
           <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-2">
@@ -151,13 +163,13 @@ export default function TourForm({ tour, onSaved }: TourFormProps) {
           </label>
           <textarea
             value={description[activeLocale] || ''}
-            onChange={(e) => handleLocaleChange(setDescription, activeLocale, e.target.value)}
+            onChange={(e) => { handleLocaleChange(setDescription, activeLocale, e.target.value); clearError(`description.${activeLocale}`); }}
             rows={6}
             className="w-full bg-transparent border border-[var(--line-soft)] focus:border-primary text-[var(--field-text)] font-serif text-sm px-4 py-3 outline-none transition-colors duration-300 resize-y"
           />
-          {(errors[`description.${activeLocale}`] || (activeLocale === 'en' && errors['description.en'])) && (
+          {fieldError(`description.${activeLocale}`) && (
             <p className="text-red-400 text-xs font-sans mt-1">
-              {errors[`description.${activeLocale}`] || errors['description.en']}
+              {fieldError(`description.${activeLocale}`)}
             </p>
           )}
         </div>
@@ -169,8 +181,8 @@ export default function TourForm({ tour, onSaved }: TourFormProps) {
           label="Location"
           size="sm"
           value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          error={errors.location}
+          onChange={(e) => { setLocation(e.target.value); clearError('location'); }}
+          error={fieldError('location')}
         />
         <Input
           label="Latitude"
@@ -212,16 +224,16 @@ export default function TourForm({ tour, onSaved }: TourFormProps) {
           type="number"
           step="0.01"
           value={pricePerPerson}
-          onChange={(e) => setPricePerPerson(e.target.value)}
-          error={errors.price_per_person}
+          onChange={(e) => { setPricePerPerson(e.target.value); clearError('price_per_person'); }}
+          error={fieldError('price_per_person')}
         />
         <Input
           label="Max capacity"
           size="sm"
           type="number"
           value={maxCapacity}
-          onChange={(e) => setMaxCapacity(e.target.value)}
-          error={errors.max_capacity}
+          onChange={(e) => { setMaxCapacity(e.target.value); clearError('max_capacity'); }}
+          error={fieldError('max_capacity')}
         />
       </div>
 

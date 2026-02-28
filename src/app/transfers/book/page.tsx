@@ -9,6 +9,8 @@ import Footer from '@/components/Footer';
 import { Input, Button, Spinner, PhoneInput } from '@/components/ui';
 import type { E164Number } from '@/components/ui';
 import { validatePhone } from '@/lib/validation/phone';
+import { useFormValidation } from '@/hooks/useFormValidation';
+import { transferBookingSchema } from '@/lib/validation/schemas/booking';
 import { useCreateTransferBooking } from '@/hooks/useTransfers';
 import { useToast } from '@/components/ui/Toast';
 import { ApiError } from '@/lib/api/client';
@@ -40,6 +42,7 @@ function TransferBookingForm() {
   const [flightNumber, setFlightNumber] = useState('');
   const [specialRequests, setSpecialRequests] = useState('');
   const createBookingMutation = useCreateTransferBooking();
+  const { errors, validate, clearError } = useFormValidation(transferBookingSchema);
   const [agreed, setAgreed] = useState(false);
 
   const formatPrice = (p: number) => {
@@ -48,17 +51,10 @@ function TransferBookingForm() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!contactName || !contactEmail || !contactPhone) {
-      toast('error', 'Please fill in contact information');
-      return;
-    }
+    if (!validate({ contactName, contactEmail, pickupDate, pickupTime })) return;
     const phoneErr = validatePhone(contactPhone);
     if (phoneErr) {
       toast('error', phoneErr);
-      return;
-    }
-    if (!pickupDate || !pickupTime) {
-      toast('error', 'Please select pickup date and time');
       return;
     }
     if (!agreed) {
@@ -116,8 +112,8 @@ function TransferBookingForm() {
               <div className="bg-[var(--surface-card)] border border-[var(--line-soft)] p-6">
                 <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-6">Contact Information</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Input label="Full Name" placeholder="John Doe" value={contactName} onChange={(e) => setContactName(e.target.value)} icon={<User size={18} />} />
-                  <Input label="Email" type="email" placeholder="your@email.com" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} icon={<Mail size={18} />} />
+                  <Input label="Full Name" placeholder="John Doe" value={contactName} onChange={(e) => { setContactName(e.target.value); clearError('contactName'); }} error={errors.contactName} icon={<User size={18} />} />
+                  <Input label="Email" type="email" placeholder="your@email.com" value={contactEmail} onChange={(e) => { setContactEmail(e.target.value); clearError('contactEmail'); }} error={errors.contactEmail} icon={<Mail size={18} />} />
                   <PhoneInput label="Phone" value={contactPhone} onChange={setContactPhone} required />
                 </div>
               </div>
@@ -126,8 +122,8 @@ function TransferBookingForm() {
               <div className="bg-[var(--surface-card)] border border-[var(--line-soft)] p-6">
                 <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-6">Trip Details</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Input label="Pickup Date" type="date" value={pickupDate} onChange={(e) => setPickupDate(e.target.value)} icon={<Calendar size={18} />} />
-                  <Input label="Pickup Time" type="time" value={pickupTime} onChange={(e) => setPickupTime(e.target.value)} icon={<Clock size={18} />} />
+                  <Input label="Pickup Date" type="date" value={pickupDate} onChange={(e) => { setPickupDate(e.target.value); clearError('pickupDate'); }} error={errors.pickupDate} icon={<Calendar size={18} />} />
+                  <Input label="Pickup Time" type="time" value={pickupTime} onChange={(e) => { setPickupTime(e.target.value); clearError('pickupTime'); }} error={errors.pickupTime} icon={<Clock size={18} />} />
                   <div>
                     <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-3">Passengers</p>
                     <div className="flex items-center gap-4">

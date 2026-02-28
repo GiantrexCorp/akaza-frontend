@@ -9,6 +9,8 @@ import Footer from '@/components/Footer';
 import { Input, Button, Spinner, Select, Badge, PhoneInput } from '@/components/ui';
 import type { E164Number } from '@/components/ui';
 import { validatePhone } from '@/lib/validation/phone';
+import { useFormValidation } from '@/hooks/useFormValidation';
+import { hotelBookingSchema } from '@/lib/validation/schemas/booking';
 import { useCreateHotelBooking } from '@/hooks/useHotels';
 import { useToast } from '@/components/ui/Toast';
 import { ApiError } from '@/lib/api/client';
@@ -57,6 +59,7 @@ function BookingFormContent() {
     }))
   );
   const createBookingMutation = useCreateHotelBooking();
+  const { errors, validate, clearError } = useFormValidation(hotelBookingSchema);
   const [agreed, setAgreed] = useState(false);
 
   if (!bookingData || !bookingData.rooms?.length) {
@@ -88,10 +91,7 @@ function BookingFormContent() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!holderName || !holderSurname || !holderEmail) {
-      toast('error', 'Please fill in holder information');
-      return;
-    }
+    if (!validate({ holderName, holderSurname, holderEmail })) return;
     const phoneErr = validatePhone(holderPhone);
     if (phoneErr) {
       toast('error', phoneErr);
@@ -162,9 +162,9 @@ function BookingFormContent() {
               <div className="bg-[var(--surface-card)] border border-[var(--line-soft)] p-6">
                 <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-6">Contact Information</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Input label="First Name" placeholder="John" value={holderName} onChange={(e) => setHolderName(e.target.value)} icon={<User size={18} />} />
-                  <Input label="Last Name" placeholder="Doe" value={holderSurname} onChange={(e) => setHolderSurname(e.target.value)} icon={<User size={18} />} />
-                  <Input label="Email" type="email" placeholder="your@email.com" value={holderEmail} onChange={(e) => setHolderEmail(e.target.value)} icon={<Mail size={18} />} />
+                  <Input label="First Name" placeholder="John" value={holderName} onChange={(e) => { setHolderName(e.target.value); clearError('holderName'); }} error={errors.holderName} icon={<User size={18} />} />
+                  <Input label="Last Name" placeholder="Doe" value={holderSurname} onChange={(e) => { setHolderSurname(e.target.value); clearError('holderSurname'); }} error={errors.holderSurname} icon={<User size={18} />} />
+                  <Input label="Email" type="email" placeholder="your@email.com" value={holderEmail} onChange={(e) => { setHolderEmail(e.target.value); clearError('holderEmail'); }} error={errors.holderEmail} icon={<Mail size={18} />} />
                   <PhoneInput label="Phone" value={holderPhone} onChange={setHolderPhone} />
                 </div>
               </div>

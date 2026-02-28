@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { Input, Select, Button } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast';
+import { useFormValidation } from '@/hooks/useFormValidation';
+import { vehicleFormSchema } from '@/lib/validation/schemas/admin';
 import { adminTransfersApi } from '@/lib/api/admin-transfers';
 import { ApiError } from '@/lib/api/client';
 import type { AdminTransferVehicle, CreateVehicleRequest, UpdateVehicleRequest, VehicleType } from '@/types/transfer';
@@ -48,7 +50,8 @@ export default function VehicleForm({ vehicle, onSaved }: VehicleFormProps) {
   const [sortOrder, setSortOrder] = useState(vehicle?.sort_order ? String(vehicle.sort_order) : '0');
   const [status, setStatus] = useState<'active' | 'inactive'>(vehicle?.status || 'active');
   const [saving, setSaving] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [apiErrors, setApiErrors] = useState<Record<string, string>>({});
+  const { errors: validationErrors, validate, clearError, clearErrors } = useFormValidation(vehicleFormSchema);
 
   const handleLocaleChange = (
     setter: React.Dispatch<React.SetStateAction<LocaleMap>>,
@@ -58,10 +61,19 @@ export default function VehicleForm({ vehicle, onSaved }: VehicleFormProps) {
     setter((prev) => ({ ...prev, [locale]: value }));
   };
 
+  const fieldError = (field: string): string | undefined =>
+    validationErrors[field] || apiErrors[field];
+
   const handleSubmit = async () => {
-    setErrors({});
-    if (!name.en) { setErrors({ 'name.en': 'English name is required' }); return; }
-    if (!maxPassengers) { setErrors({ max_passengers: 'Max passengers is required' }); return; }
+    setApiErrors({});
+
+    if (!validate({
+      name: { en: name.en || '', de: name.de || '', fr: name.fr || '' },
+      type,
+      max_passengers: maxPassengers,
+    })) {
+      return;
+    }
 
     setSaving(true);
     try {
@@ -90,7 +102,7 @@ export default function VehicleForm({ vehicle, onSaved }: VehicleFormProps) {
           for (const [k, v] of Object.entries(err.fieldErrors)) {
             mapped[k] = v[0];
           }
-          setErrors(mapped);
+          setApiErrors(mapped);
         }
       }
     } finally {
@@ -123,8 +135,8 @@ export default function VehicleForm({ vehicle, onSaved }: VehicleFormProps) {
           label={`Name (${activeLocale})`}
           size="sm"
           value={name[activeLocale] || ''}
-          onChange={(e) => handleLocaleChange(setName, activeLocale, e.target.value)}
-          error={errors[`name.${activeLocale}`] || (activeLocale === 'en' ? errors['name.en'] : undefined)}
+          onChange={(e) => { handleLocaleChange(setName, activeLocale, e.target.value); clearError(`name.${activeLocale}`); }}
+          error={fieldError(`name.${activeLocale}`)}
         />
         <div>
           <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-2">
@@ -153,8 +165,8 @@ export default function VehicleForm({ vehicle, onSaved }: VehicleFormProps) {
           size="sm"
           type="number"
           value={maxPassengers}
-          onChange={(e) => setMaxPassengers(e.target.value)}
-          error={errors.max_passengers}
+          onChange={(e) => { setMaxPassengers(e.target.value); clearError('max_passengers'); }}
+          error={fieldError('max_passengers')}
         />
         <Input
           label="Max Luggage"

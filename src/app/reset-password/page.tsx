@@ -8,6 +8,8 @@ import { useToast } from '@/components/ui/Toast';
 import { authApi } from '@/lib/api/auth';
 import { ApiError } from '@/lib/api/client';
 import { Input, Button, Spinner } from '@/components/ui';
+import { useFormValidation } from '@/hooks/useFormValidation';
+import { resetPasswordSchema } from '@/lib/validation/schemas';
 import AkazaLogo from '@/components/AkazaLogo';
 
 function ResetPasswordForm() {
@@ -23,25 +25,16 @@ function ResetPasswordForm() {
   });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const { errors, validate, clearError } = useFormValidation(resetPasswordSchema);
 
   const update = (field: string, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
-    setErrors((prev) => ({ ...prev, [field]: '' }));
-  };
-
-  const validate = () => {
-    const errs: Record<string, string> = {};
-    if (!form.password) errs.password = 'Password is required';
-    if (form.password.length < 8) errs.password = 'Password must be at least 8 characters';
-    if (form.password !== form.password_confirmation) errs.password_confirmation = 'Passwords do not match';
-    setErrors(errs);
-    return Object.keys(errs).length === 0;
+    clearError(field);
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
+    if (!validate(form)) return;
 
     setLoading(true);
     try {

@@ -1,6 +1,6 @@
 'use client';
 
-import { forwardRef, useState } from 'react';
+import { forwardRef, useId, useState } from 'react';
 import type { InputHTMLAttributes, ReactNode } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 
@@ -18,15 +18,17 @@ const sizes = {
 };
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, error, icon, size = 'md', className = '', type, ...props }, ref) => {
+  ({ label, error, icon, size = 'md', className = '', type, id: externalId, ...props }, ref) => {
     const [showPassword, setShowPassword] = useState(false);
     const isPassword = type === 'password';
     const inputType = isPassword && showPassword ? 'text' : type;
+    const generatedId = useId();
+    const inputId = externalId || generatedId;
 
     return (
       <div className="space-y-2">
         {label && (
-          <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans">
+          <label htmlFor={inputId} className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans">
             {label}
           </label>
         )}
@@ -38,6 +40,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
           <input
             ref={ref}
+            id={inputId}
             type={inputType}
             className={`w-full bg-transparent border-b ${error ? 'border-red-500' : 'border-[var(--line-strong)] focus:border-primary'} text-[var(--field-text)] placeholder-[var(--field-placeholder)] font-serif outline-none transition-colors duration-300 ${icon ? 'pl-11' : 'pl-0'} ${isPassword ? 'pr-12' : 'pr-0'} ${sizes[size]} ${className}`}
             {...props}

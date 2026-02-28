@@ -9,6 +9,8 @@ import Footer from '@/components/Footer';
 import { Input, Button, Spinner, Select, PhoneInput } from '@/components/ui';
 import type { E164Number } from '@/components/ui';
 import { validatePhone } from '@/lib/validation/phone';
+import { useFormValidation } from '@/hooks/useFormValidation';
+import { tourBookingSchema } from '@/lib/validation/schemas/booking';
 import { useCreateTourBooking } from '@/hooks/useTours';
 import { useToast } from '@/components/ui/Toast';
 import { ApiError } from '@/lib/api/client';
@@ -37,6 +39,7 @@ function TourBookingForm() {
     Array.from({ length: guestsCount }, () => ({ name: '', surname: '', type: 'AD' as const, age: null, _key: crypto.randomUUID() }))
   );
   const createBookingMutation = useCreateTourBooking();
+  const { errors, validate, clearError } = useFormValidation(tourBookingSchema);
   const [agreed, setAgreed] = useState(false);
 
   const totalPrice = price * guests.length;
@@ -60,10 +63,7 @@ function TourBookingForm() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!contactName || !contactEmail) {
-      toast('error', 'Please fill in contact information');
-      return;
-    }
+    if (!validate({ contactName, contactEmail })) return;
     const phoneErr = validatePhone(contactPhone);
     if (phoneErr) {
       toast('error', phoneErr);
@@ -116,8 +116,8 @@ function TourBookingForm() {
               <div className="bg-[var(--surface-card)] border border-[var(--line-soft)] p-6">
                 <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-6">Contact Information</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Input label="Full Name" placeholder="John Doe" value={contactName} onChange={(e) => setContactName(e.target.value)} icon={<User size={18} />} />
-                  <Input label="Email" type="email" placeholder="your@email.com" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} icon={<Mail size={18} />} />
+                  <Input label="Full Name" placeholder="John Doe" value={contactName} onChange={(e) => { setContactName(e.target.value); clearError('contactName'); }} error={errors.contactName} icon={<User size={18} />} />
+                  <Input label="Email" type="email" placeholder="your@email.com" value={contactEmail} onChange={(e) => { setContactEmail(e.target.value); clearError('contactEmail'); }} error={errors.contactEmail} icon={<Mail size={18} />} />
                   <PhoneInput label="Phone" value={contactPhone} onChange={setContactPhone} />
                 </div>
               </div>

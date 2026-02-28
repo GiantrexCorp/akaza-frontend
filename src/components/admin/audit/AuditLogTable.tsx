@@ -1,6 +1,8 @@
 'use client';
 
-import { Badge } from '@/components/ui';
+import { Badge, DataTable } from '@/components/ui';
+import type { Column } from '@/components/ui';
+import { formatRelativeTime } from '@/lib/utils/format';
 import type { AuditLog, AuditAction } from '@/types/audit';
 
 interface AuditLogTableProps {
@@ -23,81 +25,64 @@ const actionColors: Record<AuditAction, 'green' | 'blue' | 'red' | 'yellow' | 'p
   exported: 'gray',
 };
 
-function formatRelativeTime(dateStr: string | null): string {
-  if (!dateStr) return 'Never';
-  const date = new Date(dateStr);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMins = Math.floor(diffMs / 60000);
-  if (diffMins < 1) return 'Just now';
-  if (diffMins < 60) return `${diffMins}m ago`;
-  const diffHours = Math.floor(diffMins / 60);
-  if (diffHours < 24) return `${diffHours}h ago`;
-  const diffDays = Math.floor(diffHours / 24);
-  if (diffDays < 30) return `${diffDays}d ago`;
-  const diffMonths = Math.floor(diffDays / 30);
-  if (diffMonths < 12) return `${diffMonths}mo ago`;
-  return `${Math.floor(diffMonths / 12)}y ago`;
-}
+const columns: Column<AuditLog>[] = [
+  {
+    key: 'actor',
+    header: 'Actor',
+    render: (log) => (
+      <p className="text-sm font-serif text-[var(--text-primary)]">{log.user_name}</p>
+    ),
+  },
+  {
+    key: 'action',
+    header: 'Action',
+    render: (log) => (
+      <Badge label={log.action_label} color={actionColors[log.action] || 'gray'} size="sm" />
+    ),
+  },
+  {
+    key: 'entity',
+    header: 'Entity',
+    render: (log) => (
+      <>
+        <p className="text-sm text-[var(--text-primary)] font-sans">{log.entity_type_label}</p>
+        {log.entity_id && (
+          <p className="text-xs text-[var(--text-muted)] font-mono mt-0.5">#{log.entity_id}</p>
+        )}
+      </>
+    ),
+  },
+  {
+    key: 'description',
+    header: 'Description',
+    className: 'max-w-[260px]',
+    render: (log) => (
+      <p className="text-xs text-[var(--text-secondary)] font-sans truncate">{log.description}</p>
+    ),
+  },
+  {
+    key: 'ip_address',
+    header: 'IP Address',
+    render: (log) => (
+      <span className="text-xs text-[var(--text-muted)] font-mono">{log.ip_address || '—'}</span>
+    ),
+  },
+  {
+    key: 'when',
+    header: 'When',
+    render: (log) => (
+      <span className="text-xs text-[var(--text-muted)] font-sans">{formatRelativeTime(log.created_at)}</span>
+    ),
+  },
+];
 
 export default function AuditLogTable({ logs, onRowClick }: AuditLogTableProps) {
   return (
-    <div className="overflow-x-auto border border-[var(--line-soft)]">
-      <table className="w-full">
-        <thead>
-          <tr className="border-b border-[var(--line-soft)]">
-            <th className="text-left px-4 py-3 text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans">
-              Actor
-            </th>
-            <th className="text-left px-4 py-3 text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans">
-              Action
-            </th>
-            <th className="text-left px-4 py-3 text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans">
-              Entity
-            </th>
-            <th className="text-left px-4 py-3 text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans">
-              Description
-            </th>
-            <th className="text-left px-4 py-3 text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans">
-              IP Address
-            </th>
-            <th className="text-left px-4 py-3 text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans">
-              When
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {logs.map((log) => (
-            <tr
-              key={log.id}
-              onClick={() => onRowClick(log)}
-              className="border-b border-[var(--line-soft)] last:border-b-0 hover:bg-white/[0.02] cursor-pointer transition-colors"
-            >
-              <td className="px-4 py-4">
-                <p className="text-sm font-serif text-[var(--text-primary)]">{log.user_name}</p>
-              </td>
-              <td className="px-4 py-4">
-                <Badge label={log.action_label} color={actionColors[log.action] || 'gray'} size="sm" />
-              </td>
-              <td className="px-4 py-4">
-                <p className="text-sm text-[var(--text-primary)] font-sans">{log.entity_type_label}</p>
-                {log.entity_id && (
-                  <p className="text-xs text-[var(--text-muted)] font-mono mt-0.5">#{log.entity_id}</p>
-                )}
-              </td>
-              <td className="px-4 py-4 max-w-[260px]">
-                <p className="text-xs text-[var(--text-secondary)] font-sans truncate">{log.description}</p>
-              </td>
-              <td className="px-4 py-4 text-xs text-[var(--text-muted)] font-mono">
-                {log.ip_address || '—'}
-              </td>
-              <td className="px-4 py-4 text-xs text-[var(--text-muted)] font-sans">
-                {formatRelativeTime(log.created_at)}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <DataTable
+      columns={columns}
+      data={logs}
+      keyExtractor={(log) => log.id}
+      onRowClick={onRowClick}
+    />
   );
 }

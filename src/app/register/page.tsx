@@ -10,6 +10,8 @@ import { ApiError } from '@/lib/api/client';
 import { Input, Button, PhoneInput } from '@/components/ui';
 import type { E164Number } from '@/components/ui';
 import { validatePhone } from '@/lib/validation/phone';
+import { useFormValidation } from '@/hooks/useFormValidation';
+import { registerSchema } from '@/lib/validation/schemas';
 import AkazaLogo from '@/components/AkazaLogo';
 
 export default function RegisterPage() {
@@ -31,31 +33,28 @@ export default function RegisterPage() {
     password_confirmation: '',
   });
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const { errors, validate, clearError, setErrors } = useFormValidation(registerSchema);
   const [agreed, setAgreed] = useState(false);
 
   const update = (field: string, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
-    setErrors((prev) => ({ ...prev, [field]: '' }));
-  };
-
-  const validate = () => {
-    const errs: Record<string, string> = {};
-    if (!form.name.trim()) errs.name = 'Name is required';
-    if (!form.email.trim()) errs.email = 'Email is required';
-    const phoneErr = validatePhone(form.phone);
-    if (phoneErr) errs.phone = phoneErr;
-    if (!form.password) errs.password = 'Password is required';
-    if (form.password.length < 8) errs.password = 'Password must be at least 8 characters';
-    if (form.password !== form.password_confirmation) errs.password_confirmation = 'Passwords do not match';
-    if (!agreed) errs.agreed = 'You must accept the terms';
-    setErrors(errs);
-    return Object.keys(errs).length === 0;
+    clearError(field);
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
+    const phoneErr = validatePhone(form.phone);
+    const manualErrors: Record<string, string> = {};
+    if (phoneErr) manualErrors.phone = phoneErr;
+    if (!agreed) manualErrors.agreed = 'You must accept the terms';
+
+    const isValid = validate({ name: form.name, email: form.email, password: form.password, password_confirmation: form.password_confirmation });
+    if (Object.keys(manualErrors).length > 0) {
+      setErrors((prev) => ({ ...prev, ...manualErrors }));
+      if (!isValid) return;
+      return;
+    }
+    if (!isValid) return;
 
     setLoading(true);
     try {

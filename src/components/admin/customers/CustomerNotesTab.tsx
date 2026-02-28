@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Plus, Pin, Edit3, Trash2, StickyNote } from 'lucide-react';
 import { Button, Badge, Modal, Input, Select, Spinner, EmptyState } from '@/components/ui';
+import { useFormValidation } from '@/hooks/useFormValidation';
+import { customerNoteSchema } from '@/lib/validation/schemas/admin';
 import { adminCustomersApi } from '@/lib/api/admin-customers';
 import { ApiError } from '@/lib/api/client';
 import { useToast } from '@/components/ui/Toast';
@@ -48,7 +50,8 @@ export default function CustomerNotesTab({ customerId }: CustomerNotesTabProps) 
   const [formPinned, setFormPinned] = useState(false);
   const [formFollowUpDate, setFormFollowUpDate] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
+  const [apiFieldErrors, setApiFieldErrors] = useState<Record<string, string[]>>({});
+  const { errors: validationErrors, validate, clearError, clearErrors } = useFormValidation(customerNoteSchema);
 
   const fetchNotes = useCallback(async () => {
     setLoading(true);
@@ -77,7 +80,8 @@ export default function CustomerNotesTab({ customerId }: CustomerNotesTabProps) 
     setFormContent('');
     setFormPinned(false);
     setFormFollowUpDate('');
-    setFieldErrors({});
+    setApiFieldErrors({});
+    clearErrors();
   };
 
   const openCreate = () => {
@@ -90,14 +94,28 @@ export default function CustomerNotesTab({ customerId }: CustomerNotesTabProps) 
     setFormContent(note.content);
     setFormPinned(note.is_pinned);
     setFormFollowUpDate(note.follow_up_date || '');
-    setFieldErrors({});
+    setApiFieldErrors({});
+    clearErrors();
     setEditNote(note);
   };
 
+  const fieldError = (field: string): string | undefined =>
+    validationErrors[field] || apiFieldErrors[field]?.[0];
+
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setApiFieldErrors({});
+
+    if (!validate({
+      type: formType,
+      content: formContent,
+      follow_up_date: formFollowUpDate,
+      pinned: formPinned,
+    })) {
+      return;
+    }
+
     setSubmitting(true);
-    setFieldErrors({});
     try {
       await adminCustomersApi.createNote(customerId, {
         type: formType,
@@ -111,7 +129,7 @@ export default function CustomerNotesTab({ customerId }: CustomerNotesTabProps) 
       fetchNotes();
     } catch (err) {
       if (err instanceof ApiError) {
-        setFieldErrors(err.fieldErrors);
+        setApiFieldErrors(err.fieldErrors);
         toast('error', err.errors[0] || 'Failed to create note');
       }
     } finally {
@@ -123,7 +141,7 @@ export default function CustomerNotesTab({ customerId }: CustomerNotesTabProps) 
     e.preventDefault();
     if (!editNote) return;
     setSubmitting(true);
-    setFieldErrors({});
+    setApiFieldErrors({});
     try {
       await adminCustomersApi.updateNote(customerId, editNote.id, {
         type: formType,
@@ -137,7 +155,7 @@ export default function CustomerNotesTab({ customerId }: CustomerNotesTabProps) 
       fetchNotes();
     } catch (err) {
       if (err instanceof ApiError) {
-        setFieldErrors(err.fieldErrors);
+        setApiFieldErrors(err.fieldErrors);
         toast('error', err.errors[0] || 'Failed to update note');
       }
     } finally {
@@ -169,15 +187,15 @@ export default function CustomerNotesTab({ customerId }: CustomerNotesTabProps) 
           label="Type"
           options={noteTypeOptions}
           value={formType}
-          onChange={(e) => setFormType(e.target.value as NoteType)}
-          error={fieldErrors.type?.[0]}
+          onChange={(e) => { setFormType(e.target.value as NoteType); clearError('type'); }}
+          error={fieldError('type')}
         />
         <Input
           label="Follow-up Date"
           type="date"
           value={formFollowUpDate}
-          onChange={(e) => setFormFollowUpDate(e.target.value)}
-          error={fieldErrors.follow_up_date?.[0]}
+          onChange={(e) => { setFormFollowUpDate(e.target.value); clearError('follow_up_date'); }}
+          error={fieldError('follow_up_date')}
         />
       </div>
       <div>
@@ -186,13 +204,13 @@ export default function CustomerNotesTab({ customerId }: CustomerNotesTabProps) 
         </label>
         <textarea
           value={formContent}
-          onChange={(e) => setFormContent(e.target.value)}
+          onChange={(e) => { setFormContent(e.target.value); clearError('content'); }}
           rows={4}
           required
           className="w-full bg-transparent border border-[var(--line-strong)] focus:border-primary text-[var(--field-text)] placeholder-[var(--field-placeholder)] font-sans text-sm p-3 outline-none transition-colors duration-300 resize-none"
         />
-        {fieldErrors.content && (
-          <p className="text-red-400 text-xs font-sans mt-1">{fieldErrors.content[0]}</p>
+        {fieldError('content') && (
+          <p className="text-red-400 text-xs font-sans mt-1">{fieldError('content')}</p>
         )}
       </div>
       <label className="flex items-center gap-2 cursor-pointer">

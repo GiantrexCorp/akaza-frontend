@@ -1,6 +1,7 @@
 'use client';
 
 import { Badge } from '@/components/ui';
+import { formatRelativeTime } from '@/lib/utils/format';
 import type { HotelBookingStatusLog, HotelBookingStatus } from '@/types/hotel';
 
 interface HotelBookingStatusLogsProps {
@@ -20,22 +21,6 @@ const statusColors: Record<HotelBookingStatus, 'yellow' | 'green' | 'red' | 'gra
 function formatStatusLabel(status: HotelBookingStatus | null): string {
   if (!status) return '—';
   return status.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
-function formatRelativeTime(dateStr: string): string {
-  const date = new Date(dateStr);
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMins = Math.floor(diffMs / 60000);
-  if (diffMins < 1) return 'Just now';
-  if (diffMins < 60) return `${diffMins}m ago`;
-  const diffHours = Math.floor(diffMins / 60);
-  if (diffHours < 24) return `${diffHours}h ago`;
-  const diffDays = Math.floor(diffHours / 24);
-  if (diffDays < 30) return `${diffDays}d ago`;
-  const diffMonths = Math.floor(diffDays / 30);
-  if (diffMonths < 12) return `${diffMonths}mo ago`;
-  return `${Math.floor(diffMonths / 12)}y ago`;
 }
 
 export default function HotelBookingStatusLogs({ logs }: HotelBookingStatusLogsProps) {

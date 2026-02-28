@@ -1,6 +1,6 @@
 'use client';
 
-import { forwardRef } from 'react';
+import { forwardRef, useId } from 'react';
 import type { SelectHTMLAttributes } from 'react';
 import { ChevronDown } from 'lucide-react';
 
@@ -24,17 +24,21 @@ const sizes = {
 };
 
 const Select = forwardRef<HTMLSelectElement, SelectProps>(
-  ({ label, error, options, placeholder, size = 'md', className = '', ...props }, ref) => {
+  ({ label, error, options, placeholder, size = 'md', className = '', id: externalId, ...props }, ref) => {
+    const generatedId = useId();
+    const selectId = externalId || generatedId;
+
     return (
       <div className="space-y-2">
         {label && (
-          <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans">
+          <label htmlFor={selectId} className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans">
             {label}
           </label>
         )}
         <div className="relative group">
           <select
             ref={ref}
+            id={selectId}
             className={`w-full appearance-none bg-transparent border-b ${error ? 'border-red-500' : 'border-[var(--line-strong)] focus:border-primary'} text-[var(--field-text)] font-serif outline-none cursor-pointer transition-colors duration-300 pr-8 ${sizes[size]} ${className}`}
             {...props}
           >

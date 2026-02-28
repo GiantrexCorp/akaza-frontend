@@ -7,6 +7,8 @@ import { useToast } from '@/components/ui/Toast';
 import { authApi } from '@/lib/api/auth';
 import { ApiError } from '@/lib/api/client';
 import { Input, Button } from '@/components/ui';
+import { useFormValidation } from '@/hooks/useFormValidation';
+import { forgotPasswordSchema } from '@/lib/validation/schemas';
 import AkazaLogo from '@/components/AkazaLogo';
 
 export default function ForgotPasswordPage() {
@@ -14,17 +16,13 @@ export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
-  const [error, setError] = useState('');
+  const { errors, validate, clearError } = useFormValidation(forgotPasswordSchema);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) {
-      setError('Email is required');
-      return;
-    }
+    if (!validate({ email })) return;
 
     setLoading(true);
-    setError('');
     try {
       await authApi.forgotPassword({ email });
       setSent(true);
@@ -83,8 +81,8 @@ export default function ForgotPasswordPage() {
                   type="email"
                   placeholder="your@email.com"
                   value={email}
-                  onChange={(e) => { setEmail(e.target.value); setError(''); }}
-                  error={error}
+                  onChange={(e) => { setEmail(e.target.value); clearError('email'); }}
+                  error={errors.email}
                   icon={<Mail size={18} />}
                 />
 

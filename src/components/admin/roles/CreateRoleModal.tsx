@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { Button, Input, Modal } from '@/components/ui';
 import PermissionGroupAccordion from '@/components/admin/roles/PermissionGroupAccordion';
+import { useFormValidation } from '@/hooks/useFormValidation';
+import { createRoleSchema } from '@/lib/validation/schemas/admin';
 import { adminRolesApi } from '@/lib/api/admin-roles';
 import { ApiError } from '@/lib/api/client';
 import { PERMISSION_GROUPS } from '@/lib/permissions';
@@ -17,7 +19,8 @@ interface CreateRoleModalProps {
 export default function CreateRoleModal({ open, onClose, onCreated }: CreateRoleModalProps) {
   const { toast } = useToast();
   const [submitting, setSubmitting] = useState(false);
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
+  const [apiFieldErrors, setApiFieldErrors] = useState<Record<string, string[]>>({});
+  const { errors: validationErrors, validate, clearError, clearErrors } = useFormValidation(createRoleSchema);
   const [name, setName] = useState('');
   const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
@@ -26,7 +29,8 @@ export default function CreateRoleModal({ open, onClose, onCreated }: CreateRole
     setName('');
     setSelectedPermissions([]);
     setExpandedGroups(new Set());
-    setFieldErrors({});
+    setApiFieldErrors({});
+    clearErrors();
   };
 
   const handleClose = () => {
@@ -49,10 +53,18 @@ export default function CreateRoleModal({ open, onClose, onCreated }: CreateRole
     );
   };
 
+  const fieldError = (field: string): string | undefined =>
+    validationErrors[field] || apiFieldErrors[field]?.[0];
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setApiFieldErrors({});
+
+    if (!validate({ name })) {
+      return;
+    }
+
     setSubmitting(true);
-    setFieldErrors({});
 
     try {
       await adminRolesApi.create({
@@ -64,7 +76,7 @@ export default function CreateRoleModal({ open, onClose, onCreated }: CreateRole
       onCreated();
     } catch (err) {
       if (err instanceof ApiError) {
-        setFieldErrors(err.fieldErrors);
+        setApiFieldErrors(err.fieldErrors);
         toast('error', err.errors[0] || 'Failed to create role');
       }
     } finally {
@@ -78,8 +90,8 @@ export default function CreateRoleModal({ open, onClose, onCreated }: CreateRole
         <Input
           label="Role Name"
           value={name}
-          onChange={(e) => setName(e.target.value)}
-          error={fieldErrors.name?.[0]}
+          onChange={(e) => { setName(e.target.value); clearError('name'); }}
+          error={fieldError('name')}
           placeholder="e.g. content-editor"
           required
         />

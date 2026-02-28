@@ -8,6 +8,8 @@ import { useAuth } from '@/lib/auth';
 import { useToast } from '@/components/ui/Toast';
 import { ApiError } from '@/lib/api/client';
 import { Input, Button, Spinner } from '@/components/ui';
+import { useFormValidation } from '@/hooks/useFormValidation';
+import { loginSchema } from '@/lib/validation/schemas';
 import AkazaLogo from '@/components/AkazaLogo';
 
 function LoginForm() {
@@ -20,19 +22,11 @@ function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
-
-  const validate = () => {
-    const errs: typeof errors = {};
-    if (!email) errs.email = 'Email is required';
-    if (!password) errs.password = 'Password is required';
-    setErrors(errs);
-    return Object.keys(errs).length === 0;
-  };
+  const { errors, validate, clearError } = useFormValidation(loginSchema);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!validate()) return;
+    if (!validate({ email, password })) return;
 
     setLoading(true);
     try {
@@ -71,7 +65,7 @@ function LoginForm() {
           type="email"
           placeholder="your@email.com"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => { setEmail(e.target.value); clearError('email'); }}
           error={errors.email}
           icon={<Mail size={18} />}
           className="h-[52px] border border-[var(--line-soft)] bg-[var(--surface-page)]/72 px-4 pl-10 text-base font-sans focus:border-primary"
@@ -82,7 +76,7 @@ function LoginForm() {
           type="password"
           placeholder="Enter your password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) => { setPassword(e.target.value); clearError('password'); }}
           error={errors.password}
           icon={<Lock size={18} />}
           className="h-[52px] border border-[var(--line-soft)] bg-[var(--surface-page)]/72 px-4 pl-10 pr-12 text-base font-sans focus:border-primary"

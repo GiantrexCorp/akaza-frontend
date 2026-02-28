@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { Button, Input, Select, Modal, PhoneInput } from '@/components/ui';
 import type { E164Number } from '@/components/ui';
 import { validatePhone } from '@/lib/validation/phone';
+import { useFormValidation } from '@/hooks/useFormValidation';
+import { createUserSchema } from '@/lib/validation/schemas/admin';
 import { adminUsersApi } from '@/lib/api/admin-users';
 import { ApiError } from '@/lib/api/client';
 import { ALL_ROLES } from '@/lib/permissions';
@@ -36,7 +38,8 @@ const statusOptions = [
 export default function CreateUserModal({ open, onClose, onCreated }: CreateUserModalProps) {
   const { toast } = useToast();
   const [submitting, setSubmitting] = useState(false);
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
+  const [apiFieldErrors, setApiFieldErrors] = useState<Record<string, string[]>>({});
+  const { errors: validationErrors, validate, clearError, clearErrors } = useFormValidation(createUserSchema);
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -58,7 +61,8 @@ export default function CreateUserModal({ open, onClose, onCreated }: CreateUser
     setStatus('active');
     setLocale('en');
     setSelectedRoles([]);
-    setFieldErrors({});
+    setApiFieldErrors({});
+    clearErrors();
   };
 
   const handleClose = () => {
@@ -74,15 +78,24 @@ export default function CreateUserModal({ open, onClose, onCreated }: CreateUser
     );
   };
 
+  const fieldError = (field: string): string | undefined =>
+    validationErrors[field] || apiFieldErrors[field]?.[0];
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const phoneErr = validatePhone(phone);
-    if (phoneErr) {
-      setFieldErrors({ phone: [phoneErr] });
+    setApiFieldErrors({});
+
+    if (!validate({ name, email, password, password_confirmation: passwordConfirmation, type, status, locale })) {
       return;
     }
+
+    const phoneErr = validatePhone(phone);
+    if (phoneErr) {
+      setApiFieldErrors({ phone: [phoneErr] });
+      return;
+    }
+
     setSubmitting(true);
-    setFieldErrors({});
 
     try {
       const data: CreateUserRequest = {
@@ -103,7 +116,7 @@ export default function CreateUserModal({ open, onClose, onCreated }: CreateUser
       onCreated();
     } catch (err) {
       if (err instanceof ApiError) {
-        setFieldErrors(err.fieldErrors);
+        setApiFieldErrors(err.fieldErrors);
         toast('error', err.errors[0] || 'Failed to create user');
       }
     } finally {
@@ -118,60 +131,60 @@ export default function CreateUserModal({ open, onClose, onCreated }: CreateUser
           <Input
             label="Name"
             value={name}
-            onChange={(e) => setName(e.target.value)}
-            error={fieldErrors.name?.[0]}
+            onChange={(e) => { setName(e.target.value); clearError('name'); }}
+            error={fieldError('name')}
             required
           />
           <Input
             label="Email"
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            error={fieldErrors.email?.[0]}
+            onChange={(e) => { setEmail(e.target.value); clearError('email'); }}
+            error={fieldError('email')}
             required
           />
           <Input
             label="Password"
             type="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            error={fieldErrors.password?.[0]}
+            onChange={(e) => { setPassword(e.target.value); clearError('password'); }}
+            error={fieldError('password')}
             required
           />
           <Input
             label="Confirm Password"
             type="password"
             value={passwordConfirmation}
-            onChange={(e) => setPasswordConfirmation(e.target.value)}
-            error={fieldErrors.password_confirmation?.[0]}
+            onChange={(e) => { setPasswordConfirmation(e.target.value); clearError('password_confirmation'); }}
+            error={fieldError('password_confirmation')}
             required
           />
           <PhoneInput
             label="Phone"
             value={phone}
-            onChange={setPhone}
-            error={fieldErrors.phone?.[0]}
+            onChange={(val) => { setPhone(val); setApiFieldErrors((prev) => { const next = { ...prev }; delete next.phone; return next; }); }}
+            error={fieldError('phone')}
           />
           <Select
             label="Type"
             options={typeOptions}
             value={type}
-            onChange={(e) => setType(e.target.value as 'customer' | 'admin')}
-            error={fieldErrors.type?.[0]}
+            onChange={(e) => { setType(e.target.value as 'customer' | 'admin'); clearError('type'); }}
+            error={fieldError('type')}
           />
           <Select
             label="Status"
             options={statusOptions}
             value={status}
-            onChange={(e) => setStatus(e.target.value as 'active' | 'inactive' | 'suspended')}
-            error={fieldErrors.status?.[0]}
+            onChange={(e) => { setStatus(e.target.value as 'active' | 'inactive' | 'suspended'); clearError('status'); }}
+            error={fieldError('status')}
           />
           <Select
             label="Locale"
             options={localeOptions}
             value={locale}
-            onChange={(e) => setLocale(e.target.value as 'en' | 'de' | 'fr')}
-            error={fieldErrors.locale?.[0]}
+            onChange={(e) => { setLocale(e.target.value as 'en' | 'de' | 'fr'); clearError('locale'); }}
+            error={fieldError('locale')}
           />
         </div>
 
@@ -199,8 +212,8 @@ export default function CreateUserModal({ open, onClose, onCreated }: CreateUser
               );
             })}
           </div>
-          {fieldErrors.roles && (
-            <p className="text-red-400 text-xs font-sans mt-2">{fieldErrors.roles[0]}</p>
+          {apiFieldErrors.roles && (
+            <p className="text-red-400 text-xs font-sans mt-2">{apiFieldErrors.roles[0]}</p>
           )}
         </div>
 

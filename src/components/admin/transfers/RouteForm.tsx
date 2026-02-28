@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { Input, Select, Button } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast';
+import { useFormValidation } from '@/hooks/useFormValidation';
+import { routeFormSchema } from '@/lib/validation/schemas/admin';
 import { adminTransfersApi } from '@/lib/api/admin-transfers';
 import { ApiError } from '@/lib/api/client';
 import type { AdminTransferRoute, CreateRouteRequest, UpdateRouteRequest, TransferType } from '@/types/transfer';
@@ -45,7 +47,8 @@ export default function RouteForm({ route, onSaved }: RouteFormProps) {
   const [dropoffCode, setDropoffCode] = useState(route?.dropoff_code || '');
   const [status, setStatus] = useState<'active' | 'inactive'>(route?.status || 'active');
   const [saving, setSaving] = useState(false);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [apiErrors, setApiErrors] = useState<Record<string, string>>({});
+  const { errors: validationErrors, validate, clearError, clearErrors } = useFormValidation(routeFormSchema);
 
   const handleLocaleChange = (
     setter: React.Dispatch<React.SetStateAction<LocaleMap>>,
@@ -55,10 +58,19 @@ export default function RouteForm({ route, onSaved }: RouteFormProps) {
     setter((prev) => ({ ...prev, [locale]: value }));
   };
 
+  const fieldError = (field: string): string | undefined =>
+    validationErrors[field] || apiErrors[field];
+
   const handleSubmit = async () => {
-    setErrors({});
-    if (!pickupName.en) { setErrors({ 'pickup_name.en': 'English pickup name is required' }); return; }
-    if (!dropoffName.en) { setErrors({ 'dropoff_name.en': 'English dropoff name is required' }); return; }
+    setApiErrors({});
+
+    if (!validate({
+      pickup_name: { en: pickupName.en || '', de: pickupName.de || '', fr: pickupName.fr || '' },
+      dropoff_name: { en: dropoffName.en || '', de: dropoffName.de || '', fr: dropoffName.fr || '' },
+      transfer_type: transferType,
+    })) {
+      return;
+    }
 
     setSaving(true);
     try {
@@ -86,7 +98,7 @@ export default function RouteForm({ route, onSaved }: RouteFormProps) {
           for (const [k, v] of Object.entries(err.fieldErrors)) {
             mapped[k] = v[0];
           }
-          setErrors(mapped);
+          setApiErrors(mapped);
         }
       }
     } finally {
@@ -119,15 +131,15 @@ export default function RouteForm({ route, onSaved }: RouteFormProps) {
           label={`Pickup Name (${activeLocale})`}
           size="sm"
           value={pickupName[activeLocale] || ''}
-          onChange={(e) => handleLocaleChange(setPickupName, activeLocale, e.target.value)}
-          error={errors[`pickup_name.${activeLocale}`] || (activeLocale === 'en' ? errors['pickup_name.en'] : undefined)}
+          onChange={(e) => { handleLocaleChange(setPickupName, activeLocale, e.target.value); clearError(`pickup_name.${activeLocale}`); }}
+          error={fieldError(`pickup_name.${activeLocale}`)}
         />
         <Input
           label={`Dropoff Name (${activeLocale})`}
           size="sm"
           value={dropoffName[activeLocale] || ''}
-          onChange={(e) => handleLocaleChange(setDropoffName, activeLocale, e.target.value)}
-          error={errors[`dropoff_name.${activeLocale}`] || (activeLocale === 'en' ? errors['dropoff_name.en'] : undefined)}
+          onChange={(e) => { handleLocaleChange(setDropoffName, activeLocale, e.target.value); clearError(`dropoff_name.${activeLocale}`); }}
+          error={fieldError(`dropoff_name.${activeLocale}`)}
         />
       </div>
 

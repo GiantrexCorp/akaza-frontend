@@ -12,3 +12,5 @@ export { default as Pagination } from './Pagination';
 export { default as Toggle } from './Toggle';
 export { default as PhoneInput } from './PhoneInput';
 export type { E164Number } from './PhoneInput';
+export { default as DataTable } from './DataTable';
+export type { Column } from './DataTable';
