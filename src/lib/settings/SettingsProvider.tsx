@@ -25,7 +25,8 @@ export default function SettingsProvider({ children }: { children: ReactNode }) 
 
   const settings: SettingsMap = {};
   if (data) {
-    for (const item of data as PublicSetting[]) {
+    const items: PublicSetting[] = Array.isArray(data) ? data : (data as unknown as { data: PublicSetting[] }).data ?? [];
+    for (const item of items) {
       settings[item.key] = item.value;
     }
   }
