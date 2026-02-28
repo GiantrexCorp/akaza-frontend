@@ -33,7 +33,7 @@ export function useCreateVehicle() {
   return useMutation({
     mutationFn: (data: CreateVehicleRequest) => adminTransfersApi.createVehicle(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'transfers', 'vehicles'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.transfers.vehiclesAll() });
     },
   });
 }
@@ -44,7 +44,7 @@ export function useUpdateVehicle() {
     mutationFn: ({ id, data }: { id: number; data: UpdateVehicleRequest }) =>
       adminTransfersApi.updateVehicle(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'transfers', 'vehicles'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.transfers.vehiclesAll() });
     },
   });
 }
@@ -54,7 +54,7 @@ export function useDeleteVehicle() {
   return useMutation({
     mutationFn: (id: number) => adminTransfersApi.deleteVehicle(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'transfers', 'vehicles'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.transfers.vehiclesAll() });
     },
   });
 }
@@ -65,7 +65,7 @@ export function useUploadVehicleImage() {
     mutationFn: ({ vehicleId, file }: { vehicleId: number; file: File }) =>
       adminTransfersApi.uploadVehicleImage(vehicleId, file),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'transfers', 'vehicles'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.transfers.vehiclesAll() });
     },
   });
 }
@@ -75,7 +75,7 @@ export function useDeleteVehicleImage() {
   return useMutation({
     mutationFn: (vehicleId: number) => adminTransfersApi.deleteVehicleImage(vehicleId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'transfers', 'vehicles'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.transfers.vehiclesAll() });
     },
   });
 }
@@ -104,7 +104,7 @@ export function useCreateRoute() {
   return useMutation({
     mutationFn: (data: CreateRouteRequest) => adminTransfersApi.createRoute(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'transfers', 'routes'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.transfers.routesAll() });
     },
   });
 }
@@ -115,7 +115,7 @@ export function useUpdateRoute() {
     mutationFn: ({ id, data }: { id: number; data: UpdateRouteRequest }) =>
       adminTransfersApi.updateRoute(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'transfers', 'routes'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.transfers.routesAll() });
     },
   });
 }
@@ -125,7 +125,7 @@ export function useDeleteRoute() {
   return useMutation({
     mutationFn: (id: number) => adminTransfersApi.deleteRoute(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'transfers', 'routes'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.transfers.routesAll() });
     },
   });
 }
@@ -136,7 +136,7 @@ export function useSetRoutePrice() {
     mutationFn: ({ routeId, data }: { routeId: number; data: SetRoutePriceRequest }) =>
       adminTransfersApi.setRoutePrice(routeId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'transfers', 'routes'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.transfers.routesAll() });
     },
   });
 }

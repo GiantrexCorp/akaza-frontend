@@ -28,7 +28,7 @@ export function useCreateLead() {
   return useMutation({
     mutationFn: (data: CreateLeadRequest) => adminLeadsApi.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'leads'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.leads.all() });
     },
   });
 }
@@ -39,7 +39,7 @@ export function useUpdateLead() {
     mutationFn: ({ id, data }: { id: number; data: UpdateLeadRequest }) =>
       adminLeadsApi.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'leads'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.leads.all() });
     },
   });
 }
@@ -49,8 +49,8 @@ export function useConvertLead() {
   return useMutation({
     mutationFn: (id: number) => adminLeadsApi.convert(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'leads'] });
-      queryClient.invalidateQueries({ queryKey: ['admin', 'customers'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.leads.all() });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.customers.all() });
     },
   });
 }

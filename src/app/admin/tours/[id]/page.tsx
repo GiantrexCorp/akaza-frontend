@@ -16,16 +16,11 @@ import { AdminProtectedRoute } from '@/lib/auth';
 import { useAuth } from '@/lib/auth';
 import { hasPermission } from '@/lib/permissions';
 import { useRouter } from 'next/navigation';
-import type { AdminTour, TourStatus } from '@/types/tour';
+import type { AdminTour } from '@/types/tour';
+
+import { TOUR_STATUS_COLORS } from '@/lib/constants';
 
 type Tab = 'info' | 'availabilities' | 'images';
-
-const statusColors: Record<TourStatus, 'yellow' | 'green' | 'gray'> = {
-  draft: 'yellow',
-  active: 'green',
-  inactive: 'gray',
-};
-
 function TourDetail({ id }: { id: number }) {
   const { toast } = useToast();
   const router = useRouter();
@@ -104,7 +99,7 @@ function TourDetail({ id }: { id: number }) {
           <div>
             <div className="flex items-center gap-3 flex-wrap">
               <h1 className="text-2xl font-serif text-[var(--text-primary)]">{tour.translated_title}</h1>
-              <Badge label={tour.status_label} color={statusColors[tour.status] || 'gray'} />
+              <Badge label={tour.status_label} color={TOUR_STATUS_COLORS[tour.status] || 'gray'} />
             </div>
             <p className="text-xs text-[var(--text-muted)] font-sans mt-2">
               {tour.location} &middot; {tour.formatted_price}

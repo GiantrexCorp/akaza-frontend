@@ -16,13 +16,9 @@ import { hasPermission } from '@/lib/permissions';
 import { useRouter } from 'next/navigation';
 import type { AdminTransferRoute } from '@/types/transfer';
 
+import { ACTIVE_STATUS_COLORS } from '@/lib/constants';
+
 type Tab = 'info' | 'prices';
-
-const statusColors: Record<string, 'green' | 'gray'> = {
-  active: 'green',
-  inactive: 'gray',
-};
-
 function RouteDetail({ id }: { id: number }) {
   const { toast } = useToast();
   const router = useRouter();
@@ -101,7 +97,7 @@ function RouteDetail({ id }: { id: number }) {
               <h1 className="text-2xl font-serif text-[var(--text-primary)]">
                 {route.translated_pickup_name} &rarr; {route.translated_dropoff_name}
               </h1>
-              <Badge label={route.status === 'active' ? 'Active' : 'Inactive'} color={statusColors[route.status] || 'gray'} />
+              <Badge label={route.status === 'active' ? 'Active' : 'Inactive'} color={ACTIVE_STATUS_COLORS[route.status] || 'gray'} />
             </div>
             <p className="text-xs text-[var(--text-muted)] font-sans mt-2">
               {route.transfer_type_label} &middot; {route.prices?.length || 0} price{(route.prices?.length || 0) !== 1 ? 's' : ''} configured

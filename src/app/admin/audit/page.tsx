@@ -9,6 +9,7 @@ import { Spinner, EmptyState, Pagination } from '@/components/ui';
 import { useAdminAuditList } from '@/hooks/admin/useAdminAudit';
 import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { AdminProtectedRoute } from '@/lib/auth';
+import { PAGE_SIZE } from '@/lib/constants';
 import type { AuditLog } from '@/types/audit';
 
 export default function AdminAuditPage() {
@@ -20,7 +21,7 @@ export default function AdminAuditPage() {
   const queryParams = useMemo(() => {
     const params = new URLSearchParams();
     params.set('page', String(currentPage));
-    params.set('per_page', '20');
+    params.set('per_page', String(PAGE_SIZE.TABLE_LARGE));
     params.set('sort', '-created_at');
     if (filters.action) params.set('filter[action]', filters.action);
     if (filters.entity_type) params.set('filter[entity_type]', filters.entity_type);

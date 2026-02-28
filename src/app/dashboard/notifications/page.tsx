@@ -11,18 +11,13 @@ import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { useToast } from '@/components/ui/Toast';
 import { ProtectedRoute } from '@/lib/auth';
 
+import { NOTIFICATION_STATUS_COLORS } from '@/lib/constants';
+
 const channelIcons: Record<string, typeof Mail> = {
   email: Mail,
   sms: MessageSquare,
   in_app: Bell,
 };
-
-const statusColors: Record<string, 'green' | 'red' | 'yellow'> = {
-  sent: 'green',
-  failed: 'red',
-  pending: 'yellow',
-};
-
 export default function NotificationsPage() {
   const { toast } = useToast();
   const [currentPage, setCurrentPage] = useState(1);
@@ -79,7 +74,7 @@ export default function NotificationsPage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                           <p className="text-sm font-serif text-[var(--text-primary)]">{notif.subject}</p>
-                          <Badge label={notif.status_label} color={statusColors[notif.status] || 'gray'} size="sm" />
+                          <Badge label={notif.status_label} color={NOTIFICATION_STATUS_COLORS[notif.status] || 'gray'} size="sm" />
                         </div>
                         <p className="text-xs text-[var(--text-muted)] font-sans">{notif.type_label} via {notif.channel}</p>
                         {notif.error_message && (

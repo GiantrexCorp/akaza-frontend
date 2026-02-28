@@ -6,15 +6,11 @@ import type { Column } from '@/components/ui';
 import { formatRelativeTime } from '@/lib/utils/format';
 import type { AdminTransferVehicle, VehicleType } from '@/types/transfer';
 
+import { ACTIVE_STATUS_COLORS } from '@/lib/constants';
+
 interface VehicleTableProps {
   vehicles: AdminTransferVehicle[];
 }
-
-const statusColors: Record<string, 'green' | 'gray'> = {
-  active: 'green',
-  inactive: 'gray',
-};
-
 const typeColors: Record<VehicleType, 'yellow' | 'blue' | 'green' | 'purple' | 'red'> = {
   sedan: 'yellow',
   suv: 'blue',
@@ -59,7 +55,7 @@ export default function VehicleTable({ vehicles }: VehicleTableProps) {
       key: 'status',
       header: 'Status',
       render: (vehicle) => (
-        <Badge label={vehicle.status === 'active' ? 'Active' : 'Inactive'} color={statusColors[vehicle.status] || 'gray'} size="sm" />
+        <Badge label={vehicle.status === 'active' ? 'Active' : 'Inactive'} color={ACTIVE_STATUS_COLORS[vehicle.status] || 'gray'} size="sm" />
       ),
     },
     {

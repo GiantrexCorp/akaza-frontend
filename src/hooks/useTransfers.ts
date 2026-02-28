@@ -36,7 +36,7 @@ export function useCreateTransferBooking() {
   return useMutation({
     mutationFn: (data: CreateTransferBookingRequest) => transfersApi.createBooking(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['bookings', 'transfers'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.bookings.transfers() });
     },
   });
 }
@@ -47,7 +47,7 @@ export function useCancelTransferBooking() {
     mutationFn: ({ id, data }: { id: string; data?: { reason?: string } }) =>
       transfersApi.cancelBooking(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['bookings', 'transfers'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.bookings.transfers() });
     },
   });
 }

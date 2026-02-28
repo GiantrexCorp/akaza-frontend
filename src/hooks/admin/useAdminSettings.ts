@@ -16,7 +16,7 @@ export function useBulkUpdateSettings() {
   return useMutation({
     mutationFn: (settings: Record<string, unknown>) => adminSettingsApi.update(settings),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'settings'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.settings.all() });
       queryClient.invalidateQueries({ queryKey: queryKeys.settings.public() });
     },
   });

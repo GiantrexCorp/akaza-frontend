@@ -4,19 +4,14 @@ import { Badge, Button, Select } from '@/components/ui';
 import { Trash2 } from 'lucide-react';
 import type { AdminUser } from '@/types/admin';
 
+import { USER_STATUS_COLORS } from '@/lib/constants';
+
 interface UserDetailHeaderProps {
   user: AdminUser;
   onStatusChange: (status: 'active' | 'inactive' | 'suspended') => void;
   onDelete: () => void;
   saving: boolean;
 }
-
-const statusColors: Record<string, 'green' | 'gray' | 'red'> = {
-  active: 'green',
-  inactive: 'gray',
-  suspended: 'red',
-};
-
 const typeColors: Record<string, 'purple' | 'blue'> = {
   admin: 'purple',
   customer: 'blue',
@@ -35,7 +30,7 @@ export default function UserDetailHeader({ user, onStatusChange, onDelete, savin
         <div className="flex items-center gap-3 mb-1">
           <h1 className="text-2xl font-serif text-[var(--text-primary)]">{user.name}</h1>
           <Badge label={user.type} color={typeColors[user.type] || 'gray'} size="sm" />
-          <Badge label={user.status} color={statusColors[user.status] || 'gray'} size="sm" />
+          <Badge label={user.status} color={USER_STATUS_COLORS[user.status] || 'gray'} size="sm" />
         </div>
         <p className="text-sm text-[var(--text-muted)] font-sans">{user.email}</p>
       </div>

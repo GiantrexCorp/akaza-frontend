@@ -3,18 +3,13 @@
 import { Badge, Select } from '@/components/ui';
 import type { Customer, CustomerStatus, CustomerSource } from '@/types/customer';
 
+import { CUSTOMER_STATUS_COLORS } from '@/lib/constants';
+
 interface CustomerDetailHeaderProps {
   customer: Customer;
   onStatusChange: (status: CustomerStatus) => void;
   saving: boolean;
 }
-
-const statusColors: Record<CustomerStatus, 'green' | 'gray' | 'yellow'> = {
-  active: 'green',
-  inactive: 'gray',
-  vip: 'yellow',
-};
-
 const sourceColors: Record<CustomerSource, 'blue' | 'gray' | 'purple'> = {
   booking: 'blue',
   manual: 'gray',
@@ -44,7 +39,7 @@ export default function CustomerDetailHeader({ customer, onStatusChange, saving 
           <div className="flex items-center gap-3 mb-1">
             <h1 className="text-2xl font-serif text-[var(--text-primary)]">{customer.full_name}</h1>
             <Badge label={customer.source_label} color={sourceColors[customer.source] || 'gray'} size="sm" />
-            <Badge label={customer.status_label} color={statusColors[customer.status] || 'gray'} size="sm" />
+            <Badge label={customer.status_label} color={CUSTOMER_STATUS_COLORS[customer.status] || 'gray'} size="sm" />
           </div>
           <p className="text-sm text-[var(--text-muted)] font-sans">{customer.email}</p>
         </div>

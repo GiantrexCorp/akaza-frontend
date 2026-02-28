@@ -1,6 +1,8 @@
+export type BadgeColor = 'yellow' | 'green' | 'red' | 'gray' | 'orange' | 'blue' | 'purple';
+
 interface BadgeProps {
   label: string;
-  color?: 'yellow' | 'green' | 'red' | 'gray' | 'orange' | 'blue' | 'purple';
+  color?: BadgeColor;
   size?: 'sm' | 'md';
 }
 

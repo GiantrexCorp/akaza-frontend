@@ -8,6 +8,7 @@ import { Spinner, EmptyState, Pagination } from '@/components/ui';
 import { useAdminCustomerList } from '@/hooks/admin/useAdminCustomers';
 import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { AdminProtectedRoute } from '@/lib/auth';
+import { PAGE_SIZE } from '@/lib/constants';
 import type { Customer } from '@/types/customer';
 
 export default function AdminCustomersPage() {
@@ -18,7 +19,7 @@ export default function AdminCustomersPage() {
   const queryParams = useMemo(() => {
     const params = new URLSearchParams();
     params.set('page', String(currentPage));
-    params.set('per_page', '15');
+    params.set('per_page', String(PAGE_SIZE.TABLE));
     params.set('sort', '-created_at');
     if (filters.search) params.set('filter[email]', filters.search);
     if (filters.status) params.set('filter[status]', filters.status);

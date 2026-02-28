@@ -37,7 +37,7 @@ export function useCreateTourBooking() {
   return useMutation({
     mutationFn: (data: CreateTourBookingRequest) => toursApi.createBooking(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['bookings', 'tours'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.bookings.tours() });
     },
   });
 }
@@ -47,7 +47,7 @@ export function useCancelTourBooking() {
   return useMutation({
     mutationFn: (id: string) => toursApi.cancelBooking(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['bookings', 'tours'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.bookings.tours() });
     },
   });
 }

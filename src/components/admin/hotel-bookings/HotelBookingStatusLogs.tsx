@@ -4,20 +4,11 @@ import { Badge } from '@/components/ui';
 import { formatRelativeTime } from '@/lib/utils/format';
 import type { HotelBookingStatusLog, HotelBookingStatus } from '@/types/hotel';
 
+import { HOTEL_BOOKING_STATUS_COLORS } from '@/lib/constants';
+
 interface HotelBookingStatusLogsProps {
   logs: HotelBookingStatusLog[];
 }
-
-const statusColors: Record<HotelBookingStatus, 'yellow' | 'green' | 'red' | 'gray' | 'orange' | 'purple'> = {
-  pending: 'yellow',
-  confirmed: 'green',
-  failed: 'red',
-  cancelled: 'gray',
-  pending_cancellation: 'orange',
-  cancellation_failed: 'red',
-  pending_reconciliation: 'purple',
-};
-
 function formatStatusLabel(status: HotelBookingStatus | null): string {
   if (!status) return '—';
   return status.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
@@ -38,12 +29,12 @@ export default function HotelBookingStatusLogs({ logs }: HotelBookingStatusLogsP
           <div key={log.id} className="p-6 flex flex-col sm:flex-row sm:items-center gap-3">
             <div className="flex items-center gap-2 shrink-0">
               {log.from_status ? (
-                <Badge label={formatStatusLabel(log.from_status)} color={statusColors[log.from_status] || 'gray'} size="sm" />
+                <Badge label={formatStatusLabel(log.from_status)} color={HOTEL_BOOKING_STATUS_COLORS[log.from_status] || 'gray'} size="sm" />
               ) : (
                 <span className="text-xs text-[var(--text-muted)] font-sans">—</span>
               )}
               <span className="text-xs text-[var(--text-muted)] font-sans">&rarr;</span>
-              <Badge label={formatStatusLabel(log.to_status)} color={statusColors[log.to_status] || 'gray'} size="sm" />
+              <Badge label={formatStatusLabel(log.to_status)} color={HOTEL_BOOKING_STATUS_COLORS[log.to_status] || 'gray'} size="sm" />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-xs text-[var(--text-secondary)] font-sans">

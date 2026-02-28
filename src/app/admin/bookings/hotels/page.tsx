@@ -8,6 +8,7 @@ import { Spinner, EmptyState, Pagination } from '@/components/ui';
 import { useAdminHotelBookingList } from '@/hooks/admin/useAdminHotelBookings';
 import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { AdminProtectedRoute } from '@/lib/auth';
+import { PAGE_SIZE } from '@/lib/constants';
 
 export default function AdminHotelBookingsPage() {
   useEffect(() => { document.title = 'Hotel Bookings | Akaza Admin'; }, []);
@@ -17,7 +18,7 @@ export default function AdminHotelBookingsPage() {
   const queryParams = useMemo(() => {
     const params = new URLSearchParams();
     params.set('page', String(currentPage));
-    params.set('per_page', '20');
+    params.set('per_page', String(PAGE_SIZE.TABLE_LARGE));
     params.set('sort', '-created_at');
     if (filters.status) params.set('filter[status]', filters.status);
     if (filters.reference) params.set('filter[booking_reference]', filters.reference);

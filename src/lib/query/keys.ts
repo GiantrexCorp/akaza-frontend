@@ -41,43 +41,54 @@ export const queryKeys = {
 
   admin: {
     users: {
+      all: () => ['admin', 'users'] as const,
       list: (params?: string) => ['admin', 'users', 'list', params] as const,
       detail: (id: number) => ['admin', 'users', 'detail', id] as const,
     },
     roles: {
+      all: () => ['admin', 'roles'] as const,
       list: (params?: string) => ['admin', 'roles', 'list', params] as const,
       detail: (id: number) => ['admin', 'roles', 'detail', id] as const,
     },
     hotelBookings: {
+      all: () => ['admin', 'hotelBookings'] as const,
       list: (params?: string) => ['admin', 'hotelBookings', 'list', params] as const,
       detail: (id: number) => ['admin', 'hotelBookings', 'detail', id] as const,
     },
     tourBookings: {
+      all: () => ['admin', 'tourBookings'] as const,
       list: (params?: string) => ['admin', 'tourBookings', 'list', params] as const,
       detail: (id: number) => ['admin', 'tourBookings', 'detail', id] as const,
     },
     transferBookings: {
+      all: () => ['admin', 'transferBookings'] as const,
       list: (params?: string) => ['admin', 'transferBookings', 'list', params] as const,
       detail: (id: number) => ['admin', 'transferBookings', 'detail', id] as const,
     },
     tours: {
+      all: () => ['admin', 'tours'] as const,
       list: (params?: string) => ['admin', 'tours', 'list', params] as const,
       detail: (id: number) => ['admin', 'tours', 'detail', id] as const,
       availabilities: (tourId: number) => ['admin', 'tours', 'availabilities', tourId] as const,
     },
     transfers: {
+      all: () => ['admin', 'transfers'] as const,
+      vehiclesAll: () => ['admin', 'transfers', 'vehicles'] as const,
       vehicles: (params?: string) => ['admin', 'transfers', 'vehicles', params] as const,
       vehicleDetail: (id: number) => ['admin', 'transfers', 'vehicles', 'detail', id] as const,
+      routesAll: () => ['admin', 'transfers', 'routes'] as const,
       routes: (params?: string) => ['admin', 'transfers', 'routes', params] as const,
       routeDetail: (id: number) => ['admin', 'transfers', 'routes', 'detail', id] as const,
     },
     customers: {
+      all: () => ['admin', 'customers'] as const,
       list: (params?: string) => ['admin', 'customers', 'list', params] as const,
       detail: (id: number) => ['admin', 'customers', 'detail', id] as const,
       notes: (customerId: number) => ['admin', 'customers', 'notes', customerId] as const,
       bookingHistory: (id: number) => ['admin', 'customers', 'bookingHistory', id] as const,
     },
     leads: {
+      all: () => ['admin', 'leads'] as const,
       list: (params?: string) => ['admin', 'leads', 'list', params] as const,
       detail: (id: number) => ['admin', 'leads', 'detail', id] as const,
     },
@@ -92,12 +103,14 @@ export const queryKeys = {
       detail: (id: number) => ['admin', 'audit', 'detail', id] as const,
     },
     notifications: {
+      all: () => ['admin', 'notifications'] as const,
       templates: (params?: string) => ['admin', 'notifications', 'templates', params] as const,
       templateDetail: (id: number) => ['admin', 'notifications', 'templateDetail', id] as const,
       logs: (params?: string) => ['admin', 'notifications', 'logs', params] as const,
       logDetail: (id: number) => ['admin', 'notifications', 'logDetail', id] as const,
     },
     settings: {
+      all: () => ['admin', 'settings'] as const,
       list: () => ['admin', 'settings', 'list'] as const,
       group: (group: string) => ['admin', 'settings', 'group', group] as const,
     },

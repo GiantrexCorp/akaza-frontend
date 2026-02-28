@@ -16,13 +16,9 @@ import { hasPermission } from '@/lib/permissions';
 import { useRouter } from 'next/navigation';
 import type { AdminTransferVehicle } from '@/types/transfer';
 
+import { ACTIVE_STATUS_COLORS } from '@/lib/constants';
+
 type Tab = 'info' | 'image';
-
-const statusColors: Record<string, 'green' | 'gray'> = {
-  active: 'green',
-  inactive: 'gray',
-};
-
 function VehicleDetail({ id }: { id: number }) {
   const { toast } = useToast();
   const router = useRouter();
@@ -99,7 +95,7 @@ function VehicleDetail({ id }: { id: number }) {
           <div>
             <div className="flex items-center gap-3 flex-wrap">
               <h1 className="text-2xl font-serif text-[var(--text-primary)]">{vehicle.translated_name}</h1>
-              <Badge label={vehicle.status === 'active' ? 'Active' : 'Inactive'} color={statusColors[vehicle.status] || 'gray'} />
+              <Badge label={vehicle.status === 'active' ? 'Active' : 'Inactive'} color={ACTIVE_STATUS_COLORS[vehicle.status] || 'gray'} />
             </div>
             <p className="text-xs text-[var(--text-muted)] font-sans mt-2">
               {vehicle.type_label} &middot; {vehicle.max_passengers} passengers

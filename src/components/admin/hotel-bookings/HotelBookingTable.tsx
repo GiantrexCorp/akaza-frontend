@@ -4,22 +4,13 @@ import { useRouter } from 'next/navigation';
 import { Badge, DataTable } from '@/components/ui';
 import type { Column } from '@/components/ui';
 import { formatRelativeTime, formatPrice } from '@/lib/utils/format';
-import type { AdminHotelBooking, HotelBookingStatus } from '@/types/hotel';
+import type { AdminHotelBooking } from '@/types/hotel';
+
+import { HOTEL_BOOKING_STATUS_COLORS } from '@/lib/constants';
 
 interface HotelBookingTableProps {
   bookings: AdminHotelBooking[];
 }
-
-const statusColors: Record<HotelBookingStatus, 'yellow' | 'green' | 'red' | 'gray' | 'orange' | 'purple'> = {
-  pending: 'yellow',
-  confirmed: 'green',
-  failed: 'red',
-  cancelled: 'gray',
-  pending_cancellation: 'orange',
-  cancellation_failed: 'red',
-  pending_reconciliation: 'purple',
-};
-
 export default function HotelBookingTable({ bookings }: HotelBookingTableProps) {
   const router = useRouter();
 
@@ -78,7 +69,7 @@ export default function HotelBookingTable({ bookings }: HotelBookingTableProps) 
       key: 'status',
       header: 'Status',
       render: (booking) => (
-        <Badge label={booking.status_label} color={statusColors[booking.status] || 'gray'} size="sm" />
+        <Badge label={booking.status_label} color={HOTEL_BOOKING_STATUS_COLORS[booking.status] || 'gray'} size="sm" />
       ),
     },
     {

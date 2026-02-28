@@ -29,7 +29,7 @@ export function useReconcileHotelBooking() {
     mutationFn: ({ id, data }: { id: number; data: ReconcileRequest }) =>
       adminHotelBookingsApi.reconcile(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'hotelBookings'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.hotelBookings.all() });
     },
   });
 }

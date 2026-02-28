@@ -32,7 +32,7 @@ export function useCreateTour() {
   return useMutation({
     mutationFn: (data: CreateTourRequest) => adminToursApi.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'tours'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.tours.all() });
     },
   });
 }
@@ -43,7 +43,7 @@ export function useUpdateTour() {
     mutationFn: ({ id, data }: { id: number; data: UpdateTourRequest }) =>
       adminToursApi.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'tours'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.tours.all() });
     },
   });
 }
@@ -53,7 +53,7 @@ export function useDeleteTour() {
   return useMutation({
     mutationFn: (id: number) => adminToursApi.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'tours'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.tours.all() });
     },
   });
 }
@@ -64,7 +64,7 @@ export function useUploadTourImages() {
     mutationFn: ({ tourId, files }: { tourId: number; files: File[] }) =>
       adminToursApi.uploadImages(tourId, files),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'tours'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.tours.all() });
     },
   });
 }
@@ -75,7 +75,7 @@ export function useDeleteTourImage() {
     mutationFn: ({ tourId, mediaId }: { tourId: number; mediaId: number }) =>
       adminToursApi.deleteImage(tourId, mediaId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'tours'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.tours.all() });
     },
   });
 }
@@ -96,7 +96,7 @@ export function useCreateAvailability() {
     mutationFn: ({ tourId, data }: { tourId: number; data: CreateAvailabilityRequest }) =>
       adminToursApi.createAvailability(tourId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'tours'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.tours.all() });
     },
   });
 }
@@ -107,7 +107,7 @@ export function useBulkCreateAvailabilities() {
     mutationFn: ({ tourId, availabilities }: { tourId: number; availabilities: CreateAvailabilityRequest[] }) =>
       adminToursApi.bulkCreateAvailabilities(tourId, availabilities),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'tours'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.tours.all() });
     },
   });
 }
@@ -118,7 +118,7 @@ export function useUpdateAvailability() {
     mutationFn: ({ tourId, availId, data }: { tourId: number; availId: number; data: UpdateAvailabilityRequest }) =>
       adminToursApi.updateAvailability(tourId, availId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'tours'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.tours.all() });
     },
   });
 }
@@ -129,7 +129,7 @@ export function useDeleteAvailability() {
     mutationFn: ({ tourId, availId }: { tourId: number; availId: number }) =>
       adminToursApi.deleteAvailability(tourId, availId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'tours'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.tours.all() });
     },
   });
 }

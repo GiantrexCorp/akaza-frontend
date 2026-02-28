@@ -14,14 +14,7 @@ import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { useToast } from '@/components/ui/Toast';
 import { ApiError } from '@/lib/api/client';
 import { ProtectedRoute } from '@/lib/auth';
-
-const statusColors: Record<string, 'yellow' | 'green' | 'red' | 'gray' | 'purple'> = {
-  pending: 'yellow',
-  confirmed: 'green',
-  cancelled: 'gray',
-  completed: 'purple',
-  no_show: 'red',
-};
+import { CUSTOMER_BOOKING_STATUS_COLORS } from '@/lib/constants';
 
 function TourBookingDetail({ id }: { id: string }) {
   const { toast } = useToast();
@@ -90,7 +83,7 @@ function TourBookingDetail({ id }: { id: string }) {
           <h1 className="text-2xl font-serif text-[var(--text-primary)]">{booking.tour.translated_title}</h1>
           <p className="text-sm text-[var(--text-muted)] font-sans mt-1">Ref: {booking.booking_reference}</p>
         </div>
-        <Badge label={booking.status_label} color={statusColors[booking.status] || 'gray'} />
+        <Badge label={booking.status_label} color={CUSTOMER_BOOKING_STATUS_COLORS[booking.status] || 'gray'} />
       </div>
 
       <div className="bg-[var(--surface-card)] border border-[var(--line-soft)] divide-y divide-[var(--line-soft)]">

@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '@/lib/query';
 import { hotelsApi } from '@/lib/api/hotels';
 import type { HotelSearchParams, CheckRateRequest, CreateHotelBookingRequest } from '@/types/hotel';
 
@@ -19,7 +20,7 @@ export function useCreateHotelBooking() {
   return useMutation({
     mutationFn: (data: CreateHotelBookingRequest) => hotelsApi.createBooking(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['bookings', 'hotels'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.bookings.hotels() });
     },
   });
 }
@@ -29,7 +30,7 @@ export function useCancelHotelBooking() {
   return useMutation({
     mutationFn: (id: string) => hotelsApi.cancelBooking(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['bookings', 'hotels'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.bookings.hotels() });
     },
   });
 }

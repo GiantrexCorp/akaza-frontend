@@ -12,16 +12,7 @@ import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { useToast } from '@/components/ui/Toast';
 import { ApiError } from '@/lib/api/client';
 import { ProtectedRoute } from '@/lib/auth';
-
-const statusColors: Record<string, 'yellow' | 'green' | 'red' | 'gray' | 'orange' | 'purple'> = {
-  pending: 'yellow',
-  confirmed: 'green',
-  failed: 'red',
-  cancelled: 'gray',
-  pending_cancellation: 'orange',
-  cancellation_failed: 'red',
-  pending_reconciliation: 'purple',
-};
+import { HOTEL_BOOKING_STATUS_COLORS } from '@/lib/constants';
 
 function ConfirmationContent({ id }: { id: string }) {
   const { toast } = useToast();
@@ -89,7 +80,7 @@ function ConfirmationContent({ id }: { id: string }) {
           {/* Status */}
           <div className="p-6 flex items-center justify-between">
             <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans">Status</p>
-            <Badge label={booking.status_label} color={statusColors[booking.status] || 'gray'} />
+            <Badge label={booking.status_label} color={HOTEL_BOOKING_STATUS_COLORS[booking.status] || 'gray'} />
           </div>
 
           {/* Hotel info */}

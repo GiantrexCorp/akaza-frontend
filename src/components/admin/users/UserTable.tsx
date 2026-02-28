@@ -6,16 +6,11 @@ import type { Column } from '@/components/ui';
 import { formatRelativeTime } from '@/lib/utils/format';
 import type { AdminUser } from '@/types/admin';
 
+import { USER_STATUS_COLORS } from '@/lib/constants';
+
 interface UserTableProps {
   users: AdminUser[];
 }
-
-const statusColors: Record<string, 'green' | 'gray' | 'red'> = {
-  active: 'green',
-  inactive: 'gray',
-  suspended: 'red',
-};
-
 const typeColors: Record<string, 'purple' | 'blue'> = {
   admin: 'purple',
   customer: 'blue',
@@ -61,7 +56,7 @@ export default function UserTable({ users }: UserTableProps) {
       key: 'status',
       header: 'Status',
       render: (user) => (
-        <Badge label={user.status} color={statusColors[user.status] || 'gray'} size="sm" />
+        <Badge label={user.status} color={USER_STATUS_COLORS[user.status] || 'gray'} size="sm" />
       ),
     },
     {

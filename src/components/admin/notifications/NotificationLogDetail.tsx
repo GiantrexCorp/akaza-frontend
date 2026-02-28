@@ -4,7 +4,9 @@ import { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 import { Badge } from '@/components/ui';
 import { adminNotificationsApi } from '@/lib/api/admin-notifications';
-import type { AdminNotificationLog, NotificationChannel, NotificationLogStatus } from '@/types/admin-notification';
+import type { AdminNotificationLog, NotificationChannel } from '@/types/admin-notification';
+
+import { NOTIFICATION_STATUS_COLORS } from '@/lib/constants';
 
 interface NotificationLogDetailProps {
   log: AdminNotificationLog | null;
@@ -15,13 +17,6 @@ const channelColors: Record<NotificationChannel, 'blue' | 'purple'> = {
   mail: 'blue',
   database: 'purple',
 };
-
-const statusColors: Record<NotificationLogStatus, 'yellow' | 'green' | 'red'> = {
-  pending: 'yellow',
-  sent: 'green',
-  failed: 'red',
-};
-
 function formatTimestamp(dateStr: string): string {
   const d = new Date(dateStr);
   return d.toLocaleString('en-US', {
@@ -31,15 +26,15 @@ function formatTimestamp(dateStr: string): string {
 }
 
 export default function NotificationLogDetail({ log, onClose }: NotificationLogDetailProps) {
-  const [fullLog, setFullLog] = useState<AdminNotificationLog | null>(null);
+  const [enrichedLog, setEnrichedLog] = useState<AdminNotificationLog | null>(null);
 
   useEffect(() => {
-    if (!log) {
-      setFullLog(null);
-      return;
-    }
-    setFullLog(log);
-    adminNotificationsApi.getLog(log.id).then(setFullLog).catch(() => {});
+    if (!log) return;
+    let active = true;
+    adminNotificationsApi.getLog(log.id).then((data) => {
+      if (active) setEnrichedLog(data);
+    }).catch(() => {});
+    return () => { active = false; };
   }, [log]);
 
   useEffect(() => {
@@ -53,7 +48,7 @@ export default function NotificationLogDetail({ log, onClose }: NotificationLogD
 
   if (!log) return null;
 
-  const display = fullLog || log;
+  const display = (enrichedLog && enrichedLog.id === log?.id) ? enrichedLog : log;
 
   return (
     <>
@@ -78,7 +73,7 @@ export default function NotificationLogDetail({ log, onClose }: NotificationLogD
           {/* Status + Type + Channel badges */}
           <div className="space-y-3">
             <div className="flex flex-wrap gap-2">
-              <Badge label={display.status_label} color={statusColors[display.status] || 'gray'} />
+              <Badge label={display.status_label} color={NOTIFICATION_STATUS_COLORS[display.status] || 'gray'} />
               <Badge label={display.type_label} color="blue" />
               <Badge label={display.channel_label || display.channel} color={channelColors[display.channel] || 'gray'} />
             </div>

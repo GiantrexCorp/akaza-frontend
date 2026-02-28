@@ -3,7 +3,9 @@
 import { Badge, DataTable } from '@/components/ui';
 import type { Column } from '@/components/ui';
 import { formatRelativeTime } from '@/lib/utils/format';
-import type { AdminNotificationLog, NotificationChannel, NotificationLogStatus } from '@/types/admin-notification';
+import type { AdminNotificationLog, NotificationChannel } from '@/types/admin-notification';
+
+import { NOTIFICATION_STATUS_COLORS } from '@/lib/constants';
 
 interface NotificationLogTableProps {
   logs: AdminNotificationLog[];
@@ -14,13 +16,6 @@ const channelColors: Record<NotificationChannel, 'blue' | 'purple'> = {
   mail: 'blue',
   database: 'purple',
 };
-
-const statusColors: Record<NotificationLogStatus, 'yellow' | 'green' | 'red'> = {
-  pending: 'yellow',
-  sent: 'green',
-  failed: 'red',
-};
-
 const columns: Column<AdminNotificationLog>[] = [
   {
     key: 'recipient',
@@ -54,7 +49,7 @@ const columns: Column<AdminNotificationLog>[] = [
     key: 'status',
     header: 'Status',
     render: (log) => (
-      <Badge label={log.status_label} color={statusColors[log.status] || 'gray'} size="sm" />
+      <Badge label={log.status_label} color={NOTIFICATION_STATUS_COLORS[log.status] || 'gray'} size="sm" />
     ),
   },
   {

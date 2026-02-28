@@ -15,16 +15,7 @@ import { useToast } from '@/components/ui/Toast';
 import { ApiError } from '@/lib/api/client';
 import { ProtectedRoute } from '@/lib/auth';
 import type { CancellationCost } from '@/types/hotel';
-
-const statusColors: Record<string, 'yellow' | 'green' | 'red' | 'gray' | 'orange' | 'purple'> = {
-  pending: 'yellow',
-  confirmed: 'green',
-  failed: 'red',
-  cancelled: 'gray',
-  pending_cancellation: 'orange',
-  cancellation_failed: 'red',
-  pending_reconciliation: 'purple',
-};
+import { HOTEL_BOOKING_STATUS_COLORS } from '@/lib/constants';
 
 function HotelBookingDetail({ id }: { id: string }) {
   const { toast } = useToast();
@@ -108,7 +99,7 @@ function HotelBookingDetail({ id }: { id: string }) {
           <h1 className="text-2xl font-serif text-[var(--text-primary)]">{booking.hotel_name}</h1>
           <p className="text-sm text-[var(--text-muted)] font-sans mt-1">Ref: {booking.booking_reference}</p>
         </div>
-        <Badge label={booking.status_label} color={statusColors[booking.status] || 'gray'} />
+        <Badge label={booking.status_label} color={HOTEL_BOOKING_STATUS_COLORS[booking.status] || 'gray'} />
       </div>
 
       <div className="bg-[var(--surface-card)] border border-[var(--line-soft)] divide-y divide-[var(--line-soft)]">

@@ -28,7 +28,7 @@ export function useCreateUser() {
   return useMutation({
     mutationFn: (data: CreateUserRequest) => adminUsersApi.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.users.all() });
     },
   });
 }
@@ -39,7 +39,7 @@ export function useUpdateUser() {
     mutationFn: ({ id, data }: { id: number; data: UpdateUserRequest }) =>
       adminUsersApi.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.users.all() });
     },
   });
 }
@@ -49,7 +49,7 @@ export function useDeleteUser() {
   return useMutation({
     mutationFn: (id: number) => adminUsersApi.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.users.all() });
     },
   });
 }

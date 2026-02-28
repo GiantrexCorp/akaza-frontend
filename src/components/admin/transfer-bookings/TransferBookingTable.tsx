@@ -4,20 +4,13 @@ import { useRouter } from 'next/navigation';
 import { Badge, DataTable } from '@/components/ui';
 import type { Column } from '@/components/ui';
 import { formatRelativeTime } from '@/lib/utils/format';
-import type { AdminTransferBooking, TransferBookingStatus } from '@/types/transfer';
+import type { AdminTransferBooking } from '@/types/transfer';
+
+import { SERVICE_BOOKING_STATUS_COLORS } from '@/lib/constants';
 
 interface TransferBookingTableProps {
   bookings: AdminTransferBooking[];
 }
-
-const statusColors: Record<TransferBookingStatus, 'yellow' | 'green' | 'gray' | 'blue' | 'red'> = {
-  pending: 'yellow',
-  confirmed: 'green',
-  cancelled: 'gray',
-  completed: 'blue',
-  no_show: 'red',
-};
-
 export default function TransferBookingTable({ bookings }: TransferBookingTableProps) {
   const router = useRouter();
 
@@ -76,7 +69,7 @@ export default function TransferBookingTable({ bookings }: TransferBookingTableP
       key: 'status',
       header: 'Status',
       render: (booking) => (
-        <Badge label={booking.status_label} color={statusColors[booking.status] || 'gray'} size="sm" />
+        <Badge label={booking.status_label} color={SERVICE_BOOKING_STATUS_COLORS[booking.status] || 'gray'} size="sm" />
       ),
     },
     {

@@ -3,21 +3,14 @@
 import { Badge, DataTable } from '@/components/ui';
 import type { Column } from '@/components/ui';
 import { formatRelativeTime } from '@/lib/utils/format';
-import type { Lead, LeadStatus, LeadSource } from '@/types/customer';
+import type { Lead, LeadSource } from '@/types/customer';
+
+import { LEAD_STATUS_COLORS } from '@/lib/constants';
 
 interface LeadTableProps {
   leads: Lead[];
   onRowClick: (lead: Lead) => void;
 }
-
-const statusColors: Record<LeadStatus, 'blue' | 'yellow' | 'orange' | 'green' | 'gray'> = {
-  new: 'blue',
-  contacted: 'yellow',
-  qualified: 'orange',
-  converted: 'green',
-  lost: 'gray',
-};
-
 const sourceColors: Record<LeadSource, 'blue' | 'green' | 'purple' | 'orange' | 'gray'> = {
   hotel_booking: 'blue',
   tour_booking: 'green',
@@ -58,7 +51,7 @@ export default function LeadTable({ leads, onRowClick }: LeadTableProps) {
       key: 'status',
       header: 'Status',
       render: (lead) => (
-        <Badge label={lead.status_label} color={statusColors[lead.status] || 'gray'} size="sm" />
+        <Badge label={lead.status_label} color={LEAD_STATUS_COLORS[lead.status] || 'gray'} size="sm" />
       ),
     },
     {

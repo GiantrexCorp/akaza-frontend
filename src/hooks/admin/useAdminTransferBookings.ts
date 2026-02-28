@@ -29,7 +29,7 @@ export function useUpdateTransferBookingStatus() {
     mutationFn: ({ id, data }: { id: number; data: UpdateTransferBookingStatusRequest }) =>
       adminTransfersApi.updateBookingStatus(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'transferBookings'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.transferBookings.all() });
     },
   });
 }

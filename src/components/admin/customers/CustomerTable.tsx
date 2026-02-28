@@ -4,18 +4,13 @@ import { useRouter } from 'next/navigation';
 import { Badge, DataTable } from '@/components/ui';
 import type { Column } from '@/components/ui';
 import { formatRelativeTime } from '@/lib/utils/format';
-import type { Customer, CustomerStatus, CustomerSource } from '@/types/customer';
+import type { Customer, CustomerSource } from '@/types/customer';
+
+import { CUSTOMER_STATUS_COLORS } from '@/lib/constants';
 
 interface CustomerTableProps {
   customers: Customer[];
 }
-
-const statusColors: Record<CustomerStatus, 'green' | 'gray' | 'yellow'> = {
-  active: 'green',
-  inactive: 'gray',
-  vip: 'yellow',
-};
-
 const sourceColors: Record<CustomerSource, 'blue' | 'gray' | 'purple'> = {
   booking: 'blue',
   manual: 'gray',
@@ -56,7 +51,7 @@ export default function CustomerTable({ customers }: CustomerTableProps) {
       key: 'status',
       header: 'Status',
       render: (customer) => (
-        <Badge label={customer.status_label} color={statusColors[customer.status] || 'gray'} size="sm" />
+        <Badge label={customer.status_label} color={CUSTOMER_STATUS_COLORS[customer.status] || 'gray'} size="sm" />
       ),
     },
     {

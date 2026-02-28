@@ -4,20 +4,13 @@ import { useRouter } from 'next/navigation';
 import { Badge, DataTable } from '@/components/ui';
 import type { Column } from '@/components/ui';
 import { formatRelativeTime } from '@/lib/utils/format';
-import type { AdminTourBooking, TourBookingStatus } from '@/types/tour';
+import type { AdminTourBooking } from '@/types/tour';
+
+import { SERVICE_BOOKING_STATUS_COLORS } from '@/lib/constants';
 
 interface TourBookingTableProps {
   bookings: AdminTourBooking[];
 }
-
-const statusColors: Record<TourBookingStatus, 'yellow' | 'green' | 'gray' | 'blue' | 'red'> = {
-  pending: 'yellow',
-  confirmed: 'green',
-  cancelled: 'gray',
-  completed: 'blue',
-  no_show: 'red',
-};
-
 export default function TourBookingTable({ bookings }: TourBookingTableProps) {
   const router = useRouter();
 
@@ -73,7 +66,7 @@ export default function TourBookingTable({ bookings }: TourBookingTableProps) {
       key: 'status',
       header: 'Status',
       render: (booking) => (
-        <Badge label={booking.status_label} color={statusColors[booking.status] || 'gray'} size="sm" />
+        <Badge label={booking.status_label} color={SERVICE_BOOKING_STATUS_COLORS[booking.status] || 'gray'} size="sm" />
       ),
     },
     {

@@ -1,20 +1,13 @@
 'use client';
 
 import { Badge } from '@/components/ui';
-import type { AdminTransferBooking, TransferBookingStatus } from '@/types/transfer';
+import type { AdminTransferBooking } from '@/types/transfer';
+
+import { SERVICE_BOOKING_STATUS_COLORS } from '@/lib/constants';
 
 interface TransferBookingHeaderProps {
   booking: AdminTransferBooking;
 }
-
-const statusColors: Record<TransferBookingStatus, 'yellow' | 'green' | 'gray' | 'blue' | 'red'> = {
-  pending: 'yellow',
-  confirmed: 'green',
-  cancelled: 'gray',
-  completed: 'blue',
-  no_show: 'red',
-};
-
 export default function TransferBookingHeader({ booking }: TransferBookingHeaderProps) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -23,7 +16,7 @@ export default function TransferBookingHeader({ booking }: TransferBookingHeader
           <h1 className="text-2xl font-serif text-[var(--text-primary)]">
             {booking.pickup_location} &rarr; {booking.dropoff_location}
           </h1>
-          <Badge label={booking.status_label} color={statusColors[booking.status] || 'gray'} />
+          <Badge label={booking.status_label} color={SERVICE_BOOKING_STATUS_COLORS[booking.status] || 'gray'} />
         </div>
         <p className="text-xs text-[var(--text-muted)] font-mono mt-2">
           Ref: {booking.booking_reference}

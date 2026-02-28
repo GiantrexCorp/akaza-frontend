@@ -10,20 +10,9 @@ import { Spinner, Badge, EmptyState, Pagination } from '@/components/ui';
 import { useHotelBookings, useTourBookings, useTransferBookings } from '@/hooks/useBookings';
 import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { ProtectedRoute } from '@/lib/auth';
+import { ALL_BOOKING_STATUS_COLORS } from '@/lib/constants';
 
 type Tab = 'hotels' | 'tours' | 'transfers';
-
-const statusColors: Record<string, 'yellow' | 'green' | 'red' | 'gray' | 'orange' | 'purple'> = {
-  pending: 'yellow',
-  confirmed: 'green',
-  failed: 'red',
-  cancelled: 'gray',
-  completed: 'purple',
-  no_show: 'red',
-  pending_cancellation: 'orange',
-  cancellation_failed: 'red',
-  pending_reconciliation: 'purple',
-};
 
 export default function BookingsPage() {
   const [activeTab, setActiveTab] = useState<Tab>('hotels');
@@ -113,7 +102,7 @@ export default function BookingsPage() {
                               </div>
                             </div>
                             <div className="flex items-center gap-4">
-                              <Badge label={booking.status_label} color={statusColors[booking.status] || 'gray'} size="sm" />
+                              <Badge label={booking.status_label} color={ALL_BOOKING_STATUS_COLORS[booking.status] || 'gray'} size="sm" />
                               <p className="text-lg font-serif text-[var(--text-primary)]">{booking.formatted_selling_price}</p>
                               <ArrowRight size={16} className="text-[var(--text-muted)]" />
                             </div>
@@ -156,7 +145,7 @@ export default function BookingsPage() {
                               </div>
                             </div>
                             <div className="flex items-center gap-4">
-                              <Badge label={booking.status_label} color={statusColors[booking.status] || 'gray'} size="sm" />
+                              <Badge label={booking.status_label} color={ALL_BOOKING_STATUS_COLORS[booking.status] || 'gray'} size="sm" />
                               <p className="text-lg font-serif text-[var(--text-primary)]">
                                 {new Intl.NumberFormat('en-US', { style: 'currency', currency: booking.currency }).format(booking.total_price)}
                               </p>
@@ -198,7 +187,7 @@ export default function BookingsPage() {
                               </div>
                             </div>
                             <div className="flex items-center gap-4">
-                              <Badge label={booking.status_label} color={statusColors[booking.status] || 'gray'} size="sm" />
+                              <Badge label={booking.status_label} color={ALL_BOOKING_STATUS_COLORS[booking.status] || 'gray'} size="sm" />
                               <p className="text-lg font-serif text-[var(--text-primary)]">{booking.formatted_price}</p>
                               <ArrowRight size={16} className="text-[var(--text-muted)]" />
                             </div>

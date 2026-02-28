@@ -8,20 +8,13 @@ import { ApiError } from '@/lib/api/client';
 import { useToast } from '@/components/ui/Toast';
 import type { Lead, LeadStatus, LeadSource } from '@/types/customer';
 
+import { LEAD_STATUS_COLORS } from '@/lib/constants';
+
 interface LeadDetailPanelProps {
   lead: Lead | null;
   onClose: () => void;
   onUpdated: () => void;
 }
-
-const statusColors: Record<LeadStatus, 'blue' | 'yellow' | 'orange' | 'green' | 'gray'> = {
-  new: 'blue',
-  contacted: 'yellow',
-  qualified: 'orange',
-  converted: 'green',
-  lost: 'gray',
-};
-
 const sourceColors: Record<LeadSource, 'blue' | 'green' | 'purple' | 'orange' | 'gray'> = {
   hotel_booking: 'blue',
   tour_booking: 'green',
@@ -223,7 +216,7 @@ export default function LeadDetailPanel({ lead, onClose, onUpdated }: LeadDetail
               {/* Status + Source badges */}
               <div className="space-y-3">
                 <div className="flex flex-wrap gap-2">
-                  <Badge label={lead.status_label} color={statusColors[lead.status] || 'gray'} />
+                  <Badge label={lead.status_label} color={LEAD_STATUS_COLORS[lead.status] || 'gray'} />
                   <Badge label={lead.source_label} color={sourceColors[lead.source] || 'gray'} />
                 </div>
               </div>

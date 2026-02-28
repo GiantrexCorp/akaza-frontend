@@ -1,29 +1,20 @@
 'use client';
 
 import { Badge } from '@/components/ui';
-import type { AdminHotelBooking, HotelBookingStatus } from '@/types/hotel';
+import type { AdminHotelBooking } from '@/types/hotel';
+
+import { HOTEL_BOOKING_STATUS_COLORS } from '@/lib/constants';
 
 interface HotelBookingHeaderProps {
   booking: AdminHotelBooking;
 }
-
-const statusColors: Record<HotelBookingStatus, 'yellow' | 'green' | 'red' | 'gray' | 'orange' | 'purple'> = {
-  pending: 'yellow',
-  confirmed: 'green',
-  failed: 'red',
-  cancelled: 'gray',
-  pending_cancellation: 'orange',
-  cancellation_failed: 'red',
-  pending_reconciliation: 'purple',
-};
-
 export default function HotelBookingHeader({ booking }: HotelBookingHeaderProps) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
       <div>
         <div className="flex items-center gap-3 flex-wrap">
           <h1 className="text-2xl font-serif text-[var(--text-primary)]">{booking.hotel_name}</h1>
-          <Badge label={booking.status_label} color={statusColors[booking.status] || 'gray'} />
+          <Badge label={booking.status_label} color={HOTEL_BOOKING_STATUS_COLORS[booking.status] || 'gray'} />
         </div>
         <p className="text-xs text-[var(--text-muted)] font-mono mt-2">
           Ref: {booking.booking_reference}

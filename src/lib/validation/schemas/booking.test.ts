@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { hotelBookingSchema, tourBookingSchema, transferBookingSchema } from './booking';
+import { hotelBookingSchema, hotelBookingFullSchema, tourBookingSchema, transferBookingSchema, guestValidationSchema } from './booking';
 
 describe('hotelBookingSchema', () => {
   const validData = {
@@ -71,6 +71,100 @@ describe('transferBookingSchema', () => {
 
   it('fails with all fields empty', () => {
     const result = transferBookingSchema.safeParse({ contactName: '', contactEmail: '', pickupDate: '', pickupTime: '' });
+    expect(result.success).toBe(false);
+  });
+
+  it('passes with optional passengers and luggage', () => {
+    const result = transferBookingSchema.safeParse({
+      contactName: 'Bob',
+      contactEmail: 'bob@example.com',
+      pickupDate: '2026-03-15',
+      pickupTime: '14:00',
+      passengers: 3,
+      luggageCount: 2,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('fails with zero passengers', () => {
+    const result = transferBookingSchema.safeParse({
+      contactName: 'Bob',
+      contactEmail: 'bob@example.com',
+      pickupDate: '2026-03-15',
+      pickupTime: '14:00',
+      passengers: 0,
+    });
+    expect(result.success).toBe(false);
+  });
+});
+
+describe('guestValidationSchema', () => {
+  it('passes with valid adult guest', () => {
+    const result = guestValidationSchema.safeParse({ name: 'John', surname: 'Doe', type: 'AD', age: null });
+    expect(result.success).toBe(true);
+  });
+
+  it('passes with valid child guest', () => {
+    const result = guestValidationSchema.safeParse({ name: 'Jane', surname: 'Doe', type: 'CH', age: 10 });
+    expect(result.success).toBe(true);
+  });
+
+  it('fails with empty name', () => {
+    const result = guestValidationSchema.safeParse({ name: '', surname: 'Doe', type: 'AD', age: null });
+    expect(result.success).toBe(false);
+  });
+
+  it('fails with empty surname', () => {
+    const result = guestValidationSchema.safeParse({ name: 'John', surname: '', type: 'AD', age: null });
+    expect(result.success).toBe(false);
+  });
+
+  it('fails with invalid type', () => {
+    const result = guestValidationSchema.safeParse({ name: 'John', surname: 'Doe', type: 'INVALID', age: null });
+    expect(result.success).toBe(false);
+  });
+});
+
+describe('hotelBookingFullSchema', () => {
+  const validFull = {
+    holderName: 'John',
+    holderSurname: 'Doe',
+    holderEmail: 'john@example.com',
+    rooms: [{ guests: [{ name: 'John', surname: 'Doe', type: 'AD', age: null }] }],
+  };
+
+  it('passes with valid full booking data', () => {
+    const result = hotelBookingFullSchema.safeParse(validFull);
+    expect(result.success).toBe(true);
+  });
+
+  it('fails with empty rooms array', () => {
+    const result = hotelBookingFullSchema.safeParse({ ...validFull, rooms: [] });
+    expect(result.success).toBe(false);
+  });
+
+  it('fails with room with no guests', () => {
+    const result = hotelBookingFullSchema.safeParse({ ...validFull, rooms: [{ guests: [] }] });
+    expect(result.success).toBe(false);
+  });
+
+  it('validates guest details within rooms', () => {
+    const result = hotelBookingFullSchema.safeParse({
+      ...validFull,
+      rooms: [{ guests: [{ name: '', surname: 'Doe', type: 'AD', age: null }] }],
+    });
+    expect(result.success).toBe(false);
+  });
+});
+
+describe('tourBookingSchema extended', () => {
+  it('passes with optional guests count', () => {
+    const result = tourBookingSchema.safeParse({ contactName: 'Jane', contactEmail: 'jane@example.com', guests: 3 });
+    expect(result.success).toBe(true);
+  });
+
+  it('fails with zero guests', () => {
+    const result = tourBookingSchema.safeParse({ contactName: 'Jane', contactEmail: 'jane@example.com', guests: 0 });
     expect(result.success).toBe(false);
   });
 });

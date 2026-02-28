@@ -28,7 +28,7 @@ export function useCreateRole() {
   return useMutation({
     mutationFn: (data: CreateRoleRequest) => adminRolesApi.create(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'roles'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.roles.all() });
     },
   });
 }
@@ -39,7 +39,7 @@ export function useUpdateRole() {
     mutationFn: ({ id, data }: { id: number; data: UpdateRoleRequest }) =>
       adminRolesApi.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'roles'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.roles.all() });
     },
   });
 }
@@ -49,7 +49,7 @@ export function useDeleteRole() {
   return useMutation({
     mutationFn: (id: number) => adminRolesApi.delete(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'roles'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.roles.all() });
     },
   });
 }

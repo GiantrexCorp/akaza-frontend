@@ -1,20 +1,13 @@
 'use client';
 
 import { Badge } from '@/components/ui';
-import type { AdminTourBooking, TourBookingStatus } from '@/types/tour';
+import type { AdminTourBooking } from '@/types/tour';
+
+import { SERVICE_BOOKING_STATUS_COLORS } from '@/lib/constants';
 
 interface TourBookingHeaderProps {
   booking: AdminTourBooking;
 }
-
-const statusColors: Record<TourBookingStatus, 'yellow' | 'green' | 'gray' | 'blue' | 'red'> = {
-  pending: 'yellow',
-  confirmed: 'green',
-  cancelled: 'gray',
-  completed: 'blue',
-  no_show: 'red',
-};
-
 export default function TourBookingHeader({ booking }: TourBookingHeaderProps) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -23,7 +16,7 @@ export default function TourBookingHeader({ booking }: TourBookingHeaderProps) {
           <h1 className="text-2xl font-serif text-[var(--text-primary)]">
             {booking.tour?.translated_title || 'Tour Booking'}
           </h1>
-          <Badge label={booking.status_label} color={statusColors[booking.status] || 'gray'} />
+          <Badge label={booking.status_label} color={SERVICE_BOOKING_STATUS_COLORS[booking.status] || 'gray'} />
         </div>
         <p className="text-xs text-[var(--text-muted)] font-mono mt-2">
           Ref: {booking.booking_reference}

@@ -4,18 +4,13 @@ import { useRouter } from 'next/navigation';
 import { Badge, DataTable } from '@/components/ui';
 import type { Column } from '@/components/ui';
 import { formatRelativeTime } from '@/lib/utils/format';
-import type { AdminTour, TourStatus } from '@/types/tour';
+import type { AdminTour } from '@/types/tour';
+
+import { TOUR_STATUS_COLORS } from '@/lib/constants';
 
 interface TourTableProps {
   tours: AdminTour[];
 }
-
-const statusColors: Record<TourStatus, 'yellow' | 'green' | 'gray'> = {
-  draft: 'yellow',
-  active: 'green',
-  inactive: 'gray',
-};
-
 export default function TourTable({ tours }: TourTableProps) {
   const router = useRouter();
 
@@ -55,7 +50,7 @@ export default function TourTable({ tours }: TourTableProps) {
       key: 'status',
       header: 'Status',
       render: (tour) => (
-        <Badge label={tour.status_label} color={statusColors[tour.status] || 'gray'} size="sm" />
+        <Badge label={tour.status_label} color={TOUR_STATUS_COLORS[tour.status] || 'gray'} size="sm" />
       ),
     },
     {

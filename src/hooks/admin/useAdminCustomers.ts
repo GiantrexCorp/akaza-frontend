@@ -29,7 +29,7 @@ export function useUpdateCustomer() {
     mutationFn: ({ id, data }: { id: number; data: UpdateCustomerRequest }) =>
       adminCustomersApi.update(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'customers'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.customers.all() });
     },
   });
 }
@@ -60,7 +60,7 @@ export function useCreateNote() {
     mutationFn: ({ customerId, data }: { customerId: number; data: CreateNoteRequest }) =>
       adminCustomersApi.createNote(customerId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'customers'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.customers.all() });
     },
   });
 }
@@ -71,7 +71,7 @@ export function useUpdateNote() {
     mutationFn: ({ customerId, noteId, data }: { customerId: number; noteId: number; data: UpdateNoteRequest }) =>
       adminCustomersApi.updateNote(customerId, noteId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'customers'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.customers.all() });
     },
   });
 }
@@ -82,7 +82,7 @@ export function useDeleteNote() {
     mutationFn: ({ customerId, noteId }: { customerId: number; noteId: number }) =>
       adminCustomersApi.deleteNote(customerId, noteId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'customers'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.customers.all() });
     },
   });
 }

@@ -10,6 +10,7 @@ import { Button, Spinner, EmptyState, Pagination } from '@/components/ui';
 import { useAdminUserList } from '@/hooks/admin/useAdminUsers';
 import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { AdminProtectedRoute } from '@/lib/auth';
+import { PAGE_SIZE } from '@/lib/constants';
 import type { AdminUser } from '@/types/admin';
 
 export default function AdminUsersPage() {
@@ -21,7 +22,7 @@ export default function AdminUsersPage() {
   const queryParams = useMemo(() => {
     const params = new URLSearchParams();
     params.set('page', String(currentPage));
-    params.set('per_page', '15');
+    params.set('per_page', String(PAGE_SIZE.TABLE));
     params.set('include', 'roles');
     params.set('sort', '-created_at');
     if (filters.search) params.set('filter[name]', filters.search);

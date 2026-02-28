@@ -29,7 +29,7 @@ export function useUpdateTourBookingStatus() {
     mutationFn: ({ id, data }: { id: number; data: UpdateBookingStatusRequest }) =>
       adminToursApi.updateBookingStatus(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'tourBookings'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.tourBookings.all() });
     },
   });
 }

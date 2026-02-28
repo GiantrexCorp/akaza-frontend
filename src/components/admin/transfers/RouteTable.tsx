@@ -6,15 +6,11 @@ import type { Column } from '@/components/ui';
 import { formatRelativeTime } from '@/lib/utils/format';
 import type { AdminTransferRoute, TransferType } from '@/types/transfer';
 
+import { ACTIVE_STATUS_COLORS } from '@/lib/constants';
+
 interface RouteTableProps {
   routes: AdminTransferRoute[];
 }
-
-const statusColors: Record<string, 'green' | 'gray'> = {
-  active: 'green',
-  inactive: 'gray',
-};
-
 const typeColors: Record<TransferType, 'blue' | 'yellow' | 'purple'> = {
   airport: 'blue',
   city: 'yellow',
@@ -49,7 +45,7 @@ const columns: Column<AdminTransferRoute>[] = [
     key: 'status',
     header: 'Status',
     render: (route) => (
-      <Badge label={route.status === 'active' ? 'Active' : 'Inactive'} color={statusColors[route.status] || 'gray'} size="sm" />
+      <Badge label={route.status === 'active' ? 'Active' : 'Inactive'} color={ACTIVE_STATUS_COLORS[route.status] || 'gray'} size="sm" />
     ),
   },
   {

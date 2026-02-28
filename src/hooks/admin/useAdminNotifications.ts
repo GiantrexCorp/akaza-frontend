@@ -28,7 +28,7 @@ export function useUpdateNotificationTemplate() {
     mutationFn: ({ id, data }: { id: number; data: UpdateNotificationTemplateRequest }) =>
       adminNotificationsApi.updateTemplate(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin', 'notifications'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.notifications.all() });
     },
   });
 }

@@ -4,18 +4,11 @@ import { Badge } from '@/components/ui';
 import { formatRelativeTime } from '@/lib/utils/format';
 import type { StatusLog, TourBookingStatus } from '@/types/tour';
 
+import { SERVICE_BOOKING_STATUS_COLORS } from '@/lib/constants';
+
 interface TourBookingStatusLogsProps {
   logs: StatusLog[];
 }
-
-const statusColors: Record<TourBookingStatus, 'yellow' | 'green' | 'gray' | 'blue' | 'red'> = {
-  pending: 'yellow',
-  confirmed: 'green',
-  cancelled: 'gray',
-  completed: 'blue',
-  no_show: 'red',
-};
-
 function formatStatusLabel(status: string | null): string {
   if (!status) return '—';
   return status.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
@@ -38,7 +31,7 @@ export default function TourBookingStatusLogs({ logs }: TourBookingStatusLogsPro
               {log.from_status ? (
                 <Badge
                   label={formatStatusLabel(log.from_status)}
-                  color={statusColors[log.from_status as TourBookingStatus] || 'gray'}
+                  color={SERVICE_BOOKING_STATUS_COLORS[log.from_status as TourBookingStatus] || 'gray'}
                   size="sm"
                 />
               ) : (
@@ -47,7 +40,7 @@ export default function TourBookingStatusLogs({ logs }: TourBookingStatusLogsPro
               <span className="text-xs text-[var(--text-muted)] font-sans">&rarr;</span>
               <Badge
                 label={formatStatusLabel(log.to_status)}
-                color={statusColors[log.to_status as TourBookingStatus] || 'gray'}
+                color={SERVICE_BOOKING_STATUS_COLORS[log.to_status as TourBookingStatus] || 'gray'}
                 size="sm"
               />
             </div>
