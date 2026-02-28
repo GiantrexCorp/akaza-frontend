@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { queryKeys } from '@/lib/query';
-import { settingsApi } from '@/lib/api';
+import { settingsApi } from '@/lib/api/settings';
 import type { PublicSetting } from '@/types/settings';
 
 export function usePublicSettings() {

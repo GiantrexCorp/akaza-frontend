@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/lib/query';
-import { toursApi } from '@/lib/api';
+import { toursApi } from '@/lib/api/tours';
 import type { CreateTourBookingRequest } from '@/types/tour';
 
 export function useTourList(params?: string) {

@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { queryKeys } from '@/lib/query';
-import { adminRolesApi } from '@/lib/api';
+import { adminRolesApi } from '@/lib/api/admin-roles';
 import type { CreateRoleRequest, UpdateRoleRequest } from '@/types/admin';
 
 export function useAdminRoleList(params?: string) {

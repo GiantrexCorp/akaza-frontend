@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useToast } from '@/components/ui/Toast';
-import { ApiError } from '@/lib/api';
+import { ApiError } from '@/lib/api/client';
 
 export function useQueryErrorToast(isError: boolean, error: Error | null, fallback = 'Something went wrong') {
   const { toast } = useToast();

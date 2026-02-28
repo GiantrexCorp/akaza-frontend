@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { queryKeys } from '@/lib/query';
-import { adminUsersApi } from '@/lib/api';
+import { adminUsersApi } from '@/lib/api/admin-users';
 import type { CreateUserRequest, UpdateUserRequest } from '@/types/admin';
 
 export function useAdminUserList(params?: string) {

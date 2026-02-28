@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/lib/query';
-import { adminSettingsApi } from '@/lib/api';
+import { adminSettingsApi } from '@/lib/api/admin-settings';
 
 export function useAdminSettingsList() {
   return useQuery({

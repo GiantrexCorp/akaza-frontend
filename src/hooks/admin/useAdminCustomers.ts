@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { queryKeys } from '@/lib/query';
-import { adminCustomersApi } from '@/lib/api';
+import { adminCustomersApi } from '@/lib/api/admin-customers';
 import type { UpdateCustomerRequest, CreateNoteRequest, UpdateNoteRequest } from '@/types/customer';
 
 export function useAdminCustomerList(params?: string) {

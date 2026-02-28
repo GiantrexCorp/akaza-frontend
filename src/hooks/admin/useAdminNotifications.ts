@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/lib/query';
-import { adminNotificationsApi } from '@/lib/api';
+import { adminNotificationsApi } from '@/lib/api/admin-notifications';
 import type { UpdateNotificationTemplateRequest } from '@/types/admin-notification';
 
 export function useNotificationTemplates(params?: string) {

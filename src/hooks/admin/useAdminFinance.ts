@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { queryKeys } from '@/lib/query';
-import { adminFinanceApi } from '@/lib/api';
+import { adminFinanceApi } from '@/lib/api/admin-finance';
 import type { FinanceReportParams } from '@/types/finance';
 
 export function useFinanceDashboard() {

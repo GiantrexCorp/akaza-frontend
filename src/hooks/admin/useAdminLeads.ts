@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { queryKeys } from '@/lib/query';
-import { adminLeadsApi } from '@/lib/api';
+import { adminLeadsApi } from '@/lib/api/admin-leads';
 import type { CreateLeadRequest, UpdateLeadRequest } from '@/types/customer';
 
 export function useAdminLeadList(params?: string) {

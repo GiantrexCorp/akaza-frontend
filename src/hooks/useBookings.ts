@@ -1,7 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { keepPreviousData } from '@tanstack/react-query';
 import { queryKeys } from '@/lib/query';
-import { hotelsApi, toursApi, transfersApi } from '@/lib/api';
+import { hotelsApi } from '@/lib/api/hotels';
+import { toursApi } from '@/lib/api/tours';
+import { transfersApi } from '@/lib/api/transfers';
 
 export function useHotelBookings(params?: string, enabled = true) {
   return useQuery({

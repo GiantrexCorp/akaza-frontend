@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/lib/query';
-import { transfersApi } from '@/lib/api';
+import { transfersApi } from '@/lib/api/transfers';
 import type { CreateTransferBookingRequest } from '@/types/transfer';
 
 export function useTransferVehicles() {

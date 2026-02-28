@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { hotelsApi } from '@/lib/api';
+import { hotelsApi } from '@/lib/api/hotels';
 import type { HotelSearchParams, CheckRateRequest, CreateHotelBookingRequest } from '@/types/hotel';
 
 export function useHotelSearch() {

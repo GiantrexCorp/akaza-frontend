@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/lib/query';
-import { adminToursApi } from '@/lib/api';
+import { adminToursApi } from '@/lib/api/admin-tours';
 import type {
   CreateTourRequest,
   UpdateTourRequest,

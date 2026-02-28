@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { queryKeys } from '@/lib/query';
-import { adminToursApi } from '@/lib/api';
+import { adminToursApi } from '@/lib/api/admin-tours';
 import type { UpdateBookingStatusRequest } from '@/types/tour';
 
 export function useAdminTourBookingList(params?: string) {

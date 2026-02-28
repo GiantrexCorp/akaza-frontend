@@ -1,6 +1,6 @@
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { queryKeys } from '@/lib/query';
-import { adminAuditApi } from '@/lib/api';
+import { adminAuditApi } from '@/lib/api/admin-audit';
 
 export function useAdminAuditList(params?: string) {
   return useQuery({

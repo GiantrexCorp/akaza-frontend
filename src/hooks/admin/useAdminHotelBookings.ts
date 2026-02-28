@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { queryKeys } from '@/lib/query';
-import { adminHotelBookingsApi } from '@/lib/api';
+import { adminHotelBookingsApi } from '@/lib/api/admin-hotel-bookings';
 import type { ReconcileRequest } from '@/types/hotel';
 
 export function useAdminHotelBookingList(params?: string) {
