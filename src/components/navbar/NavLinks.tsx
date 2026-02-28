@@ -29,7 +29,7 @@ export default function NavLinks({ links, isActiveLink, isLight, inactiveLinkSty
                   ? 'text-[var(--nav-vip-text)] bg-black/[0.08] shadow-[inset_0_0_0_1px_rgba(255,210,145,0.72),0_10px_22px_-16px_rgba(216,154,80,0.95)]'
                   : isLight
                     ? 'text-[var(--nav-vip-text)] bg-white/75 shadow-[inset_0_0_0_1px_rgba(206,144,77,0.65)] hover:bg-white hover:text-[var(--nav-vip-hover)] hover:translate-y-[-1px] hover:shadow-[inset_0_0_0_1px_rgba(206,144,77,0.9),0_12px_24px_-16px_rgba(206,144,77,0.95)]'
-                    : 'text-[var(--nav-vip-hover)] bg-black/20 shadow-[inset_0_0_0_1px_rgba(255,210,145,0.55)] hover:bg-black/30 hover:text-[#ffe7bf] hover:translate-y-[-1px] hover:shadow-[inset_0_0_0_1px_rgba(255,214,151,0.95),0_12px_24px_-14px_rgba(241,194,122,0.95)]'
+                    : 'text-[var(--nav-vip-hover)] bg-black/20 shadow-[inset_0_0_0_1px_rgba(255,210,145,0.55)] hover:bg-black/30 hover:text-[var(--nav-vip-hover-bright)] hover:translate-y-[-1px] hover:shadow-[inset_0_0_0_1px_rgba(255,214,151,0.95),0_12px_24px_-14px_rgba(241,194,122,0.95)]'
                 : isActive
                   ? activeLinkStyle
                   : inactiveLinkStyle

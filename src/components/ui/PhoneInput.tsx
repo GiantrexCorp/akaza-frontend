@@ -188,6 +188,7 @@ export default function PhoneInput({
         placeholder={placeholder}
         flags={flags}
         countrySelectComponent={CountrySelectWithSearch}
+        aria-describedby={error ? errorId : undefined}
         className={`akaza-phone-input ${error ? 'akaza-phone-input--error' : ''}`}
       />
       {error && (

@@ -88,6 +88,7 @@
   --nav-vip-hover-light: #8a5524;
   --nav-avatar-border: rgba(226, 175, 109, 0.5);
   --nav-user-hover-text: #f2d2a5;
+  --nav-vip-hover-bright: #ffe7bf;
 }
 
 :root[data-theme="light"] {
@@ -171,6 +172,7 @@
   --nav-vip-hover-light: #f7cd8f;
   --nav-avatar-border: rgba(185, 120, 52, 0.5);
   --nav-user-hover-text: #b97834;
+  --nav-vip-hover-bright: #f7cd8f;
 }
 
 body {

@@ -41,7 +41,7 @@ export default function Navbar() {
     : "bg-[linear-gradient(120deg,rgba(185,117,50,0.16),rgba(11,23,27,0.86)_36%,rgba(226,175,109,0.08))]";
   const topAccent = isLight
     ? "via-[rgba(179,39,89,0.65)]"
-    : "via-[#e2af6d]/80";
+    : "via-primary-gradient-end/80";
   const inactiveLinkStyle = isLight
     ? "text-[var(--text-secondary)] hover:bg-black/[0.06] hover:text-[var(--text-primary)]"
     : "text-[var(--text-secondary)] hover:bg-white/6 hover:text-[var(--nav-user-hover-text)]";

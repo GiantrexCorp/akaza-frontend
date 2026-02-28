@@ -121,8 +121,10 @@ export default function SearchWidget({
               return (
                 <button
                   key={tab.id}
+                  id={`tab-${tab.id}`}
                   role="tab"
                   aria-selected={isActive}
+                  aria-controls="search-tabpanel"
                   onClick={() => handleTabChange(tab.id)}
                   className={`group relative flex items-center gap-2 px-4 py-2.5 transition-all border ${
                     isActive
@@ -143,7 +145,7 @@ export default function SearchWidget({
           </nav>
         </div>
 
-        <div className="p-5 md:p-7">
+        <div id="search-tabpanel" role="tabpanel" aria-labelledby={`tab-${activeTab}`} className="p-5 md:p-7">
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 md:gap-6 items-end">
             {fields.map((field) => {
               const Icon = field.icon;

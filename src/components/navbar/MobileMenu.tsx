@@ -39,7 +39,7 @@ export default function MobileMenu({ links, isActiveLink, isLight, theme, onTogg
                   ? 'text-[var(--nav-vip-text)] bg-black/[0.08] shadow-[inset_0_0_0_1px_rgba(255,210,145,0.72),0_10px_22px_-16px_rgba(216,154,80,0.95)]'
                   : isLight
                     ? 'text-[var(--nav-vip-text)] bg-white/80 shadow-[inset_0_0_0_1px_rgba(206,144,77,0.6)] hover:bg-white hover:text-[var(--nav-vip-hover)]'
-                    : 'text-[var(--nav-vip-hover)] bg-black/25 shadow-[inset_0_0_0_1px_rgba(255,210,145,0.5)] hover:bg-black/35 hover:text-[#ffe7bf]'
+                    : 'text-[var(--nav-vip-hover)] bg-black/25 shadow-[inset_0_0_0_1px_rgba(255,210,145,0.5)] hover:bg-black/35 hover:text-[var(--nav-vip-hover-bright)]'
                 : isActiveLink(link.href)
                 ? isLight
                   ? 'text-primary bg-black/[0.06]'
