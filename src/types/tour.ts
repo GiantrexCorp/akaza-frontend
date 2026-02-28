@@ -170,7 +170,7 @@ export interface AdminTourBooking extends TourBooking {
   status_color: string;
   cancelled_at: string | null;
   cancellation_reason: string | null;
-  refund_amount: string | null;
+  refund_amount: number | null;
   user?: { id: number; name: string; email: string };
   created_at: string;
   updated_at: string;

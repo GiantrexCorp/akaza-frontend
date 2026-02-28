@@ -43,3 +43,8 @@ export {
   type CustomerInfoInput,
   type CustomerNoteInput,
 } from './admin';
+
+export {
+  contactSchema,
+  type ContactFormData,
+} from './contact';

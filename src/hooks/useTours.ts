@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { queryKeys } from '@/lib/query';
+import { queryKeys, CACHE_TIME } from '@/lib/query';
 import { toursApi } from '@/lib/api/tours';
 import type { CreateTourBookingRequest } from '@/types/tour';
 
@@ -7,8 +7,7 @@ export function useTourList(params?: string) {
   return useQuery({
     queryKey: queryKeys.tours.list(params),
     queryFn: () => toursApi.list(params),
-    staleTime: 5 * 60 * 1000,
-    gcTime: 15 * 60 * 1000,
+    ...CACHE_TIME.MEDIUM,
   });
 }
 
@@ -17,8 +16,7 @@ export function useTourDetail(slug: string) {
     queryKey: queryKeys.tours.detail(slug),
     queryFn: () => toursApi.get(slug),
     enabled: !!slug,
-    staleTime: 5 * 60 * 1000,
-    gcTime: 15 * 60 * 1000,
+    ...CACHE_TIME.MEDIUM,
   });
 }
 
@@ -27,8 +25,7 @@ export function useTourAvailabilities(tourId: string) {
     queryKey: queryKeys.tours.availabilities(tourId),
     queryFn: () => toursApi.getAvailabilities(tourId),
     enabled: !!tourId,
-    staleTime: 5 * 60 * 1000,
-    gcTime: 15 * 60 * 1000,
+    ...CACHE_TIME.MEDIUM,
   });
 }
 

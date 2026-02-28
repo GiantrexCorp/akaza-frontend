@@ -114,13 +114,15 @@ export default function SearchWidget({
         <span className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary/70 via-primary to-primary-gradient-end/75" />
 
         <div className="bg-[var(--search-widget-topbar)] px-5 pt-4 pb-3 md:px-7 md:pt-5 md:pb-4 border-b border-[var(--line-soft)]">
-          <nav className="flex flex-wrap md:flex-nowrap gap-2 md:gap-3">
+          <nav role="tablist" className="flex flex-wrap md:flex-nowrap gap-2 md:gap-3">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
               return (
                 <button
                   key={tab.id}
+                  role="tab"
+                  aria-selected={isActive}
                   onClick={() => handleTabChange(tab.id)}
                   className={`group relative flex items-center gap-2 px-4 py-2.5 transition-all border ${
                     isActive

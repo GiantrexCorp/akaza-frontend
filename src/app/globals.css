@@ -82,6 +82,12 @@
   --field-placeholder: rgba(215, 222, 231, 0.46);
   --line-soft: rgba(255, 255, 255, 0.08);
   --line-strong: rgba(255, 255, 255, 0.24);
+  --nav-vip-text: #d89a50;
+  --nav-vip-hover: #f7cd8f;
+  --nav-vip-text-light: #b97834;
+  --nav-vip-hover-light: #8a5524;
+  --nav-avatar-border: rgba(226, 175, 109, 0.5);
+  --nav-user-hover-text: #f2d2a5;
 }
 
 :root[data-theme="light"] {
@@ -159,6 +165,12 @@
   --field-placeholder: rgba(27, 58, 66, 0.42);
   --line-soft: rgba(27, 58, 66, 0.15);
   --line-strong: rgba(27, 58, 66, 0.3);
+  --nav-vip-text: #b97834;
+  --nav-vip-hover: #8a5524;
+  --nav-vip-text-light: #d89a50;
+  --nav-vip-hover-light: #f7cd8f;
+  --nav-avatar-border: rgba(185, 120, 52, 0.5);
+  --nav-user-hover-text: #b97834;
 }
 
 body {

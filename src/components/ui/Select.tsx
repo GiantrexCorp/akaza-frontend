@@ -27,6 +27,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
   ({ label, error, options, placeholder, size = 'md', className = '', id: externalId, ...props }, ref) => {
     const generatedId = useId();
     const selectId = externalId || generatedId;
+    const errorId = `${selectId}-error`;
 
     return (
       <div className="space-y-2">
@@ -39,6 +40,8 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
           <select
             ref={ref}
             id={selectId}
+            aria-invalid={error ? true : undefined}
+            aria-describedby={error ? errorId : undefined}
             className={`w-full appearance-none bg-transparent border-b ${error ? 'border-red-500' : 'border-[var(--line-strong)] focus:border-primary'} text-[var(--field-text)] font-serif outline-none cursor-pointer transition-colors duration-300 pr-8 ${sizes[size]} ${className}`}
             {...props}
           >
@@ -56,7 +59,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>(
           <ChevronDown size={16} className="absolute right-0 top-1/2 -translate-y-1/2 text-[var(--text-muted)] pointer-events-none" />
         </div>
         {error && (
-          <p className="text-red-400 text-xs font-sans">{error}</p>
+          <p id={errorId} role="alert" className="text-red-400 text-xs font-sans">{error}</p>
         )}
       </div>
     );

@@ -29,13 +29,15 @@ export default function UserMenu({ user, isLight, onLogout }: UserMenuProps) {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen(!open)}
+        aria-expanded={open}
+        aria-haspopup="menu"
         className={`flex items-center gap-2 rounded-full border border-[var(--line-soft)] px-2 py-1.5 text-[var(--text-secondary)] transition-colors ${
           isLight
             ? 'bg-white/70 hover:border-primary/40 hover:text-[var(--text-primary)]'
-            : 'bg-black/10 hover:border-[#e2af6d]/45 hover:text-[#f2d2a5]'
+            : 'bg-black/10 hover:border-[var(--nav-avatar-border)] hover:text-[var(--nav-user-hover-text)]'
         }`}
       >
-        <div className="flex h-8 w-8 items-center justify-center rounded-full border border-[#e2af6d]/50 bg-gradient-to-br from-primary/60 to-primary-gradient-end/40">
+        <div className="flex h-8 w-8 items-center justify-center rounded-full border border-[var(--nav-avatar-border)] bg-gradient-to-br from-primary/60 to-primary-gradient-end/40">
           <span className="text-xs font-bold text-white font-sans uppercase">
             {user.name.charAt(0)}
           </span>

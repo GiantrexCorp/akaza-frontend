@@ -36,10 +36,10 @@ export default function MobileMenu({ links, isActiveLink, isLight, theme, onTogg
             className={`block px-3 py-2 text-xs uppercase tracking-wider font-semibold transition-colors ${
               link.href === '/#vip'
                 ? isActiveLink(link.href)
-                  ? 'text-[#d89a50] bg-black/[0.08] shadow-[inset_0_0_0_1px_rgba(255,210,145,0.72),0_10px_22px_-16px_rgba(216,154,80,0.95)]'
+                  ? 'text-[var(--nav-vip-text)] bg-black/[0.08] shadow-[inset_0_0_0_1px_rgba(255,210,145,0.72),0_10px_22px_-16px_rgba(216,154,80,0.95)]'
                   : isLight
-                    ? 'text-[#b97834] bg-white/80 shadow-[inset_0_0_0_1px_rgba(206,144,77,0.6)] hover:bg-white hover:text-[#8a5524]'
-                    : 'text-[#f7cd8f] bg-black/25 shadow-[inset_0_0_0_1px_rgba(255,210,145,0.5)] hover:bg-black/35 hover:text-[#ffe7bf]'
+                    ? 'text-[var(--nav-vip-text)] bg-white/80 shadow-[inset_0_0_0_1px_rgba(206,144,77,0.6)] hover:bg-white hover:text-[var(--nav-vip-hover)]'
+                    : 'text-[var(--nav-vip-hover)] bg-black/25 shadow-[inset_0_0_0_1px_rgba(255,210,145,0.5)] hover:bg-black/35 hover:text-[#ffe7bf]'
                 : isActiveLink(link.href)
                 ? isLight
                   ? 'text-primary bg-black/[0.06]'
@@ -82,7 +82,7 @@ export default function MobileMenu({ links, isActiveLink, isLight, theme, onTogg
           <Link
             href="/hotels/search"
             onClick={onClose}
-            className="rounded-full border border-[#e2af6d]/50 bg-gradient-to-r from-primary to-primary-gradient-end px-8 py-3 font-sans uppercase tracking-widest text-xs font-bold text-white w-full text-center"
+            className="rounded-full border border-[var(--nav-avatar-border)] bg-gradient-to-r from-primary to-primary-gradient-end px-8 py-3 font-sans uppercase tracking-widest text-xs font-bold text-white w-full text-center"
           >
             Book Now
           </Link>

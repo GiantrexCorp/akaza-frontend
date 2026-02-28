@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useId } from 'react';
 import { RotateCcw, Undo2 } from 'lucide-react';
 import { Button, Modal } from '@/components/ui';
 import type { ReconcileAction } from '@/types/hotel';
@@ -15,6 +15,7 @@ interface ReconcileModalProps {
 export default function ReconcileModal({ open, onClose, onReconcile, loading }: ReconcileModalProps) {
   const [selectedAction, setSelectedAction] = useState<ReconcileAction | null>(null);
   const [reason, setReason] = useState('');
+  const reasonId = useId();
 
   const handleClose = () => {
     setSelectedAction(null);
@@ -66,10 +67,11 @@ export default function ReconcileModal({ open, onClose, onReconcile, loading }: 
 
       {selectedAction === 'refund' && (
         <div className="mb-6">
-          <label className="block text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-2">
+          <label htmlFor={reasonId} className="block text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-2">
             Reason
           </label>
           <textarea
+            id={reasonId}
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             rows={3}

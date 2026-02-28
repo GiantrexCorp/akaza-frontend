@@ -11,6 +11,7 @@ import { useHotelBookings, useTourBookings, useTransferBookings } from '@/hooks/
 import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { ProtectedRoute } from '@/lib/auth';
 import { ALL_BOOKING_STATUS_COLORS } from '@/lib/constants';
+import { formatPrice } from '@/lib/utils/format';
 
 type Tab = 'hotels' | 'tours' | 'transfers';
 
@@ -147,7 +148,7 @@ export default function BookingsPage() {
                             <div className="flex items-center gap-4">
                               <Badge label={booking.status_label} color={ALL_BOOKING_STATUS_COLORS[booking.status] || 'gray'} size="sm" />
                               <p className="text-lg font-serif text-[var(--text-primary)]">
-                                {new Intl.NumberFormat('en-US', { style: 'currency', currency: booking.currency }).format(booking.total_price)}
+                                {formatPrice(booking.total_price, booking.currency)}
                               </p>
                               <ArrowRight size={16} className="text-[var(--text-muted)]" />
                             </div>

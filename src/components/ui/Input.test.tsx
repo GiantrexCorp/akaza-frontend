@@ -57,4 +57,24 @@ describe('Input', () => {
     const input = screen.getByLabelText(/custom/i);
     expect(input).toHaveAttribute('id', 'my-input');
   });
+
+  it('sets aria-invalid when error is present', () => {
+    render(<Input label="Email" error="Required" />);
+    expect(screen.getByLabelText(/email/i)).toHaveAttribute('aria-invalid', 'true');
+  });
+
+  it('does not set aria-invalid when no error', () => {
+    render(<Input label="Email" />);
+    expect(screen.getByLabelText(/email/i)).not.toHaveAttribute('aria-invalid');
+  });
+
+  it('links input to error via aria-describedby', () => {
+    render(<Input label="Email" error="Required" />);
+    const input = screen.getByLabelText(/email/i);
+    const errorId = input.getAttribute('aria-describedby');
+    expect(errorId).toBeTruthy();
+    const errorEl = document.getElementById(errorId!);
+    expect(errorEl).toHaveTextContent('Required');
+    expect(errorEl).toHaveAttribute('role', 'alert');
+  });
 });

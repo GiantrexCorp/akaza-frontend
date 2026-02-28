@@ -1,14 +1,11 @@
 'use client';
 
 import type { HotelBookingRoom } from '@/types/hotel';
+import { formatPrice } from '@/lib/utils/format';
 
 interface HotelBookingRoomsProps {
   rooms: HotelBookingRoom[];
   currency: string;
-}
-
-function formatPrice(price: number, currency: string) {
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(price);
 }
 
 export default function HotelBookingRooms({ rooms, currency }: HotelBookingRoomsProps) {

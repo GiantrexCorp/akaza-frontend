@@ -24,6 +24,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     const inputType = isPassword && showPassword ? 'text' : type;
     const generatedId = useId();
     const inputId = externalId || generatedId;
+    const errorId = `${inputId}-error`;
 
     return (
       <div className="space-y-2">
@@ -42,6 +43,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             id={inputId}
             type={inputType}
+            aria-invalid={error ? true : undefined}
+            aria-describedby={error ? errorId : undefined}
             className={`w-full bg-transparent border-b ${error ? 'border-red-500' : 'border-[var(--line-strong)] focus:border-primary'} text-[var(--field-text)] placeholder-[var(--field-placeholder)] font-serif outline-none transition-colors duration-300 ${icon ? 'pl-11' : 'pl-0'} ${isPassword ? 'pr-12' : 'pr-0'} ${sizes[size]} ${className}`}
             {...props}
           />
@@ -57,7 +60,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
         </div>
         {error && (
-          <p className="text-red-400 text-xs font-sans">{error}</p>
+          <p id={errorId} role="alert" className="text-red-400 text-xs font-sans">{error}</p>
         )}
       </div>
     );

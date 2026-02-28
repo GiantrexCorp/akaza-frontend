@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useId } from 'react';
 import { Button, Input, Select, Modal, PhoneInput } from '@/components/ui';
 import type { E164Number } from '@/components/ui';
 import { validatePhone } from '@/lib/validation/phone';
@@ -27,6 +27,7 @@ const sourceOptions = [
 
 export default function CreateLeadModal({ open, onClose, onCreated }: CreateLeadModalProps) {
   const { toast } = useToast();
+  const notesId = useId();
   const [submitting, setSubmitting] = useState(false);
   const [apiFieldErrors, setApiFieldErrors] = useState<Record<string, string[]>>({});
   const { errors: validationErrors, validate, clearError, clearErrors } = useFormValidation(createLeadSchema);
@@ -126,10 +127,11 @@ export default function CreateLeadModal({ open, onClose, onCreated }: CreateLead
           />
         </div>
         <div>
-          <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-2">
+          <label htmlFor={notesId} className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-2">
             Notes
           </label>
           <textarea
+            id={notesId}
             value={notes}
             onChange={(e) => { setNotes(e.target.value); clearError('notes'); }}
             rows={3}

@@ -1,68 +1,14 @@
 'use client';
 
-import { useEffect, useState, type FormEvent } from 'react';
 import Image from 'next/image';
-import { ArrowRight, ChevronDown, Mail, PhoneCall, Sparkles, Instagram, Linkedin, Youtube } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import { useToast } from '@/components/ui/Toast';
-
-const destinations = [
-  'Cairo & Giza',
-  'Red Sea & Hurghada',
-  'Luxor & Aswan',
-  'Marsa Alam',
-  'Sharm El Sheikh',
-  'Multi-Destination Journey',
-];
-
-const socials = [
-  { label: 'Instagram', href: 'https://instagram.com', icon: Instagram },
-  { label: 'LinkedIn', href: 'https://linkedin.com', icon: Linkedin },
-  { label: 'YouTube', href: 'https://youtube.com', icon: Youtube },
-];
+import ContactForm from '@/components/contact/ContactForm';
+import ContactInfo from '@/components/contact/ContactInfo';
+import { useScrollReveal } from '@/hooks/useScrollReveal';
 
 export default function ContactPage() {
-  const { toast } = useToast();
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [destination, setDestination] = useState('');
-  const [vision, setVision] = useState('');
-  const [sending, setSending] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) entry.target.classList.add('is-visible');
-        });
-      },
-      { threshold: 0.18, rootMargin: '0px 0px -10% 0px' }
-    );
-
-    const nodes = Array.from(document.querySelectorAll('[data-reveal]'));
-    nodes.forEach((node) => observer.observe(node));
-    return () => observer.disconnect();
-  }, []);
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!name || !email || !phone || !destination || !vision) {
-      toast('error', 'Please complete all required fields.');
-      return;
-    }
-
-    setSending(true);
-    await new Promise((resolve) => setTimeout(resolve, 1400));
-    setSending(false);
-    toast('success', "Inquiry submitted. We'll contact you shortly.");
-    setName('');
-    setEmail('');
-    setPhone('');
-    setDestination('');
-    setVision('');
-  };
+  useScrollReveal();
 
   return (
     <>
@@ -100,204 +46,13 @@ export default function ContactPage() {
           <span className="pointer-events-none absolute right-0 top-10 h-72 w-72 rounded-full bg-[var(--color-accent)]/12 blur-[96px]" />
 
           <div className="relative mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.05fr_0.95fr]">
-            <div
-              data-reveal
-              className="reveal-item border border-[var(--line-soft)] bg-[var(--contact-form-surface)] p-7 shadow-[var(--contact-form-shadow)] md:p-8"
-            >
-              <h2 className="text-4xl font-serif md:text-5xl">Inquiry Form</h2>
-              <div className="mt-4 h-px w-20 bg-gradient-to-r from-primary to-primary-gradient-end" />
-
-              <form onSubmit={handleSubmit} className="mt-8 space-y-8">
-                <div className="grid gap-x-6 gap-y-8 md:grid-cols-2">
-                  <Field
-                    label="Full Name"
-                    placeholder="Jonathan Doe"
-                    value={name}
-                    onChange={setName}
-                  />
-                  <Field
-                    label="Email Address"
-                    type="email"
-                    placeholder="concierge@example.com"
-                    value={email}
-                    onChange={setEmail}
-                  />
-                  <Field
-                    label="Phone Number"
-                    type="tel"
-                    placeholder="+44 20 7946 0000"
-                    value={phone}
-                    onChange={setPhone}
-                  />
-
-                  <div>
-                    <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--contact-form-label)]">
-                      Destination Of Interest
-                    </label>
-                    <div className="relative mt-2">
-                      <select
-                        value={destination}
-                        onChange={(e) => setDestination(e.target.value)}
-                        className={`contact-select h-12 w-full appearance-none border-b border-[var(--contact-form-line)] bg-transparent pr-8 text-base ${
-                          destination ? 'text-[var(--contact-form-text)]' : 'text-[var(--contact-form-placeholder)]'
-                        } outline-none transition-colors focus:border-primary`}
-                      >
-                        <option value="" disabled>
-                          Select a destination
-                        </option>
-                        {destinations.map((item) => (
-                          <option key={item} value={item}>
-                            {item}
-                          </option>
-                        ))}
-                      </select>
-                      <ChevronDown
-                        size={16}
-                        className="pointer-events-none absolute right-1 top-1/2 -translate-y-1/2 text-[var(--contact-form-label)]"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--contact-form-label)]">
-                    Your Vision
-                  </label>
-                  <textarea
-                    rows={4}
-                    value={vision}
-                    onChange={(e) => setVision(e.target.value)}
-                    placeholder="How can we design your unforgettable journey?"
-                    className="mt-2 w-full resize-none border-b border-[var(--contact-form-line)] bg-transparent py-2 text-base text-[var(--contact-form-text)] placeholder-[var(--contact-form-placeholder)] outline-none transition-colors focus:border-primary"
-                  />
-                </div>
-
-                <div className="pt-1">
-                  <button
-                    type="submit"
-                    disabled={sending}
-                    className="inline-flex h-12 items-center gap-2 border border-primary/65 bg-primary px-7 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all hover:-translate-y-0.5 hover:bg-primary-gradient-end disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    {sending ? 'Submitting...' : 'Submit Inquiry'}
-                    <ArrowRight size={13} />
-                  </button>
-                </div>
-              </form>
-            </div>
-
-            <aside data-reveal className="reveal-item space-y-7">
-              <div className="border border-[var(--line-soft)] bg-[var(--surface-card)]/78 p-7 shadow-[0_24px_44px_-28px_rgba(0,0,0,0.72)]">
-                <span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-primary/45 bg-primary/10 text-primary">
-                  <Sparkles size={17} />
-                </span>
-                <h3 className="mt-5 text-4xl font-serif">Speak to an Advisor</h3>
-                <p className="mt-4 text-sm leading-relaxed text-[var(--text-secondary)]">
-                  Our travel specialists are ready to curate your next escape with concierge-level precision and direct consultation.
-                </p>
-
-                <a
-                  href="tel:+442012345678"
-                  className="mt-5 inline-flex items-center gap-2 text-base font-semibold text-primary transition-colors hover:text-primary-gradient-end"
-                >
-                  <PhoneCall size={15} />
-                  +44 20 1234 5678
-                </a>
-
-                <a
-                  href="tel:+442012345678"
-                  className="mt-6 inline-flex h-11 w-full items-center justify-center border border-primary/55 text-[11px] font-semibold uppercase tracking-[0.2em] text-primary transition-all hover:bg-primary hover:text-white"
-                >
-                  Schedule A Private Call
-                </a>
-              </div>
-
-              <div className="border border-[var(--line-soft)] bg-[var(--surface-card)]/65 p-7">
-                <div className="grid gap-6 sm:grid-cols-2">
-                  <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">London Office</p>
-                    <p className="mt-3 text-sm leading-relaxed text-[var(--text-secondary)]">
-                      24 Berkeley Square
-                      <br />
-                      Mayfair, London
-                      <br />
-                      W1J 6HE, UK
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">Dubai Office</p>
-                    <p className="mt-3 text-sm leading-relaxed text-[var(--text-secondary)]">
-                      Gate Village 05
-                      <br />
-                      DIFC, Dubai
-                      <br />
-                      PO Box 506500, UAE
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-7 border-t border-[var(--line-soft)] pt-5">
-                  <a
-                    href="mailto:concierge@akazatravel.com"
-                    className="inline-flex items-center gap-2 text-sm text-[var(--text-secondary)] transition-colors hover:text-primary"
-                  >
-                    <Mail size={15} className="text-primary" />
-                    concierge@akazatravel.com
-                  </a>
-
-                  <div className="mt-5 flex gap-2.5">
-                    {socials.map((social) => {
-                      const Icon = social.icon;
-                      return (
-                        <a
-                          key={social.label}
-                          href={social.href}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label={social.label}
-                          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[var(--line-soft)] text-[var(--text-muted)] transition-all hover:-translate-y-0.5 hover:border-primary/55 hover:text-primary"
-                        >
-                          <Icon size={14} />
-                        </a>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            </aside>
+            <ContactForm />
+            <ContactInfo />
           </div>
         </section>
       </main>
 
       <Footer />
     </>
-  );
-}
-
-function Field({
-  label,
-  placeholder,
-  value,
-  onChange,
-  type = 'text',
-}: {
-  label: string;
-  placeholder: string;
-  value: string;
-  onChange: (next: string) => void;
-  type?: 'text' | 'email' | 'tel';
-}) {
-  return (
-    <div>
-      <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--contact-form-label)]">
-        {label}
-      </label>
-      <input
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="mt-2 h-12 w-full border-b border-[var(--contact-form-line)] bg-transparent text-base text-[var(--contact-form-text)] placeholder-[var(--contact-form-placeholder)] outline-none transition-colors focus:border-primary"
-      />
-    </div>
   );
 }

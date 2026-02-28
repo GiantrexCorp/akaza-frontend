@@ -1,6 +1,7 @@
 'use client';
 
 import type { AdminHotelBooking } from '@/types/hotel';
+import { formatPrice } from '@/lib/utils/format';
 
 interface HotelBookingInfoProps {
   booking: AdminHotelBooking;
@@ -13,10 +14,6 @@ function InfoRow({ label, value }: { label: string; value: string | number | nul
       <p className="text-sm text-[var(--text-primary)] font-sans text-right">{value ?? '—'}</p>
     </div>
   );
-}
-
-function formatPrice(price: number, currency: string) {
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(price);
 }
 
 export default function HotelBookingInfo({ booking }: HotelBookingInfoProps) {

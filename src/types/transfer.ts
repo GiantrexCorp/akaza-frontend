@@ -147,7 +147,7 @@ export interface AdminRoutePrice {
   id: number;
   transfer_route_id: number;
   transfer_vehicle_id: number;
-  price: string;
+  price: number;
   currency: string;
   vehicle?: AdminTransferVehicle;
 }
@@ -176,7 +176,7 @@ export interface AdminTransferBooking extends TransferBooking {
   status_color: string;
   cancelled_at: string | null;
   cancellation_reason: string | null;
-  refund_amount: string | null;
+  refund_amount: number | null;
   user?: { id: number; name: string; email: string };
   created_at: string;
   updated_at: string;

@@ -15,14 +15,7 @@ import { ApiError } from '@/lib/api/client';
 import { AdminProtectedRoute, useAuth } from '@/lib/auth';
 import { hasPermission } from '@/lib/permissions';
 import type { FinanceReportParams } from '@/types/finance';
-
-function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 2,
-  }).format(amount);
-}
+import { formatPrice } from '@/lib/utils/format';
 
 export default function AdminReportsPage() {
   useEffect(() => { document.title = 'Reports | Akaza Admin'; }, []);
@@ -110,7 +103,7 @@ export default function AdminReportsPage() {
                       Total Revenue
                     </p>
                     <p className="text-3xl font-serif text-[var(--text-primary)]">
-                      {formatCurrency(displayReport.total_revenue)}
+                      {formatPrice(displayReport.total_revenue, 'USD')}
                     </p>
                   </div>
                   <div className="text-right">

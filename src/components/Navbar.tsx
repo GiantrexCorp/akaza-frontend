@@ -44,7 +44,7 @@ export default function Navbar() {
     : "via-[#e2af6d]/80";
   const inactiveLinkStyle = isLight
     ? "text-[var(--text-secondary)] hover:bg-black/[0.06] hover:text-[var(--text-primary)]"
-    : "text-[var(--text-secondary)] hover:bg-white/6 hover:text-[#f2d2a5]";
+    : "text-[var(--text-secondary)] hover:bg-white/6 hover:text-[var(--nav-user-hover-text)]";
   const activeLinkStyle = isLight
     ? "bg-black/[0.06] text-primary shadow-[inset_0_0_0_1px_rgba(179,39,89,0.25)]"
     : "bg-white/8 text-primary shadow-[inset_0_0_0_1px_rgba(226,175,109,0.35)]";
@@ -85,7 +85,7 @@ export default function Navbar() {
 
                 <Link
                   href="/hotels/search"
-                  className="rounded-full border border-[#e2af6d]/55 bg-gradient-to-r from-primary to-primary-gradient-end px-6 py-2.5 text-[11px] font-bold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_-16px_rgba(226,175,109,0.8)] transition-all hover:translate-y-[-1px] hover:shadow-[0_14px_34px_-14px_rgba(226,175,109,0.95)]"
+                  className="rounded-full border border-[var(--nav-avatar-border)] bg-gradient-to-r from-primary to-primary-gradient-end px-6 py-2.5 text-[11px] font-bold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_-16px_rgba(226,175,109,0.8)] transition-all hover:translate-y-[-1px] hover:shadow-[0_14px_34px_-14px_rgba(226,175,109,0.95)]"
                 >
                   Book Now
                 </Link>

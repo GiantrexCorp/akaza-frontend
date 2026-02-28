@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { queryKeys } from '@/lib/query';
+import { queryKeys, CACHE_TIME } from '@/lib/query';
 import { adminToursApi } from '@/lib/api/admin-tours';
 import type {
   CreateTourRequest,
@@ -12,8 +12,7 @@ export function useAdminTourList(params?: string) {
   return useQuery({
     queryKey: queryKeys.admin.tours.list(params),
     queryFn: () => adminToursApi.list(params),
-    staleTime: 60 * 1000,
-    gcTime: 5 * 60 * 1000,
+    ...CACHE_TIME.SHORT,
   });
 }
 
@@ -22,8 +21,7 @@ export function useAdminTourDetail(id: number) {
     queryKey: queryKeys.admin.tours.detail(id),
     queryFn: () => adminToursApi.get(id),
     enabled: !!id,
-    staleTime: 60 * 1000,
-    gcTime: 5 * 60 * 1000,
+    ...CACHE_TIME.SHORT,
   });
 }
 
@@ -85,8 +83,7 @@ export function useAdminTourAvailabilities(tourId: number) {
     queryKey: queryKeys.admin.tours.availabilities(tourId),
     queryFn: () => adminToursApi.listAvailabilities(tourId),
     enabled: !!tourId,
-    staleTime: 60 * 1000,
-    gcTime: 5 * 60 * 1000,
+    ...CACHE_TIME.SHORT,
   });
 }
 

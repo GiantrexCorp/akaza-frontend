@@ -11,6 +11,7 @@ import { useHotelCheckRate } from '@/hooks/useHotels';
 import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { ApiError } from '@/lib/api/client';
 import type { HotelSearchResult, HotelRoom } from '@/types/hotel';
+import { formatPrice } from '@/lib/utils/format';
 
 function RoomSelectionContent() {
   const searchParams = useSearchParams();
@@ -50,10 +51,6 @@ function RoomSelectionContent() {
   };
 
   const totalPrice = selectedRooms.reduce((sum, r) => sum + r.selling_price, 0);
-
-  const formatPrice = (price: number, currency: string) => {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(price);
-  };
 
   if (loading) {
     return (

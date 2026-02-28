@@ -2,6 +2,7 @@ import { type ReactElement } from 'react';
 import { render, type RenderOptions } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ToastProvider } from '@/components/ui/Toast';
+import AuthProvider from '@/lib/auth/AuthProvider';
 
 function createTestQueryClient() {
   return new QueryClient({
@@ -16,9 +17,11 @@ function TestProviders({ children }: { children: React.ReactNode }) {
   const queryClient = createTestQueryClient();
   return (
     <QueryClientProvider client={queryClient}>
-      <ToastProvider>
-        {children}
-      </ToastProvider>
+      <AuthProvider>
+        <ToastProvider>
+          {children}
+        </ToastProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
@@ -28,4 +31,4 @@ function customRender(ui: ReactElement, options?: Omit<RenderOptions, 'wrapper'>
 }
 
 export * from '@testing-library/react';
-export { customRender as render };
+export { customRender as render, createTestQueryClient };

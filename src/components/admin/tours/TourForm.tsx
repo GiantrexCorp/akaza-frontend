@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useId } from 'react';
 import { Input, Select, Button } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast';
 import { useFormValidation } from '@/hooks/useFormValidation';
@@ -39,6 +39,7 @@ function initLocaleMap(source?: LocaleMap): LocaleMap {
 
 export default function TourForm({ tour, onSaved }: TourFormProps) {
   const { toast } = useToast();
+  const descriptionId = useId();
   const isEditing = !!tour;
   const [activeLocale, setActiveLocale] = useState('en');
   const [title, setTitle] = useState<LocaleMap>(() => initLocaleMap(tour?.title));
@@ -158,10 +159,11 @@ export default function TourForm({ tour, onSaved }: TourFormProps) {
           error={fieldError(`title.${activeLocale}`)}
         />
         <div>
-          <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-2">
+          <label htmlFor={descriptionId} className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-2">
             Description ({activeLocale})
           </label>
           <textarea
+            id={descriptionId}
             value={description[activeLocale] || ''}
             onChange={(e) => { handleLocaleChange(setDescription, activeLocale, e.target.value); clearError(`description.${activeLocale}`); }}
             rows={6}

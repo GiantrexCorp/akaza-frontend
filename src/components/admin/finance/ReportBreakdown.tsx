@@ -2,17 +2,10 @@
 
 import { Hotel, Ship, Car } from 'lucide-react';
 import type { RevenueBreakdown } from '@/types/finance';
+import { formatPrice } from '@/lib/utils/format';
 
 interface ReportBreakdownProps {
   breakdown: RevenueBreakdown;
-}
-
-function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 2,
-  }).format(amount);
 }
 
 const items = [
@@ -40,7 +33,7 @@ export default function ReportBreakdown({ breakdown }: ReportBreakdownProps) {
                 </p>
               </div>
               <p className="text-2xl font-serif text-[var(--text-primary)]">
-                {formatCurrency(breakdown[item.key])}
+                {formatPrice(breakdown[item.key], 'USD')}
               </p>
             </div>
           );

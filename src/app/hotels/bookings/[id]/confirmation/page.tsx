@@ -13,6 +13,7 @@ import { useToast } from '@/components/ui/Toast';
 import { ApiError } from '@/lib/api/client';
 import { ProtectedRoute } from '@/lib/auth';
 import { HOTEL_BOOKING_STATUS_COLORS } from '@/lib/constants';
+import { formatPrice } from '@/lib/utils/format';
 
 function ConfirmationContent({ id }: { id: string }) {
   const { toast } = useToast();
@@ -34,10 +35,6 @@ function ConfirmationContent({ id }: { id: string }) {
     } catch {
       toast('error', 'Failed to download voucher');
     }
-  };
-
-  const formatPrice = (price: number, currency: string) => {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(price);
   };
 
   if (loading) {

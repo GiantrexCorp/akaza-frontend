@@ -66,7 +66,7 @@ export default function ThemeToggle({ isLight, theme, onToggle, mobile }: ThemeT
       className={`h-10 w-10 rounded-full border border-[var(--line-soft)] text-[var(--text-secondary)] transition-colors flex items-center justify-center ${
         isLight
           ? 'bg-white/70 hover:border-primary/40 hover:text-[var(--text-primary)]'
-          : 'bg-black/15 hover:border-[#e2af6d]/55 hover:text-[#f2d2a5]'
+          : 'bg-black/15 hover:border-[var(--nav-avatar-border)] hover:text-[var(--nav-user-hover-text)]'
       }`}
       aria-label="Toggle theme"
       type="button"

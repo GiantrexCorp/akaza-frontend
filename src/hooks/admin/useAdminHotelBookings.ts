@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { queryKeys } from '@/lib/query';
+import { queryKeys, CACHE_TIME } from '@/lib/query';
 import { adminHotelBookingsApi } from '@/lib/api/admin-hotel-bookings';
 import type { ReconcileRequest } from '@/types/hotel';
 
@@ -7,8 +7,7 @@ export function useAdminHotelBookingList(params?: string) {
   return useQuery({
     queryKey: queryKeys.admin.hotelBookings.list(params),
     queryFn: () => adminHotelBookingsApi.list(params),
-    staleTime: 60 * 1000,
-    gcTime: 5 * 60 * 1000,
+    ...CACHE_TIME.SHORT,
     placeholderData: keepPreviousData,
   });
 }
@@ -18,8 +17,7 @@ export function useAdminHotelBookingDetail(id: number) {
     queryKey: queryKeys.admin.hotelBookings.detail(id),
     queryFn: () => adminHotelBookingsApi.get(id),
     enabled: !!id,
-    staleTime: 60 * 1000,
-    gcTime: 5 * 60 * 1000,
+    ...CACHE_TIME.SHORT,
   });
 }
 

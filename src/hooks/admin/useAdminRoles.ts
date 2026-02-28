@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { queryKeys } from '@/lib/query';
+import { queryKeys, CACHE_TIME } from '@/lib/query';
 import { adminRolesApi } from '@/lib/api/admin-roles';
 import type { CreateRoleRequest, UpdateRoleRequest } from '@/types/admin';
 
@@ -7,8 +7,7 @@ export function useAdminRoleList(params?: string) {
   return useQuery({
     queryKey: queryKeys.admin.roles.list(params),
     queryFn: () => adminRolesApi.list(params),
-    staleTime: 60 * 1000,
-    gcTime: 5 * 60 * 1000,
+    ...CACHE_TIME.SHORT,
     placeholderData: keepPreviousData,
   });
 }
@@ -18,8 +17,7 @@ export function useAdminRoleDetail(id: number, params?: string) {
     queryKey: queryKeys.admin.roles.detail(id),
     queryFn: () => adminRolesApi.get(id, params),
     enabled: !!id,
-    staleTime: 60 * 1000,
-    gcTime: 5 * 60 * 1000,
+    ...CACHE_TIME.SHORT,
   });
 }
 

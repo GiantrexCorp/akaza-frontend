@@ -11,6 +11,7 @@ import { useHotelSearch } from '@/hooks/useHotels';
 import { PAGE_SIZE } from '@/lib/constants';
 import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import type { HotelSearchResult } from '@/types/hotel';
+import { formatPrice } from '@/lib/utils/format';
 
 function HotelSearchContent() {
   const router = useRouter();
@@ -59,10 +60,6 @@ function HotelSearchContent() {
         },
       },
     );
-  };
-
-  const formatPrice = (price: number, currency: string) => {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(price);
   };
 
   return (

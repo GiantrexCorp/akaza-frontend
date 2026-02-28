@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { queryKeys } from '@/lib/query';
+import { queryKeys, CACHE_TIME } from '@/lib/query';
 import { adminToursApi } from '@/lib/api/admin-tours';
 import type { UpdateBookingStatusRequest } from '@/types/tour';
 
@@ -7,8 +7,7 @@ export function useAdminTourBookingList(params?: string) {
   return useQuery({
     queryKey: queryKeys.admin.tourBookings.list(params),
     queryFn: () => adminToursApi.listBookings(params),
-    staleTime: 60 * 1000,
-    gcTime: 5 * 60 * 1000,
+    ...CACHE_TIME.SHORT,
     placeholderData: keepPreviousData,
   });
 }
@@ -18,8 +17,7 @@ export function useAdminTourBookingDetail(id: number) {
     queryKey: queryKeys.admin.tourBookings.detail(id),
     queryFn: () => adminToursApi.getBooking(id),
     enabled: !!id,
-    staleTime: 60 * 1000,
-    gcTime: 5 * 60 * 1000,
+    ...CACHE_TIME.SHORT,
   });
 }
 

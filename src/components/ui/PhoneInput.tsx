@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useId } from 'react';
 import ReactPhoneInput from 'react-phone-number-input';
 import type { Value, Country } from 'react-phone-number-input';
 import { getCountryCallingCode } from 'react-phone-number-input';
@@ -98,6 +98,8 @@ function CountrySelectWithSearch({
       <button
         type="button"
         onClick={() => setOpen(!open)}
+        aria-expanded={open}
+        aria-haspopup="listbox"
         className="flex items-center gap-1.5 pr-3 border-r border-[var(--line-soft)] mr-3 text-[var(--field-text)] hover:text-primary transition-colors h-full"
       >
         {value ? (
@@ -121,6 +123,7 @@ function CountrySelectWithSearch({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search country..."
+              aria-label="Search countries"
               className="w-full bg-transparent text-sm font-sans text-[var(--field-text)] placeholder-[var(--field-placeholder)] outline-none"
             />
           </div>
@@ -165,15 +168,19 @@ export default function PhoneInput({
   defaultCountry = 'EG',
   placeholder = 'Phone number',
 }: PhoneInputProps) {
+  const inputId = useId();
+  const errorId = `${inputId}-error`;
+
   return (
     <div className="space-y-2">
       {label && (
-        <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans">
+        <label htmlFor={inputId} className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans">
           {label}
           {required && <span className="text-red-400 ml-1">*</span>}
         </label>
       )}
       <ReactPhoneInput
+        id={inputId}
         international
         defaultCountry={defaultCountry}
         value={value}
@@ -184,7 +191,7 @@ export default function PhoneInput({
         className={`akaza-phone-input ${error ? 'akaza-phone-input--error' : ''}`}
       />
       {error && (
-        <p className="text-red-400 text-xs font-sans">{error}</p>
+        <p id={errorId} role="alert" className="text-red-400 text-xs font-sans">{error}</p>
       )}
     </div>
   );

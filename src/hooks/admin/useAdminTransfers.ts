@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { queryKeys } from '@/lib/query';
+import { queryKeys, CACHE_TIME } from '@/lib/query';
 import { adminTransfersApi } from '@/lib/api/admin-transfers';
 import type {
   CreateVehicleRequest,
@@ -13,8 +13,7 @@ export function useAdminVehicleList(params?: string) {
   return useQuery({
     queryKey: queryKeys.admin.transfers.vehicles(params),
     queryFn: () => adminTransfersApi.listVehicles(params),
-    staleTime: 60 * 1000,
-    gcTime: 5 * 60 * 1000,
+    ...CACHE_TIME.SHORT,
   });
 }
 
@@ -23,8 +22,7 @@ export function useAdminVehicleDetail(id: number) {
     queryKey: queryKeys.admin.transfers.vehicleDetail(id),
     queryFn: () => adminTransfersApi.getVehicle(id),
     enabled: !!id,
-    staleTime: 60 * 1000,
-    gcTime: 5 * 60 * 1000,
+    ...CACHE_TIME.SHORT,
   });
 }
 
@@ -84,8 +82,7 @@ export function useAdminRouteList(params?: string) {
   return useQuery({
     queryKey: queryKeys.admin.transfers.routes(params),
     queryFn: () => adminTransfersApi.listRoutes(params),
-    staleTime: 60 * 1000,
-    gcTime: 5 * 60 * 1000,
+    ...CACHE_TIME.SHORT,
   });
 }
 
@@ -94,8 +91,7 @@ export function useAdminRouteDetail(id: number) {
     queryKey: queryKeys.admin.transfers.routeDetail(id),
     queryFn: () => adminTransfersApi.getRoute(id),
     enabled: !!id,
-    staleTime: 60 * 1000,
-    gcTime: 5 * 60 * 1000,
+    ...CACHE_TIME.SHORT,
   });
 }
 

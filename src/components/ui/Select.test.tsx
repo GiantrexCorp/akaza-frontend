@@ -50,4 +50,24 @@ describe('Select', () => {
     render(<Select label="Custom" options={options} id="my-select" />);
     expect(screen.getByLabelText(/custom/i)).toHaveAttribute('id', 'my-select');
   });
+
+  it('sets aria-invalid when error is present', () => {
+    render(<Select label="Country" options={options} error="Required" />);
+    expect(screen.getByLabelText(/country/i)).toHaveAttribute('aria-invalid', 'true');
+  });
+
+  it('does not set aria-invalid when no error', () => {
+    render(<Select label="Country" options={options} />);
+    expect(screen.getByLabelText(/country/i)).not.toHaveAttribute('aria-invalid');
+  });
+
+  it('links select to error via aria-describedby', () => {
+    render(<Select label="Country" options={options} error="Required field" />);
+    const select = screen.getByLabelText(/country/i);
+    const errorId = select.getAttribute('aria-describedby');
+    expect(errorId).toBeTruthy();
+    const errorEl = document.getElementById(errorId!);
+    expect(errorEl).toHaveTextContent('Required field');
+    expect(errorEl).toHaveAttribute('role', 'alert');
+  });
 });

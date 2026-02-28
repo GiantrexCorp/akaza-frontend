@@ -73,4 +73,36 @@ describe('DataTable', () => {
     const rows = screen.getAllByRole('row').slice(1);
     rows.forEach((row) => expect(row).not.toHaveClass('cursor-pointer'));
   });
+
+  it('adds role="button" and tabIndex when onRowClick is provided', () => {
+    render(<DataTable columns={columns} data={data} keyExtractor={(i) => i.id} onRowClick={vi.fn()} />);
+    const rows = screen.getAllByRole('button');
+    expect(rows).toHaveLength(3);
+    rows.forEach((row) => expect(row).toHaveAttribute('tabindex', '0'));
+  });
+
+  it('does not add role="button" when no onRowClick', () => {
+    render(<DataTable columns={columns} data={data} keyExtractor={(i) => i.id} />);
+    expect(screen.queryAllByRole('button')).toHaveLength(0);
+  });
+
+  it('triggers onRowClick on Enter key', async () => {
+    const user = userEvent.setup();
+    const onRowClick = vi.fn();
+    render(<DataTable columns={columns} data={data} keyExtractor={(i) => i.id} onRowClick={onRowClick} />);
+    const rows = screen.getAllByRole('button');
+    rows[0].focus();
+    await user.keyboard('{Enter}');
+    expect(onRowClick).toHaveBeenCalledWith(data[0]);
+  });
+
+  it('triggers onRowClick on Space key', async () => {
+    const user = userEvent.setup();
+    const onRowClick = vi.fn();
+    render(<DataTable columns={columns} data={data} keyExtractor={(i) => i.id} onRowClick={onRowClick} />);
+    const rows = screen.getAllByRole('button');
+    rows[1].focus();
+    await user.keyboard(' ');
+    expect(onRowClick).toHaveBeenCalledWith(data[1]);
+  });
 });

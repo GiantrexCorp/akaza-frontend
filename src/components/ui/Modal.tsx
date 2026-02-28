@@ -76,13 +76,13 @@ export default function Modal({ open, onClose, title, children, maxWidth = 'md' 
         {title && (
           <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--line-soft)]">
             <h3 className="text-xl font-serif text-[var(--text-primary)]">{title}</h3>
-            <button onClick={onClose} className="text-[var(--text-muted)] hover:text-primary transition-colors">
+            <button onClick={onClose} aria-label="Close" className="text-[var(--text-muted)] hover:text-primary transition-colors">
               <X size={20} />
             </button>
           </div>
         )}
         {!title && (
-          <button onClick={onClose} className="absolute top-4 right-4 text-[var(--text-muted)] hover:text-primary transition-colors z-10">
+          <button onClick={onClose} aria-label="Close" className="absolute top-4 right-4 text-[var(--text-muted)] hover:text-primary transition-colors z-10">
             <X size={20} />
           </button>
         )}

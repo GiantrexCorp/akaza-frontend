@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useId } from 'react';
 import { Copy, Check } from 'lucide-react';
 import { Select, Button } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast';
@@ -20,6 +20,8 @@ const channelOptions = [
 
 export default function TemplateEditForm({ template, onSaved }: TemplateEditFormProps) {
   const { toast } = useToast();
+  const subjectId = useId();
+  const bodyId = useId();
   const locales = Object.keys(template.subject);
   const [activeLocale, setActiveLocale] = useState(locales[0] || 'en');
   const [channel, setChannel] = useState<NotificationChannel>(template.channel);
@@ -118,10 +120,11 @@ export default function TemplateEditForm({ template, onSaved }: TemplateEditForm
       {/* Per-locale subject + body */}
       <div className="space-y-6">
         <div>
-          <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-2">
+          <label htmlFor={subjectId} className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-2">
             Subject ({activeLocale})
           </label>
           <input
+            id={subjectId}
             type="text"
             value={subject[activeLocale] || ''}
             onChange={(e) => handleSubjectChange(activeLocale, e.target.value)}
@@ -129,10 +132,11 @@ export default function TemplateEditForm({ template, onSaved }: TemplateEditForm
           />
         </div>
         <div>
-          <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-2">
+          <label htmlFor={bodyId} className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-2">
             Body ({activeLocale})
           </label>
           <textarea
+            id={bodyId}
             value={body[activeLocale] || ''}
             onChange={(e) => handleBodyChange(activeLocale, e.target.value)}
             rows={10}

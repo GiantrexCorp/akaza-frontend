@@ -10,6 +10,7 @@ import { Button, Spinner, Badge, EmptyState } from '@/components/ui';
 import { useTransferVehicles, useTransferRoutes, useTransferRoutePrices } from '@/hooks/useTransfers';
 import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import type { TransferRoute } from '@/types/transfer';
+import { formatPrice } from '@/lib/utils/format';
 
 const typeIcons: Record<string, typeof Plane> = {
   airport: Plane,
@@ -46,10 +47,6 @@ export default function TransfersPage() {
     { value: 'city', label: 'City' },
     { value: 'chauffeur', label: 'Chauffeur' },
   ];
-
-  const formatPrice = (price: number, currency: string) => {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(price);
-  };
 
   const getVehicleById = (id: string) => vehicles.find((v) => v.id === id);
 

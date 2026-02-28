@@ -50,7 +50,7 @@ export default function RoutePriceManager({ routeId, prices, onPricesUpdated }: 
 
   const startEdit = (vehicleId: number, existingPrice: AdminRoutePrice | null) => {
     setEditingId(vehicleId);
-    setEditPrice(existingPrice?.price || '');
+    setEditPrice(existingPrice?.price != null ? String(existingPrice.price) : '');
     setEditCurrency(existingPrice?.currency || 'EUR');
   };
 

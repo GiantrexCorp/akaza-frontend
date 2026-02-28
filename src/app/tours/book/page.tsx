@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, Suspense, type FormEvent } from 'react';
+import { useState, useId, Suspense, type FormEvent } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, User, Mail, Plus, Trash2 } from 'lucide-react';
@@ -16,6 +16,7 @@ import { useToast } from '@/components/ui/Toast';
 import { ApiError } from '@/lib/api/client';
 import { ProtectedRoute } from '@/lib/auth';
 import type { TourBookingGuest } from '@/types/tour';
+import { formatPrice } from '@/lib/utils/format';
 
 function TourBookingForm() {
   const router = useRouter();
@@ -35,6 +36,7 @@ function TourBookingForm() {
   const [contactEmail, setContactEmail] = useState('');
   const [contactPhone, setContactPhone] = useState<E164Number | undefined>(undefined);
   const [specialRequests, setSpecialRequests] = useState('');
+  const specialRequestsId = useId();
   const [guests, setGuests] = useState<(TourBookingGuest & { _key: string })[]>(() =>
     Array.from({ length: guestsCount }, () => ({ name: '', surname: '', type: 'AD' as const, age: null, _key: crypto.randomUUID() }))
   );
@@ -43,10 +45,6 @@ function TourBookingForm() {
   const [agreed, setAgreed] = useState(false);
 
   const totalPrice = price * guests.length;
-
-  const formatPrice = (p: number) => {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(p);
-  };
 
   const updateGuest = (idx: number, field: keyof TourBookingGuest, value: string | number | null) => {
     setGuests((prev) => prev.map((g, i) => i === idx ? { ...g, [field]: value } : g));
@@ -157,8 +155,9 @@ function TourBookingForm() {
 
               {/* Special requests */}
               <div className="bg-[var(--surface-card)] border border-[var(--line-soft)] p-6">
-                <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-4">Special Requests (optional)</h2>
+                <label htmlFor={specialRequestsId} className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-4 block">Special Requests (optional)</label>
                 <textarea
+                  id={specialRequestsId}
                   value={specialRequests}
                   onChange={(e) => setSpecialRequests(e.target.value)}
                   placeholder="Any dietary requirements, accessibility needs, or special requests..."
@@ -195,14 +194,14 @@ function TourBookingForm() {
                   </div>
                   <div className="flex justify-between">
                     <p className="text-sm text-[var(--text-secondary)] font-sans">Price/person</p>
-                    <p className="text-sm font-serif text-[var(--text-primary)]">{formatPrice(price)}</p>
+                    <p className="text-sm font-serif text-[var(--text-primary)]">{formatPrice(price, currency)}</p>
                   </div>
                 </div>
 
                 <div className="border-t border-[var(--line-soft)] pt-4 mb-6">
                   <div className="flex items-end justify-between">
                     <p className="text-xs text-[var(--text-muted)] font-sans uppercase tracking-wider">Total</p>
-                    <p className="text-2xl font-serif text-[var(--text-primary)]">{formatPrice(totalPrice)}</p>
+                    <p className="text-2xl font-serif text-[var(--text-primary)]">{formatPrice(totalPrice, currency)}</p>
                   </div>
                 </div>
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useId } from 'react';
 import { Modal, Select, Button } from '@/components/ui';
 import type { TourBookingStatus } from '@/types/tour';
 
@@ -31,6 +31,7 @@ const statusLabels: Record<TourBookingStatus, string> = {
 export default function StatusChangeModal({ open, onClose, currentStatus, onSubmit, loading }: StatusChangeModalProps) {
   const [newStatus, setNewStatus] = useState<TourBookingStatus | ''>('');
   const [reason, setReason] = useState('');
+  const reasonId = useId();
 
   const allowed = allowedTransitions[currentStatus] || [];
   const statusOptions = [
@@ -62,10 +63,11 @@ export default function StatusChangeModal({ open, onClose, currentStatus, onSubm
           onChange={(e) => setNewStatus(e.target.value as TourBookingStatus)}
         />
         <div>
-          <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-2">
+          <label htmlFor={reasonId} className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-2">
             Reason (optional)
           </label>
           <textarea
+            id={reasonId}
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             rows={3}

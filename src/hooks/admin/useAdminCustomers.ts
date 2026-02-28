@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
-import { queryKeys } from '@/lib/query';
+import { queryKeys, CACHE_TIME } from '@/lib/query';
 import { adminCustomersApi } from '@/lib/api/admin-customers';
 import type { UpdateCustomerRequest, CreateNoteRequest, UpdateNoteRequest } from '@/types/customer';
 
@@ -7,8 +7,7 @@ export function useAdminCustomerList(params?: string) {
   return useQuery({
     queryKey: queryKeys.admin.customers.list(params),
     queryFn: () => adminCustomersApi.list(params),
-    staleTime: 60 * 1000,
-    gcTime: 5 * 60 * 1000,
+    ...CACHE_TIME.SHORT,
     placeholderData: keepPreviousData,
   });
 }
@@ -18,8 +17,7 @@ export function useAdminCustomerDetail(id: number) {
     queryKey: queryKeys.admin.customers.detail(id),
     queryFn: () => adminCustomersApi.get(id),
     enabled: !!id,
-    staleTime: 60 * 1000,
-    gcTime: 5 * 60 * 1000,
+    ...CACHE_TIME.SHORT,
   });
 }
 
@@ -39,8 +37,7 @@ export function useCustomerBookingHistory(id: number) {
     queryKey: queryKeys.admin.customers.bookingHistory(id),
     queryFn: () => adminCustomersApi.bookingHistory(id),
     enabled: !!id,
-    staleTime: 60 * 1000,
-    gcTime: 5 * 60 * 1000,
+    ...CACHE_TIME.SHORT,
   });
 }
 
@@ -49,8 +46,7 @@ export function useCustomerNotes(customerId: number) {
     queryKey: queryKeys.admin.customers.notes(customerId),
     queryFn: () => adminCustomersApi.listNotes(customerId),
     enabled: !!customerId,
-    staleTime: 60 * 1000,
-    gcTime: 5 * 60 * 1000,
+    ...CACHE_TIME.SHORT,
   });
 }
 

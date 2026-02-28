@@ -16,6 +16,7 @@ import { ApiError } from '@/lib/api/client';
 import { ProtectedRoute } from '@/lib/auth';
 import type { CancellationCost } from '@/types/hotel';
 import { HOTEL_BOOKING_STATUS_COLORS } from '@/lib/constants';
+import { formatPrice } from '@/lib/utils/format';
 
 function HotelBookingDetail({ id }: { id: string }) {
   const { toast } = useToast();
@@ -66,10 +67,6 @@ function HotelBookingDetail({ id }: { id: string }) {
     } catch {
       toast('error', 'Failed to download voucher');
     }
-  };
-
-  const formatPrice = (price: number, currency: string) => {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(price);
   };
 
   if (loading) return <div className="py-16"><Spinner size="lg" /></div>;

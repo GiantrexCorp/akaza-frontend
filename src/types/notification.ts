@@ -3,7 +3,7 @@ export interface NotificationLog {
   user_id: string;
   type: string;
   type_label: string;
-  channel: 'email' | 'sms' | 'in_app';
+  channel: 'mail' | 'database';
   recipient_email: string | null;
   subject: string;
   status: 'sent' | 'failed' | 'pending';
