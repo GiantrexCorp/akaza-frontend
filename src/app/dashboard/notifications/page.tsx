@@ -1,16 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Bell, Mail, MessageSquare, Check, CheckCheck } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Button, Spinner, Badge, EmptyState, Pagination } from '@/components/ui';
-import { notificationsApi } from '@/lib/api/notifications';
+import { useNotificationList, useMarkRead, useMarkAllRead } from '@/hooks/useNotifications';
+import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { useToast } from '@/components/ui/Toast';
-import { ApiError } from '@/lib/api/client';
 import { ProtectedRoute } from '@/lib/auth';
-import type { NotificationLog } from '@/types/notification';
 
 const channelIcons: Record<string, typeof Mail> = {
   email: Mail,
@@ -26,46 +25,27 @@ const statusColors: Record<string, 'green' | 'red' | 'yellow'> = {
 
 export default function NotificationsPage() {
   const { toast } = useToast();
-  const [notifications, setNotifications] = useState<NotificationLog[]>([]);
-  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [lastPage, setLastPage] = useState(1);
 
-  const fetchNotifications = async (page: number) => {
-    setLoading(true);
-    try {
-      const data = await notificationsApi.list(`page=${page}`);
-      setNotifications(data.data);
-      setCurrentPage(data.meta.current_page);
-      setLastPage(data.meta.last_page);
-    } catch (err) {
-      if (err instanceof ApiError) toast('error', err.errors[0] || 'Failed to load notifications');
-    } finally {
-      setLoading(false);
-    }
+  const { data, isLoading: loading, error } = useNotificationList(`page=${currentPage}`);
+  useQueryErrorToast(!!error, error, 'Failed to load notifications');
+  const markReadMutation = useMarkRead();
+  const markAllReadMutation = useMarkAllRead();
+
+  const notifications = data?.data ?? [];
+  const lastPage = data?.meta.last_page ?? 1;
+
+  const handleMarkAsRead = (id: string) => {
+    markReadMutation.mutate(id, {
+      onError: () => toast('error', 'Failed to mark as read'),
+    });
   };
 
-  useEffect(() => {
-    fetchNotifications(1);
-  }, []);
-
-  const handleMarkAsRead = async (id: string) => {
-    try {
-      const updated = await notificationsApi.markAsRead(id);
-      setNotifications((prev) => prev.map((n) => (n.id === id ? updated : n)));
-    } catch (err) {
-      if (err instanceof ApiError) toast('error', err.errors[0] || 'Failed to mark as read');
-    }
-  };
-
-  const handleMarkAllAsRead = async () => {
-    try {
-      await notificationsApi.markAllAsRead();
-      toast('success', 'All notifications marked as read');
-      fetchNotifications(currentPage);
-    } catch (err) {
-      if (err instanceof ApiError) toast('error', err.errors[0] || 'Failed to mark all as read');
-    }
+  const handleMarkAllAsRead = () => {
+    markAllReadMutation.mutate(undefined, {
+      onSuccess: () => toast('success', 'All notifications marked as read'),
+      onError: () => toast('error', 'Failed to mark all as read'),
+    });
   };
 
   return (
@@ -117,7 +97,7 @@ export default function NotificationsPage() {
                 })}
               </div>
               <div className="mt-8">
-                <Pagination currentPage={currentPage} lastPage={lastPage} onPageChange={fetchNotifications} />
+                <Pagination currentPage={currentPage} lastPage={lastPage} onPageChange={setCurrentPage} />
               </div>
             </>
           )}

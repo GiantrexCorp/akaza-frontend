@@ -1,16 +1,17 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { use } from 'react';
 import Link from 'next/link';
 import { CheckCircle, Download, Calendar, Clock, MapPin, Car, Users, Briefcase, Plane, ArrowRight } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button, Spinner, Badge, PageError } from '@/components/ui';
 import { transfersApi } from '@/lib/api/transfers';
+import { useTransferBookingDetail } from '@/hooks/useBookings';
+import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { useToast } from '@/components/ui/Toast';
 import { ApiError } from '@/lib/api/client';
 import { ProtectedRoute } from '@/lib/auth';
-import type { TransferBooking } from '@/types/transfer';
 
 const statusColors: Record<string, 'yellow' | 'green' | 'red' | 'gray' | 'purple'> = {
   pending: 'yellow',
@@ -22,30 +23,9 @@ const statusColors: Record<string, 'yellow' | 'green' | 'red' | 'gray' | 'purple
 
 function ConfirmationContent({ id }: { id: string }) {
   const { toast } = useToast();
-  const [booking, setBooking] = useState<TransferBooking | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<ApiError | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
-
-  useEffect(() => {
-    let cancelled = false;
-    setError(null);
-    setLoading(true);
-    (async () => {
-      try {
-        const data = await transfersApi.getBooking(id);
-        if (!cancelled) setBooking(data);
-      } catch (err) {
-        if (!cancelled && err instanceof ApiError) {
-          setError(err);
-          toast('error', err.errors[0] || 'Failed to load booking');
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [id, retryCount]);
+  const { data: booking, isLoading: loading, error: queryError, refetch } = useTransferBookingDetail(id);
+  useQueryErrorToast(!!queryError, queryError, 'Failed to load booking');
+  const error = queryError instanceof ApiError ? queryError : null;
 
   const handleDownloadVoucher = async () => {
     try {
@@ -77,7 +57,7 @@ function ConfirmationContent({ id }: { id: string }) {
         <PageError
           status={error?.status ?? 404}
           title={error?.status === 404 ? 'Booking Not Found' : undefined}
-          onRetry={() => setRetryCount((c) => c + 1)}
+          onRetry={() => refetch()}
           backHref="/dashboard/bookings"
           backLabel="My Bookings"
         />

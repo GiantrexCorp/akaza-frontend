@@ -5,10 +5,12 @@ export default function OfficeSection() {
   return (
     <section className="h-[450px] w-full relative">
       <div className="absolute inset-0 bg-[var(--map-overlay)] z-10 pointer-events-none" />
-      <img
+      <Image
         alt="Egypt Map Stylized"
         src="/images/map-egypt.jpg"
-        className="w-full h-full object-cover opacity-80"
+        fill
+        sizes="100vw"
+        className="object-cover opacity-80"
       />
       <div className="absolute inset-0 flex items-center justify-center z-20">
         <div className="bg-[var(--surface-card)]/95 backdrop-blur-xl border border-[var(--line-soft)] p-12 text-center shadow-2xl max-w-md w-full mx-4">

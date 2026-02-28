@@ -4,10 +4,12 @@ import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import { Trash2 } from 'lucide-react';
 import VehicleForm from '@/components/admin/transfers/VehicleForm';
-import VehicleImageManager from '@/components/admin/transfers/VehicleImageManager';
+import dynamic from 'next/dynamic';
+const VehicleImageManager = dynamic(() => import('@/components/admin/transfers/VehicleImageManager'), { ssr: false });
 import { Spinner, Breadcrumb, Button, Badge, Modal, PageError } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast';
-import { adminTransfersApi } from '@/lib/api/admin-transfers';
+import { useAdminVehicleDetail, useDeleteVehicle } from '@/hooks/admin/useAdminTransfers';
+import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { ApiError } from '@/lib/api/client';
 import { AdminProtectedRoute, useAuth } from '@/lib/auth';
 import { hasPermission } from '@/lib/permissions';
@@ -25,35 +27,13 @@ function VehicleDetail({ id }: { id: number }) {
   const { toast } = useToast();
   const router = useRouter();
   const { user: authUser } = useAuth();
-  const [vehicle, setVehicle] = useState<AdminTransferVehicle | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<ApiError | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
+  const { data: vehicle, isLoading, isError, error, refetch } = useAdminVehicleDetail(id);
+  useQueryErrorToast(isError, error, 'Failed to load vehicle');
+  const deleteMutation = useDeleteVehicle();
   const [activeTab, setActiveTab] = useState<Tab>('info');
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [deleting, setDeleting] = useState(false);
 
   const canDelete = hasPermission(authUser, 'delete-transfer');
-
-  useEffect(() => {
-    let cancelled = false;
-    setError(null);
-    setLoading(true);
-    (async () => {
-      try {
-        const data = await adminTransfersApi.getVehicle(id);
-        if (!cancelled) setVehicle(data);
-      } catch (err) {
-        if (!cancelled && err instanceof ApiError) {
-          setError(err);
-          toast('error', err.errors[0] || 'Failed to load vehicle');
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [id, retryCount]);
 
   useEffect(() => {
     document.title = vehicle
@@ -61,24 +41,23 @@ function VehicleDetail({ id }: { id: number }) {
       : 'Loading... | Akaza Admin';
   }, [vehicle]);
 
-  const handleSaved = (updated: AdminTransferVehicle) => {
-    setVehicle(updated);
+  const handleSaved = (_updated: AdminTransferVehicle) => {
+    refetch();
   };
 
-  const handleDelete = async () => {
-    setDeleting(true);
-    try {
-      await adminTransfersApi.deleteVehicle(id);
-      toast('success', 'Vehicle deleted');
-      router.push('/admin/transfers');
-    } catch (err) {
-      if (err instanceof ApiError) toast('error', err.errors[0] || 'Failed to delete vehicle');
-    } finally {
-      setDeleting(false);
-    }
+  const handleDelete = () => {
+    deleteMutation.mutate(id, {
+      onSuccess: () => {
+        toast('success', 'Vehicle deleted');
+        router.push('/admin/transfers');
+      },
+      onError: (err) => {
+        if (err instanceof ApiError) toast('error', err.errors[0] || 'Failed to delete vehicle');
+      },
+    });
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="py-16">
         <Spinner size="lg" />
@@ -86,13 +65,13 @@ function VehicleDetail({ id }: { id: number }) {
     );
   }
 
-  if (error || !vehicle) {
+  if (isError || !vehicle) {
     return (
       <div className="py-16">
         <PageError
-          status={error?.status ?? 404}
-          title={error?.status === 404 ? 'Vehicle Not Found' : undefined}
-          onRetry={() => setRetryCount((c) => c + 1)}
+          status={(error as ApiError)?.status ?? 404}
+          title={(error as ApiError)?.status === 404 ? 'Vehicle Not Found' : undefined}
+          onRetry={() => refetch()}
           backHref="/admin/transfers"
           backLabel="Back to Transfers"
         />
@@ -155,7 +134,7 @@ function VehicleDetail({ id }: { id: number }) {
           <VehicleForm vehicle={vehicle} onSaved={handleSaved} />
         )}
         {activeTab === 'image' && (
-          <VehicleImageManager vehicle={vehicle} onUpdated={setVehicle} />
+          <VehicleImageManager vehicle={vehicle} onUpdated={() => refetch()} />
         )}
       </div>
 
@@ -167,7 +146,7 @@ function VehicleDetail({ id }: { id: number }) {
           </p>
           <div className="flex gap-3 justify-end">
             <Button variant="ghost" size="sm" onClick={() => setDeleteOpen(false)}>Cancel</Button>
-            <Button size="sm" loading={deleting} onClick={handleDelete}>
+            <Button size="sm" loading={deleteMutation.isPending} onClick={handleDelete}>
               Delete Vehicle
             </Button>
           </div>

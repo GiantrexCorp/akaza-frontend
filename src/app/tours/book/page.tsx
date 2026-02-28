@@ -9,7 +9,7 @@ import Footer from '@/components/Footer';
 import { Input, Button, Spinner, Select, PhoneInput } from '@/components/ui';
 import type { E164Number } from '@/components/ui';
 import { validatePhone } from '@/lib/validation/phone';
-import { toursApi } from '@/lib/api/tours';
+import { useCreateTourBooking } from '@/hooks/useTours';
 import { useToast } from '@/components/ui/Toast';
 import { ApiError } from '@/lib/api/client';
 import { ProtectedRoute } from '@/lib/auth';
@@ -36,7 +36,7 @@ function TourBookingForm() {
   const [guests, setGuests] = useState<(TourBookingGuest & { _key: string })[]>(() =>
     Array.from({ length: guestsCount }, () => ({ name: '', surname: '', type: 'AD' as const, age: null, _key: crypto.randomUUID() }))
   );
-  const [loading, setLoading] = useState(false);
+  const createBookingMutation = useCreateTourBooking();
   const [agreed, setAgreed] = useState(false);
 
   const totalPrice = price * guests.length;
@@ -74,9 +74,8 @@ function TourBookingForm() {
       return;
     }
 
-    setLoading(true);
-    try {
-      const booking = await toursApi.createBooking({
+    createBookingMutation.mutate(
+      {
         tour_id: tourId,
         availability_id: availabilityId,
         contact_name: contactName,
@@ -84,16 +83,19 @@ function TourBookingForm() {
         contact_phone: contactPhone || '',
         special_requests: specialRequests || undefined,
         guests,
-      });
-      toast('success', 'Tour booked successfully!');
-      router.push(`/tours/bookings/${booking.id}/confirmation`);
-    } catch (err) {
-      if (err instanceof ApiError) {
-        toast('error', err.errors[0] || 'Booking failed');
-      }
-    } finally {
-      setLoading(false);
-    }
+      },
+      {
+        onSuccess: (booking) => {
+          toast('success', 'Tour booked successfully!');
+          router.push(`/tours/bookings/${booking.id}/confirmation`);
+        },
+        onError: (err) => {
+          if (err instanceof ApiError) {
+            toast('error', err.errors[0] || 'Booking failed');
+          }
+        },
+      },
+    );
   };
 
   return (
@@ -204,7 +206,7 @@ function TourBookingForm() {
                   </div>
                 </div>
 
-                <Button type="submit" variant="gradient" loading={loading} className="w-full">
+                <Button type="submit" variant="gradient" loading={createBookingMutation.isPending} className="w-full">
                   Confirm Booking
                 </Button>
               </div>

@@ -9,7 +9,7 @@ import Footer from '@/components/Footer';
 import { Input, Button, Spinner, Select, Badge, PhoneInput } from '@/components/ui';
 import type { E164Number } from '@/components/ui';
 import { validatePhone } from '@/lib/validation/phone';
-import { hotelsApi } from '@/lib/api/hotels';
+import { useCreateHotelBooking } from '@/hooks/useHotels';
 import { useToast } from '@/components/ui/Toast';
 import { ApiError } from '@/lib/api/client';
 import { ProtectedRoute } from '@/lib/auth';
@@ -56,7 +56,7 @@ function BookingFormContent() {
       })),
     }))
   );
-  const [loading, setLoading] = useState(false);
+  const createBookingMutation = useCreateHotelBooking();
   const [agreed, setAgreed] = useState(false);
 
   if (!bookingData || !bookingData.rooms?.length) {
@@ -102,10 +102,9 @@ function BookingFormContent() {
       return;
     }
 
-    setLoading(true);
-    try {
-      const firstRoom = bookingData!.rooms[0];
-      const booking = await hotelsApi.createBooking({
+    const firstRoom = bookingData!.rooms[0];
+    createBookingMutation.mutate(
+      {
         rate_key: firstRoom.rate_key,
         rate_type: firstRoom.rate_type,
         holder_name: holderName,
@@ -129,17 +128,19 @@ function BookingFormContent() {
         check_in: bookingData!.checkIn,
         check_out: bookingData!.checkOut,
         cancellation_policies: firstRoom.cancellation_policies,
-      });
-
-      toast('success', 'Booking created successfully!');
-      router.push(`/hotels/bookings/${booking.id}/confirmation`);
-    } catch (err) {
-      if (err instanceof ApiError) {
-        toast('error', err.errors[0] || 'Booking failed');
-      }
-    } finally {
-      setLoading(false);
-    }
+      },
+      {
+        onSuccess: (booking) => {
+          toast('success', 'Booking created successfully!');
+          router.push(`/hotels/bookings/${booking.id}/confirmation`);
+        },
+        onError: (err) => {
+          if (err instanceof ApiError) {
+            toast('error', err.errors[0] || 'Booking failed');
+          }
+        },
+      },
+    );
   };
 
   return (
@@ -226,7 +227,7 @@ function BookingFormContent() {
                   </div>
                 </div>
 
-                <Button type="submit" variant="gradient" loading={loading} className="w-full">
+                <Button type="submit" variant="gradient" loading={createBookingMutation.isPending} className="w-full">
                   Confirm Booking
                 </Button>
               </div>

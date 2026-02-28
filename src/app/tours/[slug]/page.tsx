@@ -1,61 +1,38 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { useState, use } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { MapPin, Clock, Users, Check, X, Calendar, ChevronLeft, ChevronRight, Minus, Plus } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button, Spinner, Badge, PageError } from '@/components/ui';
-import { toursApi } from '@/lib/api/tours';
-import { useToast } from '@/components/ui/Toast';
+import { useTourDetail, useTourAvailabilities } from '@/hooks/useTours';
 import { ApiError } from '@/lib/api/client';
-import type { Tour, TourAvailability } from '@/types/tour';
+import type { TourAvailability } from '@/types/tour';
 
 export default function TourDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = use(params);
-  const { toast } = useToast();
-  const [tour, setTour] = useState<Tour | null>(null);
-  const [availabilities, setAvailabilities] = useState<TourAvailability[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<ApiError | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
+  const { data: tour, isLoading, error, refetch } = useTourDetail(slug);
+
+  const hasInlineAvailabilities = !!tour?.availabilities?.length;
+  const { data: fetchedAvailabilities } = useTourAvailabilities(
+    tour?.id ?? '',
+  );
+
+  const availabilities: TourAvailability[] = hasInlineAvailabilities
+    ? tour!.availabilities
+    : fetchedAvailabilities ?? [];
+
   const [selectedAvailability, setSelectedAvailability] = useState<TourAvailability | null>(null);
   const [guests, setGuests] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  useEffect(() => {
-    let cancelled = false;
-    setError(null);
-    setLoading(true);
-    (async () => {
-      try {
-        const data = await toursApi.get(slug);
-        if (cancelled) return;
-        setTour(data);
-        if (data.availabilities?.length) {
-          setAvailabilities(data.availabilities);
-        } else {
-          const avail = await toursApi.getAvailabilities(data.id);
-          if (!cancelled) setAvailabilities(avail);
-        }
-      } catch (err) {
-        if (!cancelled && err instanceof ApiError) {
-          setError(err);
-          toast('error', err.errors[0] || 'Failed to load tour');
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [slug, retryCount]);
 
   const formatPrice = (price: number, currency: string) => {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(price);
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <>
         <Navbar />
@@ -66,14 +43,15 @@ export default function TourDetailPage({ params }: { params: Promise<{ slug: str
   }
 
   if (error || !tour) {
+    const apiError = error instanceof ApiError ? error : null;
     return (
       <>
         <Navbar />
         <div className="pt-36 pb-32 max-w-7xl mx-auto px-6">
           <PageError
-            status={error?.status ?? 404}
-            title={error?.status === 404 ? 'Tour Not Found' : undefined}
-            onRetry={() => setRetryCount((c) => c + 1)}
+            status={apiError?.status ?? 404}
+            title={apiError?.status === 404 ? 'Tour Not Found' : undefined}
+            onRetry={() => refetch()}
             backHref="/tours"
             backLabel="Browse Tours"
           />

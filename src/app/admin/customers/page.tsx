@@ -1,68 +1,45 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Users2 } from 'lucide-react';
 import CustomerListFilters from '@/components/admin/customers/CustomerListFilters';
 import CustomerTable from '@/components/admin/customers/CustomerTable';
 import { Spinner, EmptyState, Pagination } from '@/components/ui';
-import { useToast } from '@/components/ui/Toast';
-import { adminCustomersApi } from '@/lib/api/admin-customers';
-import { ApiError } from '@/lib/api/client';
+import { useAdminCustomerList } from '@/hooks/admin/useAdminCustomers';
+import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { AdminProtectedRoute } from '@/lib/auth';
 import type { Customer } from '@/types/customer';
 
 export default function AdminCustomersPage() {
   useEffect(() => { document.title = 'Customers | Akaza Admin'; }, []);
-  const { toast } = useToast();
-  const [customers, setCustomers] = useState<Customer[]>([]);
-  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [lastPage, setLastPage] = useState(1);
-  const [total, setTotal] = useState(0);
   const [filters, setFilters] = useState<Record<string, string>>({});
 
-  const fetchCustomers = useCallback(async (page: number, filterParams: Record<string, string>) => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams();
-      params.set('page', String(page));
-      params.set('per_page', '15');
-      params.set('sort', '-created_at');
-      if (filterParams.search) params.set('filter[email]', filterParams.search);
-      if (filterParams.status) params.set('filter[status]', filterParams.status);
-      if (filterParams.source) params.set('filter[source]', filterParams.source);
-      const raw = await adminCustomersApi.list(params.toString());
-      if (Array.isArray(raw)) {
-        setCustomers(raw);
-        setCurrentPage(1);
-        setLastPage(1);
-        setTotal(raw.length);
-      } else {
-        setCustomers(raw?.data ?? []);
-        setCurrentPage(raw?.meta?.current_page ?? 1);
-        setLastPage(raw?.meta?.last_page ?? 1);
-        setTotal(raw?.meta?.total ?? 0);
-      }
-    } catch (err) {
-      setCustomers([]);
-      if (err instanceof ApiError) {
-        toast('error', err.errors[0] || 'Failed to load customers');
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, [toast]);
+  const queryParams = useMemo(() => {
+    const params = new URLSearchParams();
+    params.set('page', String(currentPage));
+    params.set('per_page', '15');
+    params.set('sort', '-created_at');
+    if (filters.search) params.set('filter[email]', filters.search);
+    if (filters.status) params.set('filter[status]', filters.status);
+    if (filters.source) params.set('filter[source]', filters.source);
+    return params.toString();
+  }, [currentPage, filters]);
 
-  useEffect(() => {
-    fetchCustomers(1, filters);
-  }, [filters]);
+  const { data: raw, isLoading, isError, error } = useAdminCustomerList(queryParams);
+  useQueryErrorToast(isError, error, 'Failed to load customers');
+
+  const customers: Customer[] = Array.isArray(raw) ? raw : (raw?.data ?? []);
+  const lastPage = Array.isArray(raw) ? 1 : (raw?.meta?.last_page ?? 1);
+  const total = Array.isArray(raw) ? customers.length : (raw?.meta?.total ?? 0);
 
   const handlePageChange = (page: number) => {
-    fetchCustomers(page, filters);
+    setCurrentPage(page);
   };
 
   const handleFiltersChange = (newFilters: Record<string, string>) => {
     setFilters(newFilters);
+    setCurrentPage(1);
   };
 
   return (
@@ -82,7 +59,7 @@ export default function AdminCustomersPage() {
           </div>
 
           {/* Content */}
-          {loading ? (
+          {isLoading ? (
             <div className="py-16">
               <Spinner size="lg" />
             </div>

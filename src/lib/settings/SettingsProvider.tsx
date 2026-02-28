@@ -1,8 +1,8 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import { createContext, useContext, type ReactNode } from 'react';
+import { usePublicSettings } from '@/hooks/useSettingsQuery';
 import type { PublicSetting } from '@/types/settings';
-import { settingsApi } from '@/lib/api/settings';
 
 type SettingsMap = Record<string, string | number | boolean | Record<string, unknown>>;
 
@@ -21,22 +21,14 @@ export function useSettings() {
 }
 
 export default function SettingsProvider({ children }: { children: ReactNode }) {
-  const [settings, setSettings] = useState<SettingsMap>({});
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading } = usePublicSettings();
 
-  useEffect(() => {
-    settingsApi
-      .getPublic()
-      .then((items: PublicSetting[]) => {
-        const map: SettingsMap = {};
-        for (const item of items) {
-          map[item.key] = item.value;
-        }
-        setSettings(map);
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
+  const settings: SettingsMap = {};
+  if (data) {
+    for (const item of data as PublicSetting[]) {
+      settings[item.key] = item.value;
+    }
+  }
 
   const get = (key: string, fallback = '') => {
     const val = settings[key];
@@ -46,7 +38,7 @@ export default function SettingsProvider({ children }: { children: ReactNode }) 
   };
 
   return (
-    <SettingsContext.Provider value={{ settings, loading, get }}>
+    <SettingsContext.Provider value={{ settings, loading: isLoading, get }}>
       {children}
     </SettingsContext.Provider>
   );

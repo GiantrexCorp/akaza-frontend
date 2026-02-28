@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import Image from 'next/image';
 import { Upload, Trash2, ImageIcon } from 'lucide-react';
 import { Button, Spinner } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast';
@@ -88,9 +89,12 @@ export default function TourImageManager({ tourId, images, onUpdated }: TourImag
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {images.map((image) => (
             <div key={image.id} className="relative group border border-[var(--line-soft)] overflow-hidden">
-              <img
+              <Image
                 src={image.url}
                 alt={image.name}
+                width={300}
+                height={160}
+                unoptimized
                 className="w-full h-40 object-cover"
               />
               <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">

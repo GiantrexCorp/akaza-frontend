@@ -1,53 +1,33 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { MapPin, Clock, Users, ArrowRight, Search } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Input, Button, Spinner, Pagination, EmptyState } from '@/components/ui';
-import { toursApi } from '@/lib/api/tours';
-import { useToast } from '@/components/ui/Toast';
-import { ApiError } from '@/lib/api/client';
+import { useTourList } from '@/hooks/useTours';
+import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import type { Tour } from '@/types/tour';
 
 export default function ToursPage() {
-  const { toast } = useToast();
-  const [tours, setTours] = useState<Tour[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [appliedSearch, setAppliedSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [lastPage, setLastPage] = useState(1);
 
-  const fetchTours = async (page: number) => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams({ page: page.toString() });
-      if (searchQuery) params.set('filter[location]', searchQuery);
-      const data = await toursApi.list(params.toString());
-      const normalizedTours = Array.isArray(data?.data) ? data.data : [];
-      setTours(normalizedTours);
-      setCurrentPage(data?.meta?.current_page ?? 1);
-      setLastPage(data?.meta?.last_page ?? 1);
-    } catch (err) {
-      if (err instanceof ApiError) {
-        toast('error', err.errors[0] || 'Failed to load tours');
-      }
-      setTours([]);
-      setCurrentPage(1);
-      setLastPage(1);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const params = new URLSearchParams({ page: currentPage.toString() });
+  if (appliedSearch) params.set('filter[location]', appliedSearch);
 
-  useEffect(() => {
-    fetchTours(1);
-  }, []);
+  const { data, isLoading, error, isError } = useTourList(params.toString());
+  useQueryErrorToast(isError, error, 'Failed to load tours');
+
+  const tours = Array.isArray(data?.data) ? data.data : [];
+  const lastPage = data?.meta?.last_page ?? 1;
 
   const handleSearch = () => {
-    fetchTours(1);
+    setAppliedSearch(searchQuery);
+    setCurrentPage(1);
   };
 
   const formatPrice = (price: number, currency: string) => {
@@ -94,7 +74,7 @@ export default function ToursPage() {
       {/* Tours Grid */}
       <section className="pb-32 bg-[var(--surface-page)]">
         <div className="max-w-7xl mx-auto px-6 pt-8">
-          {loading ? (
+          {isLoading ? (
             <div className="py-20">
               <Spinner size="lg" />
             </div>
@@ -109,7 +89,7 @@ export default function ToursPage() {
               </div>
 
               <div className="mt-12">
-                <Pagination currentPage={currentPage} lastPage={lastPage} onPageChange={(p) => fetchTours(p)} />
+                <Pagination currentPage={currentPage} lastPage={lastPage} onPageChange={setCurrentPage} />
               </div>
             </>
           )}

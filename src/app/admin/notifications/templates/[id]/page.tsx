@@ -2,40 +2,18 @@
 
 import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
-import TemplateEditForm from '@/components/admin/notifications/TemplateEditForm';
+import dynamic from 'next/dynamic';
+const TemplateEditForm = dynamic(() => import('@/components/admin/notifications/TemplateEditForm'), { ssr: false });
 import { Spinner, Breadcrumb, Button, PageError } from '@/components/ui';
-import { useToast } from '@/components/ui/Toast';
-import { adminNotificationsApi } from '@/lib/api/admin-notifications';
+import { useNotificationTemplateDetail } from '@/hooks/admin/useAdminNotifications';
+import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { ApiError } from '@/lib/api/client';
 import { AdminProtectedRoute } from '@/lib/auth';
 import type { NotificationTemplate } from '@/types/admin-notification';
 
 function TemplateDetail({ id }: { id: number }) {
-  const { toast } = useToast();
-  const [template, setTemplate] = useState<NotificationTemplate | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<ApiError | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
-
-  useEffect(() => {
-    let cancelled = false;
-    setError(null);
-    setLoading(true);
-    (async () => {
-      try {
-        const data = await adminNotificationsApi.getTemplate(id);
-        if (!cancelled) setTemplate(data);
-      } catch (err) {
-        if (!cancelled && err instanceof ApiError) {
-          setError(err);
-          toast('error', err.errors[0] || 'Failed to load template');
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [id, retryCount]);
+  const { data: template, isLoading, isError, error, refetch } = useNotificationTemplateDetail(id);
+  useQueryErrorToast(isError, error, 'Failed to load template');
 
   useEffect(() => {
     document.title = template
@@ -43,11 +21,11 @@ function TemplateDetail({ id }: { id: number }) {
       : 'Loading... | Akaza Admin';
   }, [template]);
 
-  const handleSaved = (updated: NotificationTemplate) => {
-    setTemplate(updated);
+  const handleSaved = (_updated: NotificationTemplate) => {
+    refetch();
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="py-16">
         <Spinner size="lg" />
@@ -55,13 +33,13 @@ function TemplateDetail({ id }: { id: number }) {
     );
   }
 
-  if (error || !template) {
+  if (isError || !template) {
     return (
       <div className="py-16">
         <PageError
-          status={error?.status ?? 404}
-          title={error?.status === 404 ? 'Template Not Found' : undefined}
-          onRetry={() => setRetryCount((c) => c + 1)}
+          status={(error as ApiError)?.status ?? 404}
+          title={(error as ApiError)?.status === 404 ? 'Template Not Found' : undefined}
+          onRetry={() => refetch()}
           backHref="/admin/notifications/templates"
           backLabel="Back to Templates"
         />

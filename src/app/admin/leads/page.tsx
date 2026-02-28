@@ -1,83 +1,59 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Plus, Target } from 'lucide-react';
 import LeadListFilters from '@/components/admin/leads/LeadListFilters';
 import LeadTable from '@/components/admin/leads/LeadTable';
-import CreateLeadModal from '@/components/admin/leads/CreateLeadModal';
+import dynamic from 'next/dynamic';
+const CreateLeadModal = dynamic(() => import('@/components/admin/leads/CreateLeadModal'), { ssr: false });
 import LeadDetailPanel from '@/components/admin/leads/LeadDetailPanel';
 import { Button, Spinner, EmptyState, Pagination } from '@/components/ui';
-import { useToast } from '@/components/ui/Toast';
-import { adminLeadsApi } from '@/lib/api/admin-leads';
-import { ApiError } from '@/lib/api/client';
+import { useAdminLeadList } from '@/hooks/admin/useAdminLeads';
+import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { AdminProtectedRoute } from '@/lib/auth';
 import type { Lead } from '@/types/customer';
 
 export default function AdminLeadsPage() {
   useEffect(() => { document.title = 'Leads | Akaza Admin'; }, []);
-  const { toast } = useToast();
-  const [leads, setLeads] = useState<Lead[]>([]);
-  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [lastPage, setLastPage] = useState(1);
-  const [total, setTotal] = useState(0);
   const [filters, setFilters] = useState<Record<string, string>>({});
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
 
-  const fetchLeads = useCallback(async (page: number, filterParams: Record<string, string>) => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams();
-      params.set('page', String(page));
-      params.set('per_page', '15');
-      params.set('sort', '-created_at');
-      params.set('include', 'customer');
-      if (filterParams.search) params.set('filter[name]', filterParams.search);
-      if (filterParams.status) params.set('filter[status]', filterParams.status);
-      if (filterParams.source) params.set('filter[source]', filterParams.source);
-      const raw = await adminLeadsApi.list(params.toString());
-      if (Array.isArray(raw)) {
-        setLeads(raw);
-        setCurrentPage(1);
-        setLastPage(1);
-        setTotal(raw.length);
-      } else {
-        setLeads(raw?.data ?? []);
-        setCurrentPage(raw?.meta?.current_page ?? 1);
-        setLastPage(raw?.meta?.last_page ?? 1);
-        setTotal(raw?.meta?.total ?? 0);
-      }
-    } catch (err) {
-      setLeads([]);
-      if (err instanceof ApiError) {
-        toast('error', err.errors[0] || 'Failed to load leads');
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, [toast]);
+  const queryParams = useMemo(() => {
+    const params = new URLSearchParams();
+    params.set('page', String(currentPage));
+    params.set('per_page', '15');
+    params.set('sort', '-created_at');
+    params.set('include', 'customer');
+    if (filters.search) params.set('filter[name]', filters.search);
+    if (filters.status) params.set('filter[status]', filters.status);
+    if (filters.source) params.set('filter[source]', filters.source);
+    return params.toString();
+  }, [currentPage, filters]);
 
-  useEffect(() => {
-    fetchLeads(1, filters);
-  }, [filters]);
+  const { data: raw, isLoading, isError, error } = useAdminLeadList(queryParams);
+  useQueryErrorToast(isError, error, 'Failed to load leads');
+
+  const leads: Lead[] = Array.isArray(raw) ? raw : (raw?.data ?? []);
+  const lastPage = Array.isArray(raw) ? 1 : (raw?.meta?.last_page ?? 1);
+  const total = Array.isArray(raw) ? leads.length : (raw?.meta?.total ?? 0);
 
   const handlePageChange = (page: number) => {
-    fetchLeads(page, filters);
+    setCurrentPage(page);
   };
 
   const handleFiltersChange = (newFilters: Record<string, string>) => {
     setFilters(newFilters);
+    setCurrentPage(1);
   };
 
   const handleLeadCreated = () => {
     setCreateModalOpen(false);
-    fetchLeads(currentPage, filters);
   };
 
   const handleLeadUpdated = () => {
     setSelectedLead(null);
-    fetchLeads(currentPage, filters);
   };
 
   return (
@@ -105,7 +81,7 @@ export default function AdminLeadsPage() {
           </div>
 
           {/* Content */}
-          {loading ? (
+          {isLoading ? (
             <div className="py-16">
               <Spinner size="lg" />
             </div>

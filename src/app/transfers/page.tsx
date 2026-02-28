@@ -1,16 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Car, Users, Briefcase, Plane, MapPin, ArrowRight } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button, Spinner, Badge, EmptyState } from '@/components/ui';
-import { transfersApi } from '@/lib/api/transfers';
-import { useToast } from '@/components/ui/Toast';
-import { ApiError } from '@/lib/api/client';
-import type { TransferVehicle, TransferRoute, TransferRoutePrice } from '@/types/transfer';
+import { useTransferVehicles, useTransferRoutes, useTransferRoutePrices } from '@/hooks/useTransfers';
+import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
+import type { TransferRoute } from '@/types/transfer';
 
 const typeIcons: Record<string, typeof Plane> = {
   airport: Plane,
@@ -19,53 +18,24 @@ const typeIcons: Record<string, typeof Plane> = {
 };
 
 export default function TransfersPage() {
-  const { toast } = useToast();
-  const [vehicles, setVehicles] = useState<TransferVehicle[]>([]);
-  const [routes, setRoutes] = useState<TransferRoute[]>([]);
-  const [loading, setLoading] = useState(true);
   const [selectedType, setSelectedType] = useState<string>('all');
   const [selectedRoute, setSelectedRoute] = useState<TransferRoute | null>(null);
-  const [routePrices, setRoutePrices] = useState<TransferRoutePrice[]>([]);
-  const [loadingPrices, setLoadingPrices] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [vehiclesData, routesData] = await Promise.all([
-          transfersApi.listVehicles(),
-          transfersApi.listRoutes(),
-        ]);
-        setVehicles(vehiclesData);
-        setRoutes(routesData);
-      } catch (err) {
-        if (err instanceof ApiError) {
-          toast('error', err.errors[0] || 'Failed to load transfers');
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  const { data: vehicles = [], isLoading: loadingVehicles, isError: isVehiclesError, error: vehiclesError } = useTransferVehicles();
+  const { data: routes = [], isLoading: loadingRoutes, isError: isRoutesError, error: routesError } = useTransferRoutes();
+  const { data: routePrices = [], isLoading: loadingPrices } = useTransferRoutePrices(selectedRoute?.id ?? '');
 
-  const handleSelectRoute = async (route: TransferRoute) => {
+  useQueryErrorToast(isVehiclesError, vehiclesError, 'Failed to load vehicles');
+  useQueryErrorToast(isRoutesError, routesError, 'Failed to load routes');
+
+  const loading = loadingVehicles || loadingRoutes;
+
+  const handleSelectRoute = (route: TransferRoute) => {
     if (selectedRoute?.id === route.id) {
       setSelectedRoute(null);
-      setRoutePrices([]);
       return;
     }
     setSelectedRoute(route);
-    setLoadingPrices(true);
-    try {
-      const prices = route.prices?.length ? route.prices : await transfersApi.getRoutePrices(route.id);
-      setRoutePrices(prices);
-    } catch (err) {
-      if (err instanceof ApiError) {
-        toast('error', err.errors[0] || 'Failed to load prices');
-      }
-    } finally {
-      setLoadingPrices(false);
-    }
   };
 
   const filteredRoutes = selectedType === 'all' ? routes : routes.filter((r) => r.transfer_type === selectedType);
@@ -82,6 +52,8 @@ export default function TransfersPage() {
   };
 
   const getVehicleById = (id: string) => vehicles.find((v) => v.id === id);
+
+  const effectivePrices = selectedRoute?.prices?.length ? selectedRoute.prices : routePrices;
 
   return (
     <>
@@ -208,11 +180,11 @@ export default function TransfersPage() {
                       <div className="border border-t-0 border-primary/30 bg-[var(--surface-card)] p-6">
                         {loadingPrices ? (
                           <Spinner size="sm" />
-                        ) : routePrices.length === 0 ? (
+                        ) : effectivePrices.length === 0 ? (
                           <p className="text-sm text-[var(--text-muted)] font-sans">No prices available for this route.</p>
                         ) : (
                           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {routePrices.map((rp) => {
+                            {effectivePrices.map((rp) => {
                               const vehicle = rp.vehicle || getVehicleById(rp.transfer_vehicle_id);
                               return (
                                 <div key={rp.id} className="border border-[var(--line-soft)] p-4 hover:border-primary/40 transition-colors">

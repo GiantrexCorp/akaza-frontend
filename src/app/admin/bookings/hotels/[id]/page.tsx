@@ -7,42 +7,23 @@ import HotelBookingHeader from '@/components/admin/hotel-bookings/HotelBookingHe
 import HotelBookingInfo from '@/components/admin/hotel-bookings/HotelBookingInfo';
 import HotelBookingRooms from '@/components/admin/hotel-bookings/HotelBookingRooms';
 import HotelBookingStatusLogs from '@/components/admin/hotel-bookings/HotelBookingStatusLogs';
-import ReconcileModal from '@/components/admin/hotel-bookings/ReconcileModal';
+import dynamic from 'next/dynamic';
+const ReconcileModal = dynamic(() => import('@/components/admin/hotel-bookings/ReconcileModal'), { ssr: false });
 import { Spinner, Button, Breadcrumb, PageError } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast';
+import { useAdminHotelBookingDetail, useReconcileHotelBooking } from '@/hooks/admin/useAdminHotelBookings';
+import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { adminHotelBookingsApi } from '@/lib/api/admin-hotel-bookings';
 import { ApiError } from '@/lib/api/client';
 import { AdminProtectedRoute } from '@/lib/auth';
-import type { AdminHotelBooking, ReconcileAction } from '@/types/hotel';
+import type { ReconcileAction } from '@/types/hotel';
 
 function HotelBookingDetail({ id }: { id: number }) {
   const { toast } = useToast();
-  const [booking, setBooking] = useState<AdminHotelBooking | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<ApiError | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
+  const { data: booking, isLoading, isError, error, refetch } = useAdminHotelBookingDetail(id);
+  useQueryErrorToast(isError, error, 'Failed to load booking');
+  const reconcileMutation = useReconcileHotelBooking();
   const [reconcileOpen, setReconcileOpen] = useState(false);
-  const [reconciling, setReconciling] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-    setError(null);
-    setLoading(true);
-    (async () => {
-      try {
-        const data = await adminHotelBookingsApi.get(id);
-        if (!cancelled) setBooking(data);
-      } catch (err) {
-        if (!cancelled && err instanceof ApiError) {
-          setError(err);
-          toast('error', err.errors[0] || 'Failed to load booking');
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [id, retryCount]);
 
   useEffect(() => {
     document.title = booking
@@ -50,20 +31,22 @@ function HotelBookingDetail({ id }: { id: number }) {
       : 'Loading... | Akaza Admin';
   }, [booking]);
 
-  const handleReconcile = async (action: ReconcileAction, reason?: string) => {
-    setReconciling(true);
-    try {
-      const updated = await adminHotelBookingsApi.reconcile(id, { action, reason });
-      setBooking(updated);
-      setReconcileOpen(false);
-      toast('success', action === 'retry' ? 'Booking retry initiated' : 'Refund initiated');
-    } catch (err) {
-      if (err instanceof ApiError) {
-        toast('error', err.errors[0] || 'Reconciliation failed');
-      }
-    } finally {
-      setReconciling(false);
-    }
+  const handleReconcile = (action: ReconcileAction, reason?: string) => {
+    reconcileMutation.mutate(
+      { id, data: { action, reason } },
+      {
+        onSuccess: () => {
+          refetch();
+          setReconcileOpen(false);
+          toast('success', action === 'retry' ? 'Booking retry initiated' : 'Refund initiated');
+        },
+        onError: (err) => {
+          if (err instanceof ApiError) {
+            toast('error', err.errors[0] || 'Reconciliation failed');
+          }
+        },
+      },
+    );
   };
 
   const handleDownloadVoucher = async () => {
@@ -82,7 +65,7 @@ function HotelBookingDetail({ id }: { id: number }) {
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="py-16">
         <Spinner size="lg" />
@@ -90,13 +73,13 @@ function HotelBookingDetail({ id }: { id: number }) {
     );
   }
 
-  if (error || !booking) {
+  if (isError || !booking) {
     return (
       <div className="py-16">
         <PageError
-          status={error?.status ?? 404}
-          title={error?.status === 404 ? 'Booking Not Found' : undefined}
-          onRetry={() => setRetryCount((c) => c + 1)}
+          status={(error as ApiError)?.status ?? 404}
+          title={(error as ApiError)?.status === 404 ? 'Booking Not Found' : undefined}
+          onRetry={() => refetch()}
           backHref="/admin/bookings/hotels"
           backLabel="Back to Hotel Bookings"
         />
@@ -139,7 +122,7 @@ function HotelBookingDetail({ id }: { id: number }) {
         open={reconcileOpen}
         onClose={() => setReconcileOpen(false)}
         onReconcile={handleReconcile}
-        loading={reconciling}
+        loading={reconcileMutation.isPending}
       />
     </div>
   );

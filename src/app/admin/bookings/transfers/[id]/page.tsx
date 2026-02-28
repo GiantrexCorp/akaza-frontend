@@ -6,42 +6,23 @@ import { Download, RefreshCw } from 'lucide-react';
 import TransferBookingHeader from '@/components/admin/transfer-bookings/TransferBookingHeader';
 import TransferBookingInfo from '@/components/admin/transfer-bookings/TransferBookingInfo';
 import TransferBookingStatusLogs from '@/components/admin/transfer-bookings/TransferBookingStatusLogs';
-import StatusChangeModal from '@/components/admin/transfer-bookings/StatusChangeModal';
+import dynamic from 'next/dynamic';
+const StatusChangeModal = dynamic(() => import('@/components/admin/transfer-bookings/StatusChangeModal'), { ssr: false });
 import { Spinner, Button, Breadcrumb, PageError } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast';
+import { useAdminTransferBookingDetail, useUpdateTransferBookingStatus } from '@/hooks/admin/useAdminTransferBookings';
+import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { adminTransfersApi } from '@/lib/api/admin-transfers';
 import { ApiError } from '@/lib/api/client';
 import { AdminProtectedRoute } from '@/lib/auth';
-import type { AdminTransferBooking, TransferBookingStatus } from '@/types/transfer';
+import type { TransferBookingStatus } from '@/types/transfer';
 
 function TransferBookingDetail({ id }: { id: number }) {
   const { toast } = useToast();
-  const [booking, setBooking] = useState<AdminTransferBooking | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<ApiError | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
+  const { data: booking, isLoading, isError, error, refetch } = useAdminTransferBookingDetail(id);
+  useQueryErrorToast(isError, error, 'Failed to load booking');
+  const statusMutation = useUpdateTransferBookingStatus();
   const [statusModalOpen, setStatusModalOpen] = useState(false);
-  const [statusUpdating, setStatusUpdating] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-    setError(null);
-    setLoading(true);
-    (async () => {
-      try {
-        const data = await adminTransfersApi.getBooking(id);
-        if (!cancelled) setBooking(data);
-      } catch (err) {
-        if (!cancelled && err instanceof ApiError) {
-          setError(err);
-          toast('error', err.errors[0] || 'Failed to load booking');
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [id, retryCount]);
 
   useEffect(() => {
     document.title = booking
@@ -49,20 +30,22 @@ function TransferBookingDetail({ id }: { id: number }) {
       : 'Loading... | Akaza Admin';
   }, [booking]);
 
-  const handleStatusChange = async (status: TransferBookingStatus, reason?: string) => {
-    setStatusUpdating(true);
-    try {
-      const updated = await adminTransfersApi.updateBookingStatus(id, { status, reason });
-      setBooking(updated);
-      setStatusModalOpen(false);
-      toast('success', `Status changed to ${status.replace(/_/g, ' ')}`);
-    } catch (err) {
-      if (err instanceof ApiError) {
-        toast('error', err.errors[0] || 'Failed to update status');
-      }
-    } finally {
-      setStatusUpdating(false);
-    }
+  const handleStatusChange = (status: TransferBookingStatus, reason?: string) => {
+    statusMutation.mutate(
+      { id, data: { status, reason } },
+      {
+        onSuccess: () => {
+          refetch();
+          setStatusModalOpen(false);
+          toast('success', `Status changed to ${status.replace(/_/g, ' ')}`);
+        },
+        onError: (err) => {
+          if (err instanceof ApiError) {
+            toast('error', err.errors[0] || 'Failed to update status');
+          }
+        },
+      },
+    );
   };
 
   const handleDownloadVoucher = async () => {
@@ -81,7 +64,7 @@ function TransferBookingDetail({ id }: { id: number }) {
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="py-16">
         <Spinner size="lg" />
@@ -89,13 +72,13 @@ function TransferBookingDetail({ id }: { id: number }) {
     );
   }
 
-  if (error || !booking) {
+  if (isError || !booking) {
     return (
       <div className="py-16">
         <PageError
-          status={error?.status ?? 404}
-          title={error?.status === 404 ? 'Booking Not Found' : undefined}
-          onRetry={() => setRetryCount((c) => c + 1)}
+          status={(error as ApiError)?.status ?? 404}
+          title={(error as ApiError)?.status === 404 ? 'Booking Not Found' : undefined}
+          onRetry={() => refetch()}
           backHref="/admin/bookings/transfers"
           backLabel="Back to Transfer Bookings"
         />
@@ -141,7 +124,7 @@ function TransferBookingDetail({ id }: { id: number }) {
           onClose={() => setStatusModalOpen(false)}
           currentStatus={booking.status}
           onSubmit={handleStatusChange}
-          loading={statusUpdating}
+          loading={statusMutation.isPending}
         />
       )}
     </div>

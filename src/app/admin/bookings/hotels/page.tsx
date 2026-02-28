@@ -1,64 +1,47 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Hotel } from 'lucide-react';
 import HotelBookingFilters from '@/components/admin/hotel-bookings/HotelBookingFilters';
 import HotelBookingTable from '@/components/admin/hotel-bookings/HotelBookingTable';
 import { Spinner, EmptyState, Pagination } from '@/components/ui';
-import { useToast } from '@/components/ui/Toast';
-import { adminHotelBookingsApi } from '@/lib/api/admin-hotel-bookings';
-import { ApiError } from '@/lib/api/client';
+import { useAdminHotelBookingList } from '@/hooks/admin/useAdminHotelBookings';
+import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { AdminProtectedRoute } from '@/lib/auth';
-import type { AdminHotelBooking } from '@/types/hotel';
 
 export default function AdminHotelBookingsPage() {
   useEffect(() => { document.title = 'Hotel Bookings | Akaza Admin'; }, []);
-  const { toast } = useToast();
-  const [bookings, setBookings] = useState<AdminHotelBooking[]>([]);
-  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [lastPage, setLastPage] = useState(1);
-  const [total, setTotal] = useState(0);
   const [filters, setFilters] = useState<Record<string, string>>({});
 
-  const fetchBookings = useCallback(async (page: number, filterParams: Record<string, string>) => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams();
-      params.set('page', String(page));
-      params.set('per_page', '20');
-      params.set('sort', '-created_at');
-      if (filterParams.status) params.set('filter[status]', filterParams.status);
-      if (filterParams.reference) params.set('filter[booking_reference]', filterParams.reference);
-      if (filterParams.hotel_name) params.set('filter[hotel_name]', filterParams.hotel_name);
-      if (filterParams.holder_email) params.set('filter[holder_email]', filterParams.holder_email);
-      if (filterParams.date_from) params.set('filter[date_from]', filterParams.date_from);
-      if (filterParams.date_to) params.set('filter[date_to]', filterParams.date_to);
-      const raw = await adminHotelBookingsApi.list(params.toString());
-      setBookings(raw?.data ?? []);
-      setCurrentPage(raw?.meta?.current_page ?? 1);
-      setLastPage(raw?.meta?.last_page ?? 1);
-      setTotal(raw?.meta?.total ?? 0);
-    } catch (err) {
-      setBookings([]);
-      if (err instanceof ApiError) {
-        toast('error', err.errors[0] || 'Failed to load hotel bookings');
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, [toast]);
+  const queryParams = useMemo(() => {
+    const params = new URLSearchParams();
+    params.set('page', String(currentPage));
+    params.set('per_page', '20');
+    params.set('sort', '-created_at');
+    if (filters.status) params.set('filter[status]', filters.status);
+    if (filters.reference) params.set('filter[booking_reference]', filters.reference);
+    if (filters.hotel_name) params.set('filter[hotel_name]', filters.hotel_name);
+    if (filters.holder_email) params.set('filter[holder_email]', filters.holder_email);
+    if (filters.date_from) params.set('filter[date_from]', filters.date_from);
+    if (filters.date_to) params.set('filter[date_to]', filters.date_to);
+    return params.toString();
+  }, [currentPage, filters]);
 
-  useEffect(() => {
-    fetchBookings(1, filters);
-  }, [filters]);
+  const { data: raw, isLoading, isError, error } = useAdminHotelBookingList(queryParams);
+  useQueryErrorToast(isError, error, 'Failed to load hotel bookings');
+
+  const bookings = raw?.data ?? [];
+  const lastPage = raw?.meta?.last_page ?? 1;
+  const total = raw?.meta?.total ?? 0;
 
   const handlePageChange = (page: number) => {
-    fetchBookings(page, filters);
+    setCurrentPage(page);
   };
 
   const handleFiltersChange = (newFilters: Record<string, string>) => {
     setFilters(newFilters);
+    setCurrentPage(1);
   };
 
   return (
@@ -75,7 +58,7 @@ export default function AdminHotelBookingsPage() {
             <HotelBookingFilters onFiltersChange={handleFiltersChange} />
           </div>
 
-          {loading ? (
+          {isLoading ? (
             <div className="py-16">
               <Spinner size="lg" />
             </div>

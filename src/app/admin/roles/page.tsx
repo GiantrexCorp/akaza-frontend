@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, Shield } from 'lucide-react';
 import RoleCard from '@/components/admin/roles/RoleCard';
-import CreateRoleModal from '@/components/admin/roles/CreateRoleModal';
+import dynamic from 'next/dynamic';
+const CreateRoleModal = dynamic(() => import('@/components/admin/roles/CreateRoleModal'), { ssr: false });
 import { Button, Spinner, EmptyState } from '@/components/ui';
-import { useToast } from '@/components/ui/Toast';
-import { adminRolesApi } from '@/lib/api/admin-roles';
-import { ApiError } from '@/lib/api/client';
+import { useAdminRoleList } from '@/hooks/admin/useAdminRoles';
+import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { AdminProtectedRoute, useAuth } from '@/lib/auth';
 import { hasPermission } from '@/lib/permissions';
 import type { AdminRole } from '@/types/admin';
@@ -15,41 +15,17 @@ import type { AdminRole } from '@/types/admin';
 export default function AdminRolesPage() {
   useEffect(() => { document.title = 'Roles | Akaza Admin'; }, []);
   const { user } = useAuth();
-  const { toast } = useToast();
   const canCreate = hasPermission(user, 'create-role');
-  const [roles, setRoles] = useState<AdminRole[]>([]);
-  const [loading, setLoading] = useState(true);
   const [createModalOpen, setCreateModalOpen] = useState(false);
 
-  const fetchRoles = useCallback(async () => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams();
-      params.set('include', 'permissions');
-      params.set('sort', 'name');
-      const raw = await adminRolesApi.list(params.toString());
-      if (Array.isArray(raw)) {
-        setRoles(raw);
-      } else {
-        setRoles(raw?.data ?? []);
-      }
-    } catch (err) {
-      setRoles([]);
-      if (err instanceof ApiError) {
-        toast('error', err.errors[0] || 'Failed to load roles');
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, [toast]);
+  const queryParams = 'include=permissions&sort=name';
+  const { data: raw, isLoading, isError, error } = useAdminRoleList(queryParams);
+  useQueryErrorToast(isError, error, 'Failed to load roles');
 
-  useEffect(() => {
-    fetchRoles();
-  }, [fetchRoles]);
+  const roles: AdminRole[] = Array.isArray(raw) ? raw : (raw?.data ?? []);
 
   const handleRoleCreated = () => {
     setCreateModalOpen(false);
-    fetchRoles();
   };
 
   return (
@@ -72,7 +48,7 @@ export default function AdminRolesPage() {
           )}
         </div>
 
-        {loading ? (
+        {isLoading ? (
           <div className="py-16">
             <Spinner size="lg" />
           </div>

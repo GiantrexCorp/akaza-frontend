@@ -7,48 +7,39 @@ import { ArrowLeft, Check, X as XIcon, ShieldCheck, Info } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button, Spinner, Badge, PageError } from '@/components/ui';
-import { hotelsApi } from '@/lib/api/hotels';
-import { useToast } from '@/components/ui/Toast';
+import { useHotelCheckRate } from '@/hooks/useHotels';
+import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { ApiError } from '@/lib/api/client';
 import type { HotelSearchResult, HotelRoom } from '@/types/hotel';
 
 function RoomSelectionContent() {
   const searchParams = useSearchParams();
-  const { toast } = useToast();
   const rateKeys = searchParams.get('rateKeys')?.split(',') || [];
   const hotelCode = searchParams.get('hotelCode') || '';
   const checkIn = searchParams.get('checkIn') || '';
   const checkOut = searchParams.get('checkOut') || '';
 
   const [hotel, setHotel] = useState<HotelSearchResult | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<ApiError | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
   const [selectedRooms, setSelectedRooms] = useState<HotelRoom[]>([]);
+
+  const checkRateMutation = useHotelCheckRate();
+  useQueryErrorToast(checkRateMutation.isError, checkRateMutation.error, 'Rate check failed');
+
+  const loading = checkRateMutation.isPending;
+  const error = checkRateMutation.error instanceof ApiError ? checkRateMutation.error : null;
 
   useEffect(() => {
     if (rateKeys.length === 0) return;
-
-    let cancelled = false;
-    setError(null);
-    setLoading(true);
-    (async () => {
-      try {
-        const results = await hotelsApi.checkRate({ rate_keys: rateKeys });
-        if (cancelled) return;
-        const match = results.find((h) => h.hotel_code === hotelCode) || results[0];
-        setHotel(match || null);
-      } catch (err) {
-        if (!cancelled && err instanceof ApiError) {
-          setError(err);
-          toast('error', err.errors[0] || 'Rate check failed');
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [retryCount]);
+    checkRateMutation.mutate(
+      { rate_keys: rateKeys },
+      {
+        onSuccess: (results) => {
+          const match = results.find((h) => h.hotel_code === hotelCode) || results[0];
+          setHotel(match || null);
+        },
+      },
+    );
+  }, []);
 
   const toggleRoom = (room: HotelRoom) => {
     setSelectedRooms((prev) => {
@@ -80,7 +71,15 @@ function RoomSelectionContent() {
           status={error?.status ?? 404}
           title={error?.status === 404 ? 'Rates Unavailable' : undefined}
           description={error?.status === 404 ? 'The selected hotel rates are no longer available. Please search again.' : undefined}
-          onRetry={() => setRetryCount((c) => c + 1)}
+          onRetry={() => checkRateMutation.mutate(
+            { rate_keys: rateKeys },
+            {
+              onSuccess: (results) => {
+                const match = results.find((h) => h.hotel_code === hotelCode) || results[0];
+                setHotel(match || null);
+              },
+            },
+          )}
           backHref="/hotels/search"
           backLabel="Back to Search"
         />

@@ -2,11 +2,13 @@
 
 import { useState, useEffect, use } from 'react';
 import { Trash2 } from 'lucide-react';
-import RolePermissionEditor from '@/components/admin/roles/RolePermissionEditor';
-import DeleteRoleModal from '@/components/admin/roles/DeleteRoleModal';
+import dynamic from 'next/dynamic';
+const RolePermissionEditor = dynamic(() => import('@/components/admin/roles/RolePermissionEditor'), { ssr: false });
+const DeleteRoleModal = dynamic(() => import('@/components/admin/roles/DeleteRoleModal'), { ssr: false });
 import { Spinner, Breadcrumb, Button, Input, PageError } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast';
-import { adminRolesApi } from '@/lib/api/admin-roles';
+import { useAdminRoleDetail, useUpdateRole } from '@/hooks/admin/useAdminRoles';
+import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { ApiError } from '@/lib/api/client';
 import { AdminProtectedRoute } from '@/lib/auth';
 import { hasPermission } from '@/lib/permissions';
@@ -16,42 +18,21 @@ import type { AdminRole } from '@/types/admin';
 function RoleDetail({ id }: { id: number }) {
   const { toast } = useToast();
   const { user } = useAuth();
-  const [role, setRole] = useState<AdminRole | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<ApiError | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
+  const { data: role, isLoading, isError, error, refetch } = useAdminRoleDetail(id);
+  useQueryErrorToast(isError, error, 'Failed to load role');
+  const updateMutation = useUpdateRole();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const [editingName, setEditingName] = useState(false);
   const [nameValue, setNameValue] = useState('');
-  const [nameSaving, setNameSaving] = useState(false);
+
+  useEffect(() => {
+    if (role) setNameValue(role.name);
+  }, [role]);
 
   const isSuperAdmin = role?.name === 'super-admin';
   const canUpdate = hasPermission(user, 'update-role');
   const canDelete = hasPermission(user, 'delete-role');
-
-  useEffect(() => {
-    let cancelled = false;
-    setError(null);
-    setLoading(true);
-    (async () => {
-      try {
-        const data = await adminRolesApi.get(id);
-        if (!cancelled) {
-          setRole(data);
-          setNameValue(data.name);
-        }
-      } catch (err) {
-        if (!cancelled && err instanceof ApiError) {
-          setError(err);
-          toast('error', err.errors[0] || 'Failed to load role');
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [id, retryCount]);
 
   useEffect(() => {
     document.title = role
@@ -59,31 +40,33 @@ function RoleDetail({ id }: { id: number }) {
       : 'Loading... | Akaza Admin';
   }, [role]);
 
-  const handleNameSave = async () => {
+  const handleNameSave = () => {
     if (!role || nameValue === role.name) {
       setEditingName(false);
       return;
     }
-    setNameSaving(true);
-    try {
-      const updated = await adminRolesApi.update(role.id, { name: nameValue });
-      setRole(updated);
-      setEditingName(false);
-      toast('success', 'Role name updated');
-    } catch (err) {
-      if (err instanceof ApiError) {
-        toast('error', err.errors[0] || 'Failed to update role name');
-      }
-    } finally {
-      setNameSaving(false);
-    }
+    updateMutation.mutate(
+      { id: role.id, data: { name: nameValue } },
+      {
+        onSuccess: () => {
+          refetch();
+          setEditingName(false);
+          toast('success', 'Role name updated');
+        },
+        onError: (err) => {
+          if (err instanceof ApiError) {
+            toast('error', err.errors[0] || 'Failed to update role name');
+          }
+        },
+      },
+    );
   };
 
-  const handlePermissionsUpdated = (updated: AdminRole) => {
-    setRole(updated);
+  const handlePermissionsUpdated = (_updated: AdminRole) => {
+    refetch();
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="py-16">
         <Spinner size="lg" />
@@ -91,13 +74,13 @@ function RoleDetail({ id }: { id: number }) {
     );
   }
 
-  if (error || !role) {
+  if (isError || !role) {
     return (
       <div className="py-16">
         <PageError
-          status={error?.status ?? 404}
-          title={error?.status === 404 ? 'Role Not Found' : undefined}
-          onRetry={() => setRetryCount((c) => c + 1)}
+          status={(error as ApiError)?.status ?? 404}
+          title={(error as ApiError)?.status === 404 ? 'Role Not Found' : undefined}
+          onRetry={() => refetch()}
           backHref="/admin/roles"
           backLabel="Back to Roles"
         />
@@ -127,7 +110,7 @@ function RoleDetail({ id }: { id: number }) {
                       onChange={(e) => setNameValue(e.target.value)}
                       className="max-w-xs"
                     />
-                    <Button size="sm" loading={nameSaving} onClick={handleNameSave}>
+                    <Button size="sm" loading={updateMutation.isPending} onClick={handleNameSave}>
                       Save
                     </Button>
                     <Button

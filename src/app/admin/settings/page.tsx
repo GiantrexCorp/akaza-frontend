@@ -1,14 +1,13 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { Settings } from 'lucide-react';
 import SettingsGroupForm from '@/components/admin/settings/SettingsGroupForm';
 import { Spinner, EmptyState } from '@/components/ui';
-import { useToast } from '@/components/ui/Toast';
-import { adminSettingsApi } from '@/lib/api/admin-settings';
-import { ApiError } from '@/lib/api/client';
+import { useAdminSettingsList } from '@/hooks/admin/useAdminSettings';
+import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { AdminProtectedRoute } from '@/lib/auth';
-import type { AdminSetting, SettingGroup } from '@/types/settings';
+import type { AdminSetting } from '@/types/settings';
 
 const GROUP_LABELS: Record<string, string> = {
   general: 'General',
@@ -20,36 +19,20 @@ const GROUP_LABELS: Record<string, string> = {
 
 export default function AdminSettingsPage() {
   useEffect(() => { document.title = 'Settings | Akaza Admin'; }, []);
-  const { toast } = useToast();
-  const [groups, setGroups] = useState<Record<string, AdminSetting[]>>({});
-  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<string>('');
 
-  const fetchSettings = useCallback(async () => {
-    setLoading(true);
-    try {
-      const data = await adminSettingsApi.list();
-      setGroups(data);
-      const keys = Object.keys(data);
-      if (keys.length > 0 && !activeTab) {
-        setActiveTab(keys[0]);
-      }
-    } catch (err) {
-      setGroups({});
-      if (err instanceof ApiError) {
-        toast('error', err.errors[0] || 'Failed to load settings');
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, [toast]);
+  const { data: groups = {}, isLoading, isError, error, refetch } = useAdminSettingsList();
+  useQueryErrorToast(isError, error, 'Failed to load settings');
+
+  const typedGroups = groups as Record<string, AdminSetting[]>;
+  const groupKeys = Object.keys(typedGroups);
+  const totalSettings = Object.values(typedGroups).reduce((sum, arr) => sum + arr.length, 0);
 
   useEffect(() => {
-    fetchSettings();
-  }, [fetchSettings]);
-
-  const groupKeys = Object.keys(groups);
-  const totalSettings = Object.values(groups).reduce((sum, arr) => sum + arr.length, 0);
+    if (groupKeys.length > 0 && !activeTab) {
+      setActiveTab(groupKeys[0]);
+    }
+  }, [groupKeys, activeTab]);
 
   return (
     <AdminProtectedRoute permission="manage-settings">
@@ -63,7 +46,7 @@ export default function AdminSettingsPage() {
           </div>
 
           {/* Content */}
-          {loading ? (
+          {isLoading ? (
             <div className="py-16">
               <Spinner size="lg" />
             </div>
@@ -93,11 +76,11 @@ export default function AdminSettingsPage() {
               </div>
 
               {/* Active group form */}
-              {activeTab && groups[activeTab] && (
+              {activeTab && typedGroups[activeTab] && (
                 <SettingsGroupForm
                   key={activeTab}
-                  settings={groups[activeTab]}
-                  onSaved={fetchSettings}
+                  settings={typedGroups[activeTab]}
+                  onSaved={() => refetch()}
                 />
               )}
             </div>

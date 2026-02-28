@@ -1,14 +1,15 @@
 'use client';
 
 import { useState, useEffect, use } from 'react';
-import Link from 'next/link';
 import CustomerDetailHeader from '@/components/admin/customers/CustomerDetailHeader';
 import CustomerInfoForm from '@/components/admin/customers/CustomerInfoForm';
-import CustomerNotesTab from '@/components/admin/customers/CustomerNotesTab';
-import CustomerBookingHistory from '@/components/admin/customers/CustomerBookingHistory';
-import { Spinner, Breadcrumb, Button, PageError } from '@/components/ui';
+import dynamic from 'next/dynamic';
+const CustomerNotesTab = dynamic(() => import('@/components/admin/customers/CustomerNotesTab'), { ssr: false });
+const CustomerBookingHistory = dynamic(() => import('@/components/admin/customers/CustomerBookingHistory'), { ssr: false });
+import { Spinner, Breadcrumb, PageError } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast';
-import { adminCustomersApi } from '@/lib/api/admin-customers';
+import { useAdminCustomerDetail, useUpdateCustomer } from '@/hooks/admin/useAdminCustomers';
+import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { ApiError } from '@/lib/api/client';
 import { AdminProtectedRoute } from '@/lib/auth';
 import { useAuth } from '@/lib/auth';
@@ -20,34 +21,12 @@ type Tab = 'info' | 'notes' | 'bookings';
 function CustomerDetail({ id }: { id: number }) {
   const { toast } = useToast();
   const { user: authUser } = useAuth();
-  const [customer, setCustomer] = useState<Customer | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<ApiError | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
-  const [statusSaving, setStatusSaving] = useState(false);
+  const { data: customer, isLoading, isError, error, refetch } = useAdminCustomerDetail(id);
+  useQueryErrorToast(isError, error, 'Failed to load customer');
+  const updateMutation = useUpdateCustomer();
   const [activeTab, setActiveTab] = useState<Tab>('info');
 
   const canManageNotes = hasPermission(authUser, 'add-customer-notes');
-
-  useEffect(() => {
-    let cancelled = false;
-    setError(null);
-    setLoading(true);
-    (async () => {
-      try {
-        const data = await adminCustomersApi.get(id);
-        if (!cancelled) setCustomer(data);
-      } catch (err) {
-        if (!cancelled && err instanceof ApiError) {
-          setError(err);
-          toast('error', err.errors[0] || 'Failed to load customer');
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [id, retryCount]);
 
   useEffect(() => {
     document.title = customer
@@ -55,27 +34,29 @@ function CustomerDetail({ id }: { id: number }) {
       : 'Loading... | Akaza Admin';
   }, [customer]);
 
-  const handleStatusChange = async (status: CustomerStatus) => {
+  const handleStatusChange = (status: CustomerStatus) => {
     if (!customer) return;
-    setStatusSaving(true);
-    try {
-      const updated = await adminCustomersApi.update(customer.id, { status });
-      setCustomer(updated);
-      toast('success', `Status changed to ${status}`);
-    } catch (err) {
-      if (err instanceof ApiError) {
-        toast('error', err.errors[0] || 'Failed to update status');
-      }
-    } finally {
-      setStatusSaving(false);
-    }
+    updateMutation.mutate(
+      { id: customer.id, data: { status } },
+      {
+        onSuccess: () => {
+          refetch();
+          toast('success', `Status changed to ${status}`);
+        },
+        onError: (err) => {
+          if (err instanceof ApiError) {
+            toast('error', err.errors[0] || 'Failed to update status');
+          }
+        },
+      },
+    );
   };
 
-  const handleUpdated = (updated: Customer) => {
-    setCustomer(updated);
+  const handleUpdated = (_updated: Customer) => {
+    refetch();
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="py-16">
         <Spinner size="lg" />
@@ -83,13 +64,13 @@ function CustomerDetail({ id }: { id: number }) {
     );
   }
 
-  if (error || !customer) {
+  if (isError || !customer) {
     return (
       <div className="py-16">
         <PageError
-          status={error?.status ?? 404}
-          title={error?.status === 404 ? 'Customer Not Found' : undefined}
-          onRetry={() => setRetryCount((c) => c + 1)}
+          status={(error as ApiError)?.status ?? 404}
+          title={(error as ApiError)?.status === 404 ? 'Customer Not Found' : undefined}
+          onRetry={() => refetch()}
           backHref="/admin/customers"
           backLabel="Back to Customers"
         />
@@ -116,7 +97,7 @@ function CustomerDetail({ id }: { id: number }) {
         <CustomerDetailHeader
           customer={customer}
           onStatusChange={handleStatusChange}
-          saving={statusSaving}
+          saving={updateMutation.isPending}
         />
 
         {/* Tab bar */}

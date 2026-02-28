@@ -7,15 +7,13 @@ import { MapPin, Calendar, Users, Search, Star, ArrowRight, LayoutGrid, List } f
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Input, Button, Spinner, Pagination, EmptyState } from '@/components/ui';
-import { hotelsApi } from '@/lib/api/hotels';
-import { ApiError } from '@/lib/api/client';
-import { useToast } from '@/components/ui/Toast';
+import { useHotelSearch } from '@/hooks/useHotels';
+import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import type { HotelSearchResult } from '@/types/hotel';
 
 function HotelSearchContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { toast } = useToast();
 
   const [destination, setDestination] = useState(searchParams.get('destination') || '');
   const [checkIn, setCheckIn] = useState(searchParams.get('checkIn') || '');
@@ -24,7 +22,6 @@ function HotelSearchContent() {
   const [children, setChildren] = useState(searchParams.get('children') || '0');
 
   const [results, setResults] = useState<HotelSearchResult[]>([]);
-  const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
@@ -33,35 +30,34 @@ function HotelSearchContent() {
   const totalPages = Math.ceil(results.length / perPage);
   const paginatedResults = results.slice((currentPage - 1) * perPage, currentPage * perPage);
 
+  const searchMutation = useHotelSearch();
+  useQueryErrorToast(searchMutation.isError, searchMutation.error, 'Search failed');
+
   const handleSearch = async (e?: FormEvent) => {
     e?.preventDefault();
-    if (!destination || !checkIn || !checkOut) {
-      toast('error', 'Please fill in all search fields');
-      return;
-    }
+    if (!destination || !checkIn || !checkOut) return;
 
-    setLoading(true);
     setSearched(true);
     setCurrentPage(1);
-    try {
-      const data = await hotelsApi.search({
+
+    searchMutation.mutate(
+      {
         destination,
         checkIn,
         checkOut,
         occupancies: [{ adults: parseInt(adults), children: parseInt(children) }],
-      });
-      setResults(data);
-
-      const params = new URLSearchParams({ destination, checkIn, checkOut, adults, children });
-      router.replace(`/hotels/search?${params.toString()}`, { scroll: false });
-    } catch (err) {
-      if (err instanceof ApiError) {
-        toast('error', err.errors[0] || 'Search failed');
-      }
-      setResults([]);
-    } finally {
-      setLoading(false);
-    }
+      },
+      {
+        onSuccess: (data) => {
+          setResults(data);
+          const params = new URLSearchParams({ destination, checkIn, checkOut, adults, children });
+          router.replace(`/hotels/search?${params.toString()}`, { scroll: false });
+        },
+        onError: () => {
+          setResults([]);
+        },
+      },
+    );
   };
 
   const formatPrice = (price: number, currency: string) => {
@@ -121,7 +117,7 @@ function HotelSearchContent() {
                 />
               </div>
               <div>
-                <Button type="submit" variant="primary" loading={loading} className="w-full h-[42px]" size="sm">
+                <Button type="submit" variant="primary" loading={searchMutation.isPending} className="w-full h-[42px]" size="sm">
                   <Search size={14} />
                   Search
                 </Button>
@@ -134,7 +130,7 @@ function HotelSearchContent() {
       {/* Results */}
       <section className="pb-32 bg-[var(--surface-page)]">
         <div className="max-w-7xl mx-auto px-6">
-          {loading ? (
+          {searchMutation.isPending ? (
             <div className="py-20">
               <Spinner size="lg" />
               <p className="text-center text-sm text-[var(--text-muted)] font-sans mt-4">Searching hotels...</p>

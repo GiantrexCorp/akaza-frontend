@@ -1,40 +1,21 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { DollarSign } from 'lucide-react';
 import FinanceStatCards from '@/components/admin/finance/FinanceStatCards';
 import MonthlyTrendTable from '@/components/admin/finance/MonthlyTrendTable';
 import RecentBookingsTable from '@/components/admin/finance/RecentBookingsTable';
 import BookingStatusSection from '@/components/admin/finance/BookingStatusSection';
 import { Spinner, EmptyState } from '@/components/ui';
-import { useToast } from '@/components/ui/Toast';
-import { adminFinanceApi } from '@/lib/api/admin-finance';
-import { ApiError } from '@/lib/api/client';
+import { useFinanceDashboard } from '@/hooks/admin/useAdminFinance';
+import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { AdminProtectedRoute } from '@/lib/auth';
-import type { FinanceDashboard } from '@/types/finance';
 
 export default function AdminFinancePage() {
   useEffect(() => { document.title = 'Finance | Akaza Admin'; }, []);
-  const { toast } = useToast();
-  const [dashboard, setDashboard] = useState<FinanceDashboard | null>(null);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const data = await adminFinanceApi.dashboard();
-        if (!cancelled) setDashboard(data);
-      } catch (err) {
-        if (!cancelled && err instanceof ApiError) {
-          toast('error', err.errors[0] || 'Failed to load financial dashboard');
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [toast]);
+  const { data: dashboard, isLoading, isError, error } = useFinanceDashboard();
+  useQueryErrorToast(isError, error, 'Failed to load financial dashboard');
 
   return (
     <AdminProtectedRoute permission="view-financial-dashboard">
@@ -46,7 +27,7 @@ export default function AdminFinancePage() {
             </p>
           </div>
 
-          {loading ? (
+          {isLoading ? (
             <div className="py-16">
               <Spinner size="lg" />
             </div>

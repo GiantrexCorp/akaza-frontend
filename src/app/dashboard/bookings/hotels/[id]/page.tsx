@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { useState, use } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Calendar, Users, Download } from 'lucide-react';
 import Navbar from '@/components/Navbar';
@@ -8,10 +8,13 @@ import Footer from '@/components/Footer';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Button, Spinner, Badge, Modal, PageError } from '@/components/ui';
 import { hotelsApi } from '@/lib/api/hotels';
+import { useHotelBookingDetail } from '@/hooks/useBookings';
+import { useCancelHotelBooking } from '@/hooks/useHotels';
+import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { useToast } from '@/components/ui/Toast';
 import { ApiError } from '@/lib/api/client';
 import { ProtectedRoute } from '@/lib/auth';
-import type { HotelBooking, CancellationCost } from '@/types/hotel';
+import type { CancellationCost } from '@/types/hotel';
 
 const statusColors: Record<string, 'yellow' | 'green' | 'red' | 'gray' | 'orange' | 'purple'> = {
   pending: 'yellow',
@@ -25,34 +28,13 @@ const statusColors: Record<string, 'yellow' | 'green' | 'red' | 'gray' | 'orange
 
 function HotelBookingDetail({ id }: { id: string }) {
   const { toast } = useToast();
-  const [booking, setBooking] = useState<HotelBooking | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<ApiError | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
+  const { data: booking, isLoading: loading, error: queryError, refetch } = useHotelBookingDetail(id);
+  useQueryErrorToast(!!queryError, queryError, 'Failed to load booking');
+  const error = queryError instanceof ApiError ? queryError : null;
+  const cancelMutation = useCancelHotelBooking();
   const [cancelModal, setCancelModal] = useState(false);
-  const [cancelling, setCancelling] = useState(false);
   const [cancellationCost, setCancellationCost] = useState<CancellationCost | null>(null);
   const [fetchingCost, setFetchingCost] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-    setError(null);
-    setLoading(true);
-    (async () => {
-      try {
-        const data = await hotelsApi.getBooking(id);
-        if (!cancelled) setBooking(data);
-      } catch (err) {
-        if (!cancelled && err instanceof ApiError) {
-          setError(err);
-          toast('error', err.errors[0] || 'Failed to load booking');
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [id, retryCount]);
 
   const openCancelModal = async () => {
     setFetchingCost(true);
@@ -67,18 +49,16 @@ function HotelBookingDetail({ id }: { id: string }) {
     }
   };
 
-  const handleCancel = async () => {
-    setCancelling(true);
-    try {
-      const updated = await hotelsApi.cancelBooking(id);
-      setBooking(updated);
-      setCancelModal(false);
-      toast('success', 'Cancellation requested');
-    } catch (err) {
-      if (err instanceof ApiError) toast('error', err.errors[0] || 'Cancellation failed');
-    } finally {
-      setCancelling(false);
-    }
+  const handleCancel = () => {
+    cancelMutation.mutate(id, {
+      onSuccess: () => {
+        setCancelModal(false);
+        toast('success', 'Cancellation requested');
+      },
+      onError: (err) => {
+        if (err instanceof ApiError) toast('error', err.errors[0] || 'Cancellation failed');
+      },
+    });
   };
 
   const handleDownloadVoucher = async () => {
@@ -109,7 +89,7 @@ function HotelBookingDetail({ id }: { id: string }) {
         <PageError
           status={error?.status ?? 404}
           title={error?.status === 404 ? 'Booking Not Found' : undefined}
-          onRetry={() => setRetryCount((c) => c + 1)}
+          onRetry={() => refetch()}
           backHref="/dashboard/bookings"
           backLabel="Back to Bookings"
         />
@@ -213,7 +193,7 @@ function HotelBookingDetail({ id }: { id: string }) {
             )}
             <div className="flex gap-3">
               <Button variant="ghost" onClick={() => setCancelModal(false)}>Keep Booking</Button>
-              <Button variant="primary" onClick={handleCancel} loading={cancelling} className="bg-red-500 hover:bg-red-600">
+              <Button variant="primary" onClick={handleCancel} loading={cancelMutation.isPending} className="bg-red-500 hover:bg-red-600">
                 Confirm Cancel
               </Button>
             </div>

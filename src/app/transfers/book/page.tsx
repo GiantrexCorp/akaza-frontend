@@ -9,7 +9,7 @@ import Footer from '@/components/Footer';
 import { Input, Button, Spinner, PhoneInput } from '@/components/ui';
 import type { E164Number } from '@/components/ui';
 import { validatePhone } from '@/lib/validation/phone';
-import { transfersApi } from '@/lib/api/transfers';
+import { useCreateTransferBooking } from '@/hooks/useTransfers';
 import { useToast } from '@/components/ui/Toast';
 import { ApiError } from '@/lib/api/client';
 import { ProtectedRoute } from '@/lib/auth';
@@ -39,7 +39,7 @@ function TransferBookingForm() {
   const [luggageCount, setLuggageCount] = useState(1);
   const [flightNumber, setFlightNumber] = useState('');
   const [specialRequests, setSpecialRequests] = useState('');
-  const [loading, setLoading] = useState(false);
+  const createBookingMutation = useCreateTransferBooking();
   const [agreed, setAgreed] = useState(false);
 
   const formatPrice = (p: number) => {
@@ -66,9 +66,8 @@ function TransferBookingForm() {
       return;
     }
 
-    setLoading(true);
-    try {
-      const booking = await transfersApi.createBooking({
+    createBookingMutation.mutate(
+      {
         transfer_route_id: routeId,
         transfer_vehicle_id: vehicleId,
         transfer_type: transferType as 'airport' | 'city' | 'chauffeur',
@@ -80,20 +79,23 @@ function TransferBookingForm() {
         luggage_count: luggageCount,
         contact_name: contactName,
         contact_email: contactEmail,
-        contact_phone: contactPhone,
+        contact_phone: contactPhone || '',
         flight_number: flightNumber || undefined,
         special_requests: specialRequests || undefined,
         currency,
-      });
-      toast('success', 'Transfer booked successfully!');
-      router.push(`/transfers/bookings/${booking.id}/confirmation`);
-    } catch (err) {
-      if (err instanceof ApiError) {
-        toast('error', err.errors[0] || 'Booking failed');
-      }
-    } finally {
-      setLoading(false);
-    }
+      },
+      {
+        onSuccess: (booking) => {
+          toast('success', 'Transfer booked successfully!');
+          router.push(`/transfers/bookings/${booking.id}/confirmation`);
+        },
+        onError: (err) => {
+          if (err instanceof ApiError) {
+            toast('error', err.errors[0] || 'Booking failed');
+          }
+        },
+      },
+    );
   };
 
   return (
@@ -218,7 +220,7 @@ function TransferBookingForm() {
                   </div>
                 </div>
 
-                <Button type="submit" variant="gradient" loading={loading} className="w-full">
+                <Button type="submit" variant="gradient" loading={createBookingMutation.isPending} className="w-full">
                   Confirm Booking
                 </Button>
               </div>

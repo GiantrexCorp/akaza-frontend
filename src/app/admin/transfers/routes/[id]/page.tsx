@@ -4,10 +4,12 @@ import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import { Trash2 } from 'lucide-react';
 import RouteForm from '@/components/admin/transfers/RouteForm';
-import RoutePriceManager from '@/components/admin/transfers/RoutePriceManager';
+import dynamic from 'next/dynamic';
+const RoutePriceManager = dynamic(() => import('@/components/admin/transfers/RoutePriceManager'), { ssr: false });
 import { Spinner, Breadcrumb, Button, Badge, Modal, PageError } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast';
-import { adminTransfersApi } from '@/lib/api/admin-transfers';
+import { useAdminRouteDetail, useDeleteRoute } from '@/hooks/admin/useAdminTransfers';
+import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { ApiError } from '@/lib/api/client';
 import { AdminProtectedRoute, useAuth } from '@/lib/auth';
 import { hasPermission } from '@/lib/permissions';
@@ -25,35 +27,13 @@ function RouteDetail({ id }: { id: number }) {
   const { toast } = useToast();
   const router = useRouter();
   const { user: authUser } = useAuth();
-  const [route, setRoute] = useState<AdminTransferRoute | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<ApiError | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
+  const { data: route, isLoading, isError, error, refetch } = useAdminRouteDetail(id);
+  useQueryErrorToast(isError, error, 'Failed to load route');
+  const deleteMutation = useDeleteRoute();
   const [activeTab, setActiveTab] = useState<Tab>('info');
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [deleting, setDeleting] = useState(false);
 
   const canDelete = hasPermission(authUser, 'delete-transfer');
-
-  useEffect(() => {
-    let cancelled = false;
-    setError(null);
-    setLoading(true);
-    (async () => {
-      try {
-        const data = await adminTransfersApi.getRoute(id);
-        if (!cancelled) setRoute(data);
-      } catch (err) {
-        if (!cancelled && err instanceof ApiError) {
-          setError(err);
-          toast('error', err.errors[0] || 'Failed to load route');
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [id, retryCount]);
 
   useEffect(() => {
     document.title = route
@@ -61,24 +41,23 @@ function RouteDetail({ id }: { id: number }) {
       : 'Loading... | Akaza Admin';
   }, [route]);
 
-  const handleSaved = (updated: AdminTransferRoute) => {
-    setRoute(updated);
+  const handleSaved = (_updated: AdminTransferRoute) => {
+    refetch();
   };
 
-  const handleDelete = async () => {
-    setDeleting(true);
-    try {
-      await adminTransfersApi.deleteRoute(id);
-      toast('success', 'Route deleted');
-      router.push('/admin/transfers');
-    } catch (err) {
-      if (err instanceof ApiError) toast('error', err.errors[0] || 'Failed to delete route');
-    } finally {
-      setDeleting(false);
-    }
+  const handleDelete = () => {
+    deleteMutation.mutate(id, {
+      onSuccess: () => {
+        toast('success', 'Route deleted');
+        router.push('/admin/transfers');
+      },
+      onError: (err) => {
+        if (err instanceof ApiError) toast('error', err.errors[0] || 'Failed to delete route');
+      },
+    });
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="py-16">
         <Spinner size="lg" />
@@ -86,13 +65,13 @@ function RouteDetail({ id }: { id: number }) {
     );
   }
 
-  if (error || !route) {
+  if (isError || !route) {
     return (
       <div className="py-16">
         <PageError
-          status={error?.status ?? 404}
-          title={error?.status === 404 ? 'Route Not Found' : undefined}
-          onRetry={() => setRetryCount((c) => c + 1)}
+          status={(error as ApiError)?.status ?? 404}
+          title={(error as ApiError)?.status === 404 ? 'Route Not Found' : undefined}
+          onRetry={() => refetch()}
           backHref="/admin/transfers"
           backLabel="Back to Transfers"
         />
@@ -160,7 +139,7 @@ function RouteDetail({ id }: { id: number }) {
           <RoutePriceManager
             routeId={route.id}
             prices={route.prices || []}
-            onPricesUpdated={(prices) => setRoute({ ...route, prices })}
+            onPricesUpdated={() => refetch()}
           />
         )}
       </div>
@@ -173,7 +152,7 @@ function RouteDetail({ id }: { id: number }) {
           </p>
           <div className="flex gap-3 justify-end">
             <Button variant="ghost" size="sm" onClick={() => setDeleteOpen(false)}>Cancel</Button>
-            <Button size="sm" loading={deleting} onClick={handleDelete}>
+            <Button size="sm" loading={deleteMutation.isPending} onClick={handleDelete}>
               Delete Route
             </Button>
           </div>

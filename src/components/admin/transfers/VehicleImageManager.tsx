@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import Image from 'next/image';
 import { Upload, Trash2, ImageIcon } from 'lucide-react';
 import { Button, Spinner } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast';
@@ -79,9 +80,12 @@ export default function VehicleImageManager({ vehicle, onUpdated }: VehicleImage
 
       {vehicle.image_url ? (
         <div className="relative group border border-[var(--line-soft)] overflow-hidden inline-block">
-          <img
+          <Image
             src={vehicle.image_url}
             alt={vehicle.translated_name}
+            width={384}
+            height={192}
+            unoptimized
             className="max-w-sm h-48 object-cover"
           />
           <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">

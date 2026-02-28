@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { Car, Route, Plus } from 'lucide-react';
 import VehicleFilters from '@/components/admin/transfers/VehicleFilters';
@@ -8,70 +8,52 @@ import VehicleTable from '@/components/admin/transfers/VehicleTable';
 import RouteFilters from '@/components/admin/transfers/RouteFilters';
 import RouteTable from '@/components/admin/transfers/RouteTable';
 import { Spinner, EmptyState, Button } from '@/components/ui';
-import { useToast } from '@/components/ui/Toast';
-import { adminTransfersApi } from '@/lib/api/admin-transfers';
-import { ApiError } from '@/lib/api/client';
+import { useAdminVehicleList, useAdminRouteList } from '@/hooks/admin/useAdminTransfers';
+import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { AdminProtectedRoute } from '@/lib/auth';
-import type { AdminTransferVehicle, AdminTransferRoute } from '@/types/transfer';
 
 type Tab = 'vehicles' | 'routes';
 
 export default function AdminTransfersPage() {
   useEffect(() => { document.title = 'Transfers | Akaza Admin'; }, []);
-  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<Tab>('vehicles');
-
-  // Vehicles state
-  const [vehicles, setVehicles] = useState<AdminTransferVehicle[]>([]);
-  const [vehiclesLoading, setVehiclesLoading] = useState(true);
   const [vehicleFilters, setVehicleFilters] = useState<Record<string, string>>({});
-
-  // Routes state
-  const [routes, setRoutes] = useState<AdminTransferRoute[]>([]);
-  const [routesLoading, setRoutesLoading] = useState(true);
   const [routeFilters, setRouteFilters] = useState<Record<string, string>>({});
 
-  const fetchVehicles = useCallback(async (filterParams: Record<string, string>) => {
-    setVehiclesLoading(true);
-    try {
-      const params = new URLSearchParams();
-      params.set('sort', 'sort_order');
-      if (filterParams.status) params.set('filter[status]', filterParams.status);
-      if (filterParams.type) params.set('filter[type]', filterParams.type);
-      const data = await adminTransfersApi.listVehicles(params.toString());
-      setVehicles(data);
-    } catch (err) {
-      setVehicles([]);
-      if (err instanceof ApiError) toast('error', err.errors[0] || 'Failed to load vehicles');
-    } finally {
-      setVehiclesLoading(false);
-    }
-  }, [toast]);
-
-  const fetchRoutes = useCallback(async (filterParams: Record<string, string>) => {
-    setRoutesLoading(true);
-    try {
-      const params = new URLSearchParams();
-      params.set('sort', '-created_at');
-      if (filterParams.status) params.set('filter[status]', filterParams.status);
-      if (filterParams.transfer_type) params.set('filter[transfer_type]', filterParams.transfer_type);
-      const data = await adminTransfersApi.listRoutes(params.toString());
-      setRoutes(data);
-    } catch (err) {
-      setRoutes([]);
-      if (err instanceof ApiError) toast('error', err.errors[0] || 'Failed to load routes');
-    } finally {
-      setRoutesLoading(false);
-    }
-  }, [toast]);
-
-  useEffect(() => {
-    fetchVehicles(vehicleFilters);
+  const vehicleQueryParams = useMemo(() => {
+    const params = new URLSearchParams();
+    params.set('sort', 'sort_order');
+    if (vehicleFilters.status) params.set('filter[status]', vehicleFilters.status);
+    if (vehicleFilters.type) params.set('filter[type]', vehicleFilters.type);
+    return params.toString();
   }, [vehicleFilters]);
 
-  useEffect(() => {
-    fetchRoutes(routeFilters);
+  const routeQueryParams = useMemo(() => {
+    const params = new URLSearchParams();
+    params.set('sort', '-created_at');
+    if (routeFilters.status) params.set('filter[status]', routeFilters.status);
+    if (routeFilters.transfer_type) params.set('filter[transfer_type]', routeFilters.transfer_type);
+    return params.toString();
   }, [routeFilters]);
+
+  const {
+    data: vehicles = [],
+    isLoading: vehiclesLoading,
+    isError: vehiclesError,
+    error: vehiclesErr,
+  } = useAdminVehicleList(vehicleQueryParams);
+  useQueryErrorToast(vehiclesError, vehiclesErr, 'Failed to load vehicles');
+
+  const {
+    data: routes = [],
+    isLoading: routesLoading,
+    isError: routesError,
+    error: routesErr,
+  } = useAdminRouteList(routeQueryParams);
+  useQueryErrorToast(routesError, routesErr, 'Failed to load routes');
+
+  const vehicleList = Array.isArray(vehicles) ? vehicles : [];
+  const routeList = Array.isArray(routes) ? routes : [];
 
   const tabs: { key: Tab; label: string }[] = [
     { key: 'vehicles', label: 'Vehicles' },
@@ -120,14 +102,14 @@ export default function AdminTransfersPage() {
               </div>
               {vehiclesLoading ? (
                 <div className="py-16"><Spinner size="lg" /></div>
-              ) : vehicles.length === 0 ? (
+              ) : vehicleList.length === 0 ? (
                 <EmptyState
                   icon={<Car size={48} strokeWidth={1} />}
                   title="No Vehicles Found"
                   description="Try adjusting your filters or create a new vehicle."
                 />
               ) : (
-                <VehicleTable vehicles={vehicles} />
+                <VehicleTable vehicles={vehicleList} />
               )}
             </>
           )}
@@ -140,14 +122,14 @@ export default function AdminTransfersPage() {
               </div>
               {routesLoading ? (
                 <div className="py-16"><Spinner size="lg" /></div>
-              ) : routes.length === 0 ? (
+              ) : routeList.length === 0 ? (
                 <EmptyState
                   icon={<Route size={48} strokeWidth={1} />}
                   title="No Routes Found"
                   description="Try adjusting your filters or create a new route."
                 />
               ) : (
-                <RouteTable routes={routes} />
+                <RouteTable routes={routeList} />
               )}
             </>
           )}

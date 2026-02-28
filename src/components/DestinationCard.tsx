@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { ArrowRight, CheckCircle } from "lucide-react";
 
 interface DestinationCardProps {
@@ -39,10 +40,12 @@ export default function DestinationCard({
       <div className="absolute inset-0 border border-transparent group-hover:border-primary/50 z-20 transition-all duration-500 pointer-events-none m-3" />
 
       {/* Image */}
-      <img
+      <Image
         alt={alt}
         src={image}
-        className={`absolute inset-0 w-full h-full object-cover ${grayscaleClass} group-hover:grayscale-0 group-hover:scale-[1.06] transition-all duration-1000`}
+        fill
+        sizes="(max-width: 768px) 100vw, 33vw"
+        className={`object-cover ${grayscaleClass} group-hover:grayscale-0 group-hover:scale-[1.06] transition-all duration-1000`}
       />
 
       {/* Gradient overlay */}

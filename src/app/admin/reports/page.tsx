@@ -8,11 +8,13 @@ import RevenueTable from '@/components/admin/finance/RevenueTable';
 import ReportStatusSummary from '@/components/admin/finance/ReportStatusSummary';
 import { Spinner, EmptyState } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast';
+import { useFinanceReport } from '@/hooks/admin/useAdminFinance';
+import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { adminFinanceApi } from '@/lib/api/admin-finance';
 import { ApiError } from '@/lib/api/client';
 import { AdminProtectedRoute, useAuth } from '@/lib/auth';
 import { hasPermission } from '@/lib/permissions';
-import type { FinanceReport, FinanceReportParams } from '@/types/finance';
+import type { FinanceReportParams } from '@/types/finance';
 
 function formatCurrency(amount: number): string {
   return new Intl.NumberFormat('en-US', {
@@ -26,36 +28,28 @@ export default function AdminReportsPage() {
   useEffect(() => { document.title = 'Reports | Akaza Admin'; }, []);
   const { toast } = useToast();
   const { user } = useAuth();
-  const [report, setReport] = useState<FinanceReport | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [reportParams, setReportParams] = useState<FinanceReportParams | null>(null);
   const [exporting, setExporting] = useState(false);
-  const [lastParams, setLastParams] = useState<FinanceReportParams | null>(null);
 
-  const handleGenerate = async (params: FinanceReportParams) => {
-    setLoading(true);
-    setLastParams(params);
-    try {
-      const data = await adminFinanceApi.report(params);
-      setReport(data);
-    } catch (err) {
-      setReport(null);
-      if (err instanceof ApiError) {
-        toast('error', err.errors[0] || 'Failed to generate report');
-      }
-    } finally {
-      setLoading(false);
-    }
+  const { data: report, isLoading: queryLoading, isError, error } = useFinanceReport(reportParams ?? {});
+  useQueryErrorToast(isError && !!reportParams, error, 'Failed to generate report');
+
+  const loading = !!reportParams && queryLoading;
+  const displayReport = reportParams ? report : null;
+
+  const handleGenerate = (params: FinanceReportParams) => {
+    setReportParams(params);
   };
 
   const handleExportPdf = async () => {
-    if (!lastParams) return;
+    if (!reportParams) return;
     setExporting(true);
     try {
-      const blob = await adminFinanceApi.exportPdf(lastParams);
+      const blob = await adminFinanceApi.exportPdf(reportParams);
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `finance-report-${lastParams.from}-to-${lastParams.to}.pdf`;
+      a.download = `finance-report-${reportParams.from}-to-${reportParams.to}.pdf`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -81,7 +75,7 @@ export default function AdminReportsPage() {
                 Generate and export detailed financial reports
               </p>
             </div>
-            {canExport && report && (
+            {canExport && displayReport && reportParams && (
               <button
                 onClick={handleExportPdf}
                 disabled={exporting}
@@ -101,7 +95,7 @@ export default function AdminReportsPage() {
             <div className="py-16">
               <Spinner size="lg" />
             </div>
-          ) : !report ? (
+          ) : !displayReport ? (
             <EmptyState
               icon={<BarChart3 size={48} strokeWidth={1} />}
               title="No Report Generated"
@@ -116,23 +110,23 @@ export default function AdminReportsPage() {
                       Total Revenue
                     </p>
                     <p className="text-3xl font-serif text-[var(--text-primary)]">
-                      {formatCurrency(report.total_revenue)}
+                      {formatCurrency(displayReport.total_revenue)}
                     </p>
                   </div>
                   <div className="text-right">
                     <p className="text-xs text-[var(--text-muted)] font-sans">
-                      {report.date_range.from} — {report.date_range.to}
+                      {displayReport.date_range.from} — {displayReport.date_range.to}
                     </p>
                     <p className="text-xs text-[var(--text-muted)] font-sans mt-1 capitalize">
-                      {report.period} breakdown
+                      {displayReport.period} breakdown
                     </p>
                   </div>
                 </div>
               </div>
 
-              <ReportBreakdown breakdown={report.breakdown} />
-              <RevenueTable periods={report.revenue_by_period} />
-              <ReportStatusSummary summary={report.booking_status_summary} />
+              <ReportBreakdown breakdown={displayReport.breakdown} />
+              <RevenueTable periods={displayReport.revenue_by_period} />
+              <ReportStatusSummary summary={displayReport.booking_status_summary} />
             </div>
           )}
         </div>

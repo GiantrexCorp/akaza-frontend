@@ -8,7 +8,7 @@ import DashboardLayout from '@/components/DashboardLayout';
 import { Input, Button, Select, PhoneInput } from '@/components/ui';
 import type { E164Number } from '@/components/ui';
 import { validatePhone } from '@/lib/validation/phone';
-import { profileApi } from '@/lib/api/profile';
+import { useUpdateProfile, useChangePassword } from '@/hooks/useProfile';
 import { useToast } from '@/components/ui/Toast';
 import { ApiError } from '@/lib/api/client';
 import { useAuth, ProtectedRoute } from '@/lib/auth';
@@ -16,17 +16,17 @@ import { useAuth, ProtectedRoute } from '@/lib/auth';
 export default function ProfilePage() {
   const { toast } = useToast();
   const { user, refreshUser } = useAuth();
+  const updateProfileMutation = useUpdateProfile();
+  const changePasswordMutation = useChangePassword();
 
   const [name, setName] = useState(user?.name || '');
   const [email, setEmail] = useState(user?.email || '');
   const [phone, setPhone] = useState<E164Number | undefined>((user?.phone as E164Number) || undefined);
   const [locale, setLocale] = useState<string>(user?.locale || 'en');
-  const [saving, setSaving] = useState(false);
 
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [changingPassword, setChangingPassword] = useState(false);
 
   const handleUpdateProfile = async (e: FormEvent) => {
     e.preventDefault();
@@ -35,16 +35,18 @@ export default function ProfilePage() {
       toast('error', phoneErr);
       return;
     }
-    setSaving(true);
-    try {
-      await profileApi.update({ name, phone: phone || undefined, locale: locale as 'en' | 'de' | 'fr' });
-      await refreshUser();
-      toast('success', 'Profile updated');
-    } catch (err) {
-      if (err instanceof ApiError) toast('error', err.errors[0] || 'Update failed');
-    } finally {
-      setSaving(false);
-    }
+    updateProfileMutation.mutate(
+      { name, phone: phone || undefined, locale: locale as 'en' | 'de' | 'fr' },
+      {
+        onSuccess: async () => {
+          await refreshUser();
+          toast('success', 'Profile updated');
+        },
+        onError: (err) => {
+          if (err instanceof ApiError) toast('error', err.errors[0] || 'Update failed');
+        },
+      },
+    );
   };
 
   const handleChangePassword = async (e: FormEvent) => {
@@ -53,22 +55,24 @@ export default function ProfilePage() {
       toast('error', 'Passwords do not match');
       return;
     }
-    setChangingPassword(true);
-    try {
-      await profileApi.changePassword({
+    changePasswordMutation.mutate(
+      {
         current_password: currentPassword,
         password: newPassword,
         password_confirmation: confirmPassword,
-      });
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
-      toast('success', 'Password changed');
-    } catch (err) {
-      if (err instanceof ApiError) toast('error', err.errors[0] || 'Password change failed');
-    } finally {
-      setChangingPassword(false);
-    }
+      },
+      {
+        onSuccess: () => {
+          setCurrentPassword('');
+          setNewPassword('');
+          setConfirmPassword('');
+          toast('success', 'Password changed');
+        },
+        onError: (err) => {
+          if (err instanceof ApiError) toast('error', err.errors[0] || 'Password change failed');
+        },
+      },
+    );
   };
 
   return (
@@ -97,7 +101,7 @@ export default function ProfilePage() {
                   onChange={(e) => setLocale(e.target.value)}
                 />
               </div>
-              <Button type="submit" variant="primary" loading={saving}>
+              <Button type="submit" variant="primary" loading={updateProfileMutation.isPending}>
                 Save Changes
               </Button>
             </div>
@@ -113,7 +117,7 @@ export default function ProfilePage() {
                 <Input label="New Password" type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} icon={<Lock size={18} />} />
                 <Input label="Confirm New Password" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} icon={<Lock size={18} />} />
               </div>
-              <Button type="submit" variant="primary" loading={changingPassword}>
+              <Button type="submit" variant="primary" loading={changePasswordMutation.isPending}>
                 Change Password
               </Button>
             </div>

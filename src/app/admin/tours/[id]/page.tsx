@@ -4,11 +4,13 @@ import { useState, useEffect, use } from 'react';
 import Link from 'next/link';
 import { Trash2 } from 'lucide-react';
 import TourForm from '@/components/admin/tours/TourForm';
-import TourAvailabilityManager from '@/components/admin/tours/TourAvailabilityManager';
-import TourImageManager from '@/components/admin/tours/TourImageManager';
+import dynamic from 'next/dynamic';
+const TourAvailabilityManager = dynamic(() => import('@/components/admin/tours/TourAvailabilityManager'), { ssr: false });
+const TourImageManager = dynamic(() => import('@/components/admin/tours/TourImageManager'), { ssr: false });
 import { Spinner, Breadcrumb, Button, Badge, Modal, PageError } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast';
-import { adminToursApi } from '@/lib/api/admin-tours';
+import { useAdminTourDetail, useDeleteTour } from '@/hooks/admin/useAdminTours';
+import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { ApiError } from '@/lib/api/client';
 import { AdminProtectedRoute } from '@/lib/auth';
 import { useAuth } from '@/lib/auth';
@@ -28,36 +30,14 @@ function TourDetail({ id }: { id: number }) {
   const { toast } = useToast();
   const router = useRouter();
   const { user: authUser } = useAuth();
-  const [tour, setTour] = useState<AdminTour | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<ApiError | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
+  const { data: tour, isLoading, isError, error, refetch } = useAdminTourDetail(id);
+  useQueryErrorToast(isError, error, 'Failed to load tour');
+  const deleteMutation = useDeleteTour();
   const [activeTab, setActiveTab] = useState<Tab>('info');
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [deleting, setDeleting] = useState(false);
 
   const canUpdate = hasPermission(authUser, 'update-tour');
   const canDelete = hasPermission(authUser, 'delete-tour');
-
-  useEffect(() => {
-    let cancelled = false;
-    setError(null);
-    setLoading(true);
-    (async () => {
-      try {
-        const data = await adminToursApi.get(id);
-        if (!cancelled) setTour(data);
-      } catch (err) {
-        if (!cancelled && err instanceof ApiError) {
-          setError(err);
-          toast('error', err.errors[0] || 'Failed to load tour');
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [id, retryCount]);
 
   useEffect(() => {
     document.title = tour
@@ -65,24 +45,23 @@ function TourDetail({ id }: { id: number }) {
       : 'Loading... | Akaza Admin';
   }, [tour]);
 
-  const handleSaved = (updated: AdminTour) => {
-    setTour(updated);
+  const handleSaved = (_updated: AdminTour) => {
+    refetch();
   };
 
-  const handleDelete = async () => {
-    setDeleting(true);
-    try {
-      await adminToursApi.delete(id);
-      toast('success', 'Tour deleted');
-      router.push('/admin/tours');
-    } catch (err) {
-      if (err instanceof ApiError) toast('error', err.errors[0] || 'Failed to delete tour');
-    } finally {
-      setDeleting(false);
-    }
+  const handleDelete = () => {
+    deleteMutation.mutate(id, {
+      onSuccess: () => {
+        toast('success', 'Tour deleted');
+        router.push('/admin/tours');
+      },
+      onError: (err) => {
+        if (err instanceof ApiError) toast('error', err.errors[0] || 'Failed to delete tour');
+      },
+    });
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="py-16">
         <Spinner size="lg" />
@@ -90,13 +69,13 @@ function TourDetail({ id }: { id: number }) {
     );
   }
 
-  if (error || !tour) {
+  if (isError || !tour) {
     return (
       <div className="py-16">
         <PageError
-          status={error?.status ?? 404}
-          title={error?.status === 404 ? 'Tour Not Found' : undefined}
-          onRetry={() => setRetryCount((c) => c + 1)}
+          status={(error as ApiError)?.status ?? 404}
+          title={(error as ApiError)?.status === 404 ? 'Tour Not Found' : undefined}
+          onRetry={() => refetch()}
           backHref="/admin/tours"
           backLabel="Back to Tours"
         />
@@ -172,7 +151,7 @@ function TourDetail({ id }: { id: number }) {
           <TourImageManager
             tourId={tour.id}
             images={tour.images}
-            onUpdated={(images) => setTour({ ...tour, images })}
+            onUpdated={() => refetch()}
           />
         )}
       </div>
@@ -185,7 +164,7 @@ function TourDetail({ id }: { id: number }) {
           </p>
           <div className="flex gap-3 justify-end">
             <Button variant="ghost" size="sm" onClick={() => setDeleteOpen(false)}>Cancel</Button>
-            <Button size="sm" loading={deleting} onClick={handleDelete}>
+            <Button size="sm" loading={deleteMutation.isPending} onClick={handleDelete}>
               Delete Tour
             </Button>
           </div>

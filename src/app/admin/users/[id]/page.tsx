@@ -1,48 +1,26 @@
 'use client';
 
 import { useState, useEffect, use } from 'react';
-import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
 import UserDetailHeader from '@/components/admin/users/UserDetailHeader';
 import UserInfoForm from '@/components/admin/users/UserInfoForm';
 import RoleAssignment from '@/components/admin/users/RoleAssignment';
 import PermissionEditor from '@/components/admin/users/PermissionEditor';
-import DeleteUserModal from '@/components/admin/users/DeleteUserModal';
-import { Spinner, Breadcrumb, Button, PageError } from '@/components/ui';
+import dynamic from 'next/dynamic';
+const DeleteUserModal = dynamic(() => import('@/components/admin/users/DeleteUserModal'), { ssr: false });
+import { Spinner, Breadcrumb, PageError } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast';
-import { adminUsersApi } from '@/lib/api/admin-users';
+import { useAdminUserDetail, useUpdateUser } from '@/hooks/admin/useAdminUsers';
+import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { ApiError } from '@/lib/api/client';
 import { AdminProtectedRoute } from '@/lib/auth';
 import type { AdminUser } from '@/types/admin';
 
 function UserDetail({ id }: { id: number }) {
   const { toast } = useToast();
-  const [user, setUser] = useState<AdminUser | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<ApiError | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
+  const { data: user, isLoading, isError, error, refetch } = useAdminUserDetail(id);
+  useQueryErrorToast(isError, error, 'Failed to load user');
+  const updateMutation = useUpdateUser();
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [statusSaving, setStatusSaving] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-    setError(null);
-    setLoading(true);
-    (async () => {
-      try {
-        const data = await adminUsersApi.get(id);
-        if (!cancelled) setUser(data);
-      } catch (err) {
-        if (!cancelled && err instanceof ApiError) {
-          setError(err);
-          toast('error', err.errors[0] || 'Failed to load user');
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [id, retryCount]);
 
   useEffect(() => {
     document.title = user
@@ -50,27 +28,29 @@ function UserDetail({ id }: { id: number }) {
       : 'Loading... | Akaza Admin';
   }, [user]);
 
-  const handleStatusChange = async (status: 'active' | 'inactive' | 'suspended') => {
+  const handleStatusChange = (status: 'active' | 'inactive' | 'suspended') => {
     if (!user) return;
-    setStatusSaving(true);
-    try {
-      const updated = await adminUsersApi.update(user.id, { status });
-      setUser(updated);
-      toast('success', `Status changed to ${status}`);
-    } catch (err) {
-      if (err instanceof ApiError) {
-        toast('error', err.errors[0] || 'Failed to update status');
-      }
-    } finally {
-      setStatusSaving(false);
-    }
+    updateMutation.mutate(
+      { id: user.id, data: { status } },
+      {
+        onSuccess: () => {
+          refetch();
+          toast('success', `Status changed to ${status}`);
+        },
+        onError: (err) => {
+          if (err instanceof ApiError) {
+            toast('error', err.errors[0] || 'Failed to update status');
+          }
+        },
+      },
+    );
   };
 
-  const handleUpdated = (updated: AdminUser) => {
-    setUser(updated);
+  const handleUpdated = (_updated: AdminUser) => {
+    refetch();
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="py-16">
         <Spinner size="lg" />
@@ -78,13 +58,13 @@ function UserDetail({ id }: { id: number }) {
     );
   }
 
-  if (error || !user) {
+  if (isError || !user) {
     return (
       <div className="py-16">
         <PageError
-          status={error?.status ?? 404}
-          title={error?.status === 404 ? 'User Not Found' : undefined}
-          onRetry={() => setRetryCount((c) => c + 1)}
+          status={(error as ApiError)?.status ?? 404}
+          title={(error as ApiError)?.status === 404 ? 'User Not Found' : undefined}
+          onRetry={() => refetch()}
           backHref="/admin/users"
           backLabel="Back to Users"
         />
@@ -106,7 +86,7 @@ function UserDetail({ id }: { id: number }) {
           user={user}
           onStatusChange={handleStatusChange}
           onDelete={() => setDeleteModalOpen(true)}
-          saving={statusSaving}
+          saving={updateMutation.isPending}
         />
 
         <UserInfoForm user={user} onUpdated={handleUpdated} />

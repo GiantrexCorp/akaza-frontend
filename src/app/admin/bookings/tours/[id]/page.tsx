@@ -6,42 +6,23 @@ import { Download, RefreshCw } from 'lucide-react';
 import TourBookingHeader from '@/components/admin/tour-bookings/TourBookingHeader';
 import TourBookingInfo from '@/components/admin/tour-bookings/TourBookingInfo';
 import TourBookingStatusLogs from '@/components/admin/tour-bookings/TourBookingStatusLogs';
-import StatusChangeModal from '@/components/admin/tour-bookings/StatusChangeModal';
+import dynamic from 'next/dynamic';
+const StatusChangeModal = dynamic(() => import('@/components/admin/tour-bookings/StatusChangeModal'), { ssr: false });
 import { Spinner, Button, Breadcrumb, PageError } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast';
+import { useAdminTourBookingDetail, useUpdateTourBookingStatus } from '@/hooks/admin/useAdminTourBookings';
+import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { adminToursApi } from '@/lib/api/admin-tours';
 import { ApiError } from '@/lib/api/client';
 import { AdminProtectedRoute } from '@/lib/auth';
-import type { AdminTourBooking, TourBookingStatus } from '@/types/tour';
+import type { TourBookingStatus } from '@/types/tour';
 
 function TourBookingDetail({ id }: { id: number }) {
   const { toast } = useToast();
-  const [booking, setBooking] = useState<AdminTourBooking | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<ApiError | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
+  const { data: booking, isLoading, isError, error, refetch } = useAdminTourBookingDetail(id);
+  useQueryErrorToast(isError, error, 'Failed to load booking');
+  const statusMutation = useUpdateTourBookingStatus();
   const [statusModalOpen, setStatusModalOpen] = useState(false);
-  const [statusUpdating, setStatusUpdating] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-    setError(null);
-    setLoading(true);
-    (async () => {
-      try {
-        const data = await adminToursApi.getBooking(id);
-        if (!cancelled) setBooking(data);
-      } catch (err) {
-        if (!cancelled && err instanceof ApiError) {
-          setError(err);
-          toast('error', err.errors[0] || 'Failed to load booking');
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [id, retryCount]);
 
   useEffect(() => {
     document.title = booking
@@ -49,20 +30,22 @@ function TourBookingDetail({ id }: { id: number }) {
       : 'Loading... | Akaza Admin';
   }, [booking]);
 
-  const handleStatusChange = async (status: TourBookingStatus, reason?: string) => {
-    setStatusUpdating(true);
-    try {
-      const updated = await adminToursApi.updateBookingStatus(id, { status, reason });
-      setBooking(updated);
-      setStatusModalOpen(false);
-      toast('success', `Status changed to ${status.replace(/_/g, ' ')}`);
-    } catch (err) {
-      if (err instanceof ApiError) {
-        toast('error', err.errors[0] || 'Failed to update status');
-      }
-    } finally {
-      setStatusUpdating(false);
-    }
+  const handleStatusChange = (status: TourBookingStatus, reason?: string) => {
+    statusMutation.mutate(
+      { id, data: { status, reason } },
+      {
+        onSuccess: () => {
+          refetch();
+          setStatusModalOpen(false);
+          toast('success', `Status changed to ${status.replace(/_/g, ' ')}`);
+        },
+        onError: (err) => {
+          if (err instanceof ApiError) {
+            toast('error', err.errors[0] || 'Failed to update status');
+          }
+        },
+      },
+    );
   };
 
   const handleDownloadVoucher = async () => {
@@ -81,7 +64,7 @@ function TourBookingDetail({ id }: { id: number }) {
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="py-16">
         <Spinner size="lg" />
@@ -89,13 +72,13 @@ function TourBookingDetail({ id }: { id: number }) {
     );
   }
 
-  if (error || !booking) {
+  if (isError || !booking) {
     return (
       <div className="py-16">
         <PageError
-          status={error?.status ?? 404}
-          title={error?.status === 404 ? 'Booking Not Found' : undefined}
-          onRetry={() => setRetryCount((c) => c + 1)}
+          status={(error as ApiError)?.status ?? 404}
+          title={(error as ApiError)?.status === 404 ? 'Booking Not Found' : undefined}
+          onRetry={() => refetch()}
           backHref="/admin/bookings/tours"
           backLabel="Back to Tour Bookings"
         />
@@ -141,7 +124,7 @@ function TourBookingDetail({ id }: { id: number }) {
           onClose={() => setStatusModalOpen(false)}
           currentStatus={booking.status}
           onSubmit={handleStatusChange}
-          loading={statusUpdating}
+          loading={statusMutation.isPending}
         />
       )}
     </div>

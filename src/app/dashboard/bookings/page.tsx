@@ -1,21 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { Hotel, Ship, Car, Calendar, MapPin, Users, ArrowRight } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import DashboardLayout from '@/components/DashboardLayout';
 import { Spinner, Badge, EmptyState, Pagination } from '@/components/ui';
-import { hotelsApi } from '@/lib/api/hotels';
-import { toursApi } from '@/lib/api/tours';
-import { transfersApi } from '@/lib/api/transfers';
-import { useToast } from '@/components/ui/Toast';
-import { ApiError } from '@/lib/api/client';
+import { useHotelBookings, useTourBookings, useTransferBookings } from '@/hooks/useBookings';
+import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { ProtectedRoute } from '@/lib/auth';
-import type { HotelBooking } from '@/types/hotel';
-import type { TourBooking } from '@/types/tour';
-import type { TransferBooking } from '@/types/transfer';
 
 type Tab = 'hotels' | 'tours' | 'transfers';
 
@@ -32,55 +26,28 @@ const statusColors: Record<string, 'yellow' | 'green' | 'red' | 'gray' | 'orange
 };
 
 export default function BookingsPage() {
-  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<Tab>('hotels');
-
-  const [hotelBookings, setHotelBookings] = useState<HotelBooking[]>([]);
-  const [tourBookings, setTourBookings] = useState<TourBooking[]>([]);
-  const [transferBookings, setTransferBookings] = useState<TransferBooking[]>([]);
-
   const [hotelPage, setHotelPage] = useState(1);
   const [tourPage, setTourPage] = useState(1);
   const [transferPage, setTransferPage] = useState(1);
 
-  const [hotelLastPage, setHotelLastPage] = useState(1);
-  const [tourLastPage, setTourLastPage] = useState(1);
-  const [transferLastPage, setTransferLastPage] = useState(1);
+  const hotelQuery = useHotelBookings(`page=${hotelPage}`, activeTab === 'hotels');
+  const tourQuery = useTourBookings(`page=${tourPage}`, activeTab === 'tours');
+  const transferQuery = useTransferBookings(`page=${transferPage}`, activeTab === 'transfers');
 
-  const [loading, setLoading] = useState(true);
+  useQueryErrorToast(!!hotelQuery.error, hotelQuery.error, 'Failed to load hotel bookings');
+  useQueryErrorToast(!!tourQuery.error, tourQuery.error, 'Failed to load tour bookings');
+  useQueryErrorToast(!!transferQuery.error, transferQuery.error, 'Failed to load transfer bookings');
 
-  const fetchBookings = async (tab: Tab, page: number) => {
-    setLoading(true);
-    try {
-      const params = `page=${page}`;
-      if (tab === 'hotels') {
-        const data = await hotelsApi.listBookings(params);
-        setHotelBookings(data.data);
-        setHotelPage(data.meta.current_page);
-        setHotelLastPage(data.meta.last_page);
-      } else if (tab === 'tours') {
-        const data = await toursApi.listBookings(params);
-        setTourBookings(data.data);
-        setTourPage(data.meta.current_page);
-        setTourLastPage(data.meta.last_page);
-      } else {
-        const data = await transfersApi.listBookings(params);
-        setTransferBookings(data.data);
-        setTransferPage(data.meta.current_page);
-        setTransferLastPage(data.meta.last_page);
-      }
-    } catch (err) {
-      if (err instanceof ApiError) {
-        toast('error', err.errors[0] || 'Failed to load bookings');
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
+  const hotelBookings = hotelQuery.data?.data ?? [];
+  const tourBookings = tourQuery.data?.data ?? [];
+  const transferBookings = transferQuery.data?.data ?? [];
 
-  useEffect(() => {
-    fetchBookings(activeTab, 1);
-  }, [activeTab]);
+  const hotelLastPage = hotelQuery.data?.meta.last_page ?? 1;
+  const tourLastPage = tourQuery.data?.meta.last_page ?? 1;
+  const transferLastPage = transferQuery.data?.meta.last_page ?? 1;
+
+  const loading = activeTab === 'hotels' ? hotelQuery.isLoading : activeTab === 'tours' ? tourQuery.isLoading : transferQuery.isLoading;
 
   const tabs: { key: Tab; label: string; icon: typeof Hotel }[] = [
     { key: 'hotels', label: 'Hotels', icon: Hotel },
@@ -155,7 +122,7 @@ export default function BookingsPage() {
                       ))}
                     </div>
                     <div className="mt-8">
-                      <Pagination currentPage={hotelPage} lastPage={hotelLastPage} onPageChange={(p) => fetchBookings('hotels', p)} />
+                      <Pagination currentPage={hotelPage} lastPage={hotelLastPage} onPageChange={setHotelPage} />
                     </div>
                   </>
                 )
@@ -200,7 +167,7 @@ export default function BookingsPage() {
                       ))}
                     </div>
                     <div className="mt-8">
-                      <Pagination currentPage={tourPage} lastPage={tourLastPage} onPageChange={(p) => fetchBookings('tours', p)} />
+                      <Pagination currentPage={tourPage} lastPage={tourLastPage} onPageChange={setTourPage} />
                     </div>
                   </>
                 )
@@ -240,7 +207,7 @@ export default function BookingsPage() {
                       ))}
                     </div>
                     <div className="mt-8">
-                      <Pagination currentPage={transferPage} lastPage={transferLastPage} onPageChange={(p) => fetchBookings('transfers', p)} />
+                      <Pagination currentPage={transferPage} lastPage={transferLastPage} onPageChange={setTransferPage} />
                     </div>
                   </>
                 )
