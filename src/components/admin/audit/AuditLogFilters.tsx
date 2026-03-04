@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Search } from 'lucide-react';
-import { Select } from '@/components/ui';
+import { Select, DatePicker } from '@/components/ui';
 
 interface AuditLogFiltersProps {
   onFiltersChange: (filters: Record<string, string>) => void;
@@ -130,29 +130,13 @@ export default function AuditLogFilters({ onFiltersChange }: AuditLogFiltersProp
       </div>
 
       {/* Date From */}
-      <div className="w-40">
-        <label className="block text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-1">
-          From
-        </label>
-        <input
-          type="date"
-          value={dateFrom}
-          onChange={(e) => handleDateChange('date_from', e.target.value)}
-          className="w-full bg-transparent border-b border-[var(--line-strong)] focus:border-primary text-[var(--field-text)] font-serif text-sm py-1.5 outline-none transition-colors duration-300"
-        />
+      <div className="w-44">
+        <DatePicker label="From" size="sm" value={dateFrom} onChange={(v) => handleDateChange('date_from', v)} />
       </div>
 
       {/* Date To */}
-      <div className="w-40">
-        <label className="block text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-1">
-          To
-        </label>
-        <input
-          type="date"
-          value={dateTo}
-          onChange={(e) => handleDateChange('date_to', e.target.value)}
-          className="w-full bg-transparent border-b border-[var(--line-strong)] focus:border-primary text-[var(--field-text)] font-serif text-sm py-1.5 outline-none transition-colors duration-300"
-        />
+      <div className="w-44">
+        <DatePicker label="To" size="sm" value={dateTo} onChange={(v) => handleDateChange('date_to', v)} minDate={dateFrom} />
       </div>
     </div>
   );

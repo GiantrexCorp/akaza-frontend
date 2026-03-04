@@ -3,8 +3,8 @@
 import { useState, type FormEvent } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, User, Mail, Plane, Calendar, Clock } from 'lucide-react';
-import { Input, Button, PhoneInput } from '@/components/ui';
+import { ArrowLeft, User, Mail, Plane, Clock } from 'lucide-react';
+import { Input, DatePicker, Button, PhoneInput } from '@/components/ui';
 import type { E164Number } from '@/components/ui';
 import { validatePhone } from '@/lib/validation/phone';
 import { useFormValidation } from '@/hooks/useFormValidation';
@@ -114,7 +114,7 @@ export default function TransferBookingForm() {
               <div className="bg-[var(--surface-card)] border border-[var(--line-soft)] p-6">
                 <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-6">Trip Details</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Input label="Pickup Date" type="date" value={pickupDate} onChange={(e) => { setPickupDate(e.target.value); clearError('pickupDate'); }} error={errors.pickupDate} icon={<Calendar size={18} />} />
+                  <DatePicker label="Pickup Date" value={pickupDate} onChange={(v) => { setPickupDate(v); clearError('pickupDate'); }} error={errors.pickupDate} minDate={new Date().toISOString().split('T')[0]} />
                   <Input label="Pickup Time" type="time" value={pickupTime} onChange={(e) => { setPickupTime(e.target.value); clearError('pickupTime'); }} error={errors.pickupTime} icon={<Clock size={18} />} />
                   <div>
                     <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-3">Passengers</p>

@@ -1,13 +1,19 @@
 import { api } from './client';
-import type { HotelSearchResult, HotelSearchParams, CheckRateRequest, HotelBooking, CreateHotelBookingRequest, CancellationCost } from '@/types/hotel';
+import type { HotelSearchResult, HotelSearchParams, CheckRateRequest, HotelBooking, CreateHotelBookingRequest, CancellationCost, Destination, HotelDetails } from '@/types/hotel';
 import type { PaginatedPayload } from '@/types/api';
 
 export const hotelsApi = {
+  searchDestinations: (query: string, signal?: AbortSignal) =>
+    api.get<Destination[]>(`/destinations/search?q=${encodeURIComponent(query)}`, { signal }),
+
   search: (params: HotelSearchParams) =>
     api.post<HotelSearchResult[]>('/hotels/search', params),
 
   checkRate: (data: CheckRateRequest) =>
     api.post<HotelSearchResult[]>('/hotels/checkrate', data),
+
+  getDetails: (hotelCode: string) =>
+    api.get<HotelDetails>(`/hotels/${hotelCode}/details`),
 
   createBooking: (data: CreateHotelBookingRequest) =>
     api.post<HotelBooking>('/hotels/bookings', data),

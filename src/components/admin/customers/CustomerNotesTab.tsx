@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Plus, Pin, Edit3, Trash2, StickyNote } from 'lucide-react';
-import { Button, Badge, Modal, Input, Select, Spinner, EmptyState } from '@/components/ui';
+import { Button, Badge, Modal, Input, DatePicker, Select, Spinner, EmptyState } from '@/components/ui';
 import { useFormValidation } from '@/hooks/useFormValidation';
 import { customerNoteSchema } from '@/lib/validation/schemas/admin';
 import { adminCustomersApi } from '@/lib/api/admin-customers';
@@ -190,11 +190,10 @@ export default function CustomerNotesTab({ customerId }: CustomerNotesTabProps) 
           onChange={(e) => { setFormType(e.target.value as NoteType); clearError('type'); }}
           error={fieldError('type')}
         />
-        <Input
+        <DatePicker
           label="Follow-up Date"
-          type="date"
           value={formFollowUpDate}
-          onChange={(e) => { setFormFollowUpDate(e.target.value); clearError('follow_up_date'); }}
+          onChange={(v) => { setFormFollowUpDate(v); clearError('follow_up_date'); }}
           error={fieldError('follow_up_date')}
         />
       </div>

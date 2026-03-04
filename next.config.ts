@@ -2,6 +2,9 @@ import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  turbopack: {
+    root: __dirname,
+  },
   images: {
     remotePatterns: [
       {
@@ -29,11 +32,14 @@ const nextConfig: NextConfig = {
         hostname: "127.0.0.1",
         port: "8000",
       },
+      {
+        protocol: "https",
+        hostname: "photos.hotelbeds.com",
+      },
     ],
   },
 };
 
 export default withSentryConfig(nextConfig, {
   silent: true,
-  disableLogger: true,
 });

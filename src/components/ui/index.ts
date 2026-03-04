@@ -1,4 +1,7 @@
+export { default as Autocomplete } from './Autocomplete';
+export type { AutocompleteOption } from './Autocomplete';
 export { default as Button } from './Button';
+export { default as DatePicker } from './DatePicker';
 export { default as Input } from './Input';
 export { default as Select } from './Select';
 export { default as Modal } from './Modal';

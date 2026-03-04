@@ -1,10 +1,18 @@
+export interface Destination {
+  code: string;
+  name: string;
+  country_code: string;
+  country_name: string | null;
+}
+
 export interface HotelSearchParams {
-  checkIn: string;
-  checkOut: string;
+  check_in: string;
+  check_out: string;
   destination: string;
   occupancies: HotelOccupancy[];
-  hotelCode?: string;
+  hotel_code?: string;
   filters?: Record<string, unknown>;
+  source_market?: string;
 }
 
 export interface HotelOccupancy {
@@ -51,6 +59,7 @@ export interface HotelRoom {
   rooms: number;
   cancellation_policies: CancellationPolicy[];
   promotions: string[];
+  rate_comments?: string | null;
 }
 
 export interface CancellationPolicy {
@@ -60,6 +69,38 @@ export interface CancellationPolicy {
 
 export interface CheckRateRequest {
   rate_keys: string[];
+}
+
+export interface HotelDetails {
+  hotel_code: string;
+  hotel_name: string;
+  description: string;
+  address: string;
+  city: string;
+  postal_code: string;
+  country_code: string;
+  category_code: string;
+  category_name: string;
+  latitude: number | null;
+  longitude: number | null;
+  phone: string;
+  email: string;
+  web: string;
+  images: HotelImage[];
+  facilities: HotelFacility[];
+}
+
+export interface HotelImage {
+  type: string;
+  path: string;
+  order: number;
+}
+
+export interface HotelFacility {
+  code: string;
+  group_code: string;
+  description: string;
+  fee: boolean;
 }
 
 export interface HotelBooking {

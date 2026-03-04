@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { FileText } from 'lucide-react';
-import { Select } from '@/components/ui';
+import { Select, DatePicker } from '@/components/ui';
 import type { FinanceReportParams, RevenuePeriodType } from '@/types/finance';
 
 interface ReportFiltersProps {
@@ -52,28 +52,12 @@ export default function ReportFilters({ onGenerate, loading }: ReportFiltersProp
         />
       </div>
 
-      <div className="w-40">
-        <label className="block text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-1">
-          From
-        </label>
-        <input
-          type="date"
-          value={from}
-          onChange={(e) => setFrom(e.target.value)}
-          className="w-full bg-transparent border-b border-[var(--line-strong)] focus:border-primary text-[var(--field-text)] font-serif text-sm py-1.5 outline-none transition-colors duration-300"
-        />
+      <div className="w-44">
+        <DatePicker label="From" size="sm" value={from} onChange={setFrom} />
       </div>
 
-      <div className="w-40">
-        <label className="block text-[9px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-1">
-          To
-        </label>
-        <input
-          type="date"
-          value={to}
-          onChange={(e) => setTo(e.target.value)}
-          className="w-full bg-transparent border-b border-[var(--line-strong)] focus:border-primary text-[var(--field-text)] font-serif text-sm py-1.5 outline-none transition-colors duration-300"
-        />
+      <div className="w-44">
+        <DatePicker label="To" size="sm" value={to} onChange={setTo} minDate={from} />
       </div>
 
       <button

@@ -10,6 +10,7 @@ export const queryKeys = {
   },
 
   hotels: {
+    details: (hotelCode: string) => ['hotels', 'details', hotelCode] as const,
     bookings: (params?: string) => ['hotels', 'bookings', params] as const,
     bookingDetail: (id: string) => ['hotels', 'bookings', id] as const,
   },

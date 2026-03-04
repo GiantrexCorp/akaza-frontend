@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Plus, Trash2, Edit3, X, Check } from 'lucide-react';
-import { Button, Badge, Input, Spinner } from '@/components/ui';
+import { Button, Badge, Input, DatePicker, Spinner } from '@/components/ui';
 import { useToast } from '@/components/ui/Toast';
 import { adminToursApi } from '@/lib/api/admin-tours';
 import { ApiError } from '@/lib/api/client';
@@ -128,7 +128,7 @@ export default function TourAvailabilityManager({ tourId }: TourAvailabilityMana
       {showAdd && (
         <div className="border border-[var(--line-soft)] p-4 space-y-4">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <Input label="Date" size="sm" type="date" value={newDate} onChange={(e) => setNewDate(e.target.value)} />
+            <DatePicker label="Date" size="sm" value={newDate} onChange={setNewDate} />
             <Input label="Start time" size="sm" type="time" value={newTime} onChange={(e) => setNewTime(e.target.value)} />
             <Input label="Total spots" size="sm" type="number" value={newSpots} onChange={(e) => setNewSpots(e.target.value)} />
             <Input label="Price override" size="sm" type="number" step="0.01" value={newPrice} onChange={(e) => setNewPrice(e.target.value)} placeholder="Optional" />
@@ -159,7 +159,7 @@ export default function TourAvailabilityManager({ tourId }: TourAvailabilityMana
                 <tr key={avail.id} className="border-b border-[var(--line-soft)] last:border-b-0">
                   {editingId === avail.id ? (
                     <>
-                      <td className="px-4 py-3"><input type="date" value={editDate} onChange={(e) => setEditDate(e.target.value)} className="bg-transparent border-b border-[var(--line-strong)] text-[var(--field-text)] font-serif text-sm py-1 outline-none w-32" /></td>
+                      <td className="px-4 py-3"><div className="w-36"><DatePicker size="sm" value={editDate} onChange={setEditDate} /></div></td>
                       <td className="px-4 py-3"><input type="time" value={editTime} onChange={(e) => setEditTime(e.target.value)} className="bg-transparent border-b border-[var(--line-strong)] text-[var(--field-text)] font-serif text-sm py-1 outline-none w-20" /></td>
                       <td className="px-4 py-3"><input type="number" value={editSpots} onChange={(e) => setEditSpots(e.target.value)} className="bg-transparent border-b border-[var(--line-strong)] text-[var(--field-text)] font-serif text-sm py-1 outline-none w-16" /></td>
                       <td className="px-4 py-3"><input type="number" step="0.01" value={editPrice} onChange={(e) => setEditPrice(e.target.value)} placeholder="—" className="bg-transparent border-b border-[var(--line-strong)] text-[var(--field-text)] font-serif text-sm py-1 outline-none w-20 placeholder-[var(--field-placeholder)]" /></td>

@@ -1,3 +1,4 @@
+export { useDestinationSearch } from './useDestinationSearch';
 export { useFormValidation } from './useFormValidation';
 export { useQueryErrorToast } from './useQueryErrorToast';
 export { useHotelSearch, useHotelCheckRate, useCreateHotelBooking, useCancelHotelBooking } from './useHotels';

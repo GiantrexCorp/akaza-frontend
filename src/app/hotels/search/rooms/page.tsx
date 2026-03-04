@@ -3,15 +3,141 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Check, X as XIcon, ShieldCheck, Info } from 'lucide-react';
+import Image from 'next/image';
+import { ArrowLeft, Check, X as XIcon, ShieldCheck, Info, Star, ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { Button, Spinner, Badge, PageError } from '@/components/ui';
-import { useHotelCheckRate } from '@/hooks/useHotels';
+import { useHotelCheckRate, useHotelDetails } from '@/hooks/useHotels';
 import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { ApiError } from '@/lib/api/client';
 import type { HotelSearchResult, HotelRoom } from '@/types/hotel';
 import { formatPrice } from '@/lib/utils/format';
+
+function ImageGallery({ hotelCode }: { hotelCode: string }) {
+  const { data: details, isLoading } = useHotelDetails(hotelCode);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const images = details?.images?.slice(0, 10).map((img) => ({
+    ...img,
+    originalPath: img.path.replace('/giata/bigger/', '/giata/original/'),
+  })) ?? [];
+
+  if (isLoading) {
+    return (
+      <div className="mb-8">
+        <div className="h-80 md:h-[420px] bg-gradient-to-br from-primary/10 to-transparent animate-pulse" />
+      </div>
+    );
+  }
+
+  if (images.length === 0) return null;
+
+  const prev = () => setCurrentIndex((i) => (i === 0 ? images.length - 1 : i - 1));
+  const next = () => setCurrentIndex((i) => (i === images.length - 1 ? 0 : i + 1));
+
+  return (
+    <div className="mb-8">
+      <div className="relative h-80 md:h-[420px] overflow-hidden group">
+        <Image
+          src={images[currentIndex].originalPath}
+          alt=""
+          fill
+          className="object-cover transition-opacity duration-300"
+          sizes="100vw"
+          quality={85}
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+
+        {images.length > 1 && (
+          <>
+            <button
+              onClick={prev}
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+              <ChevronLeft size={20} />
+            </button>
+            <button
+              onClick={next}
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity"
+            >
+              <ChevronRight size={20} />
+            </button>
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
+              {images.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentIndex(i)}
+                  className={`w-2 h-2 transition-all ${i === currentIndex ? 'bg-white scale-125' : 'bg-white/40'}`}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+
+      {images.length > 1 && (
+        <div className="flex gap-2 mt-2 overflow-x-auto pb-2">
+          {images.map((img, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentIndex(i)}
+              className={`relative w-20 h-14 shrink-0 overflow-hidden border-2 transition-all ${
+                i === currentIndex ? 'border-primary' : 'border-transparent opacity-60 hover:opacity-100'
+              }`}
+            >
+              <Image src={img.path} alt="" fill className="object-cover" sizes="80px" />
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function HotelInfo({ hotelCode, categoryName, destinationName }: { hotelCode: string; categoryName: string; destinationName: string }) {
+  const { data: details } = useHotelDetails(hotelCode);
+
+  const starMatch = categoryName.match(/(\d)/);
+  const starCount = starMatch ? parseInt(starMatch[1], 10) : 0;
+
+  const facilities = details?.facilities
+    ?.filter((f, i, arr) => arr.findIndex((x) => x.description === f.description) === i)
+    ?.filter((f) => f.description)
+    ?.slice(0, 12) ?? [];
+
+  return (
+    <>
+      {details?.description && (
+        <div className="mb-8">
+          <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-3">About This Hotel</h2>
+          <p className="text-sm text-[var(--text-secondary)] font-sans leading-relaxed">{details.description}</p>
+        </div>
+      )}
+
+      {details?.address && (
+        <div className="mb-6 flex items-start gap-2">
+          <MapPin size={14} className="text-primary shrink-0 mt-0.5" />
+          <p className="text-xs text-[var(--text-muted)] font-sans">
+            {details.address}{details.city ? `, ${details.city}` : ''}
+          </p>
+        </div>
+      )}
+
+      {facilities.length > 0 && (
+        <div className="mb-8">
+          <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-3">Facilities</h2>
+          <div className="flex flex-wrap gap-2">
+            {facilities.map((f, i) => (
+              <Badge key={i} label={f.description} color="gray" size="sm" />
+            ))}
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
 
 function RoomSelectionContent() {
   const searchParams = useSearchParams();
@@ -19,6 +145,12 @@ function RoomSelectionContent() {
   const hotelCode = searchParams.get('hotelCode') || '';
   const checkIn = searchParams.get('checkIn') || '';
   const checkOut = searchParams.get('checkOut') || '';
+  const destination = searchParams.get('destination') || '';
+  const destinationName = searchParams.get('destinationName') || '';
+  const adults = searchParams.get('adults') || '2';
+  const childrenCount = searchParams.get('children') || '0';
+
+  const backToSearchHref = `/hotels/search?${new URLSearchParams({ destination, destinationName, checkIn, checkOut, adults, children: childrenCount }).toString()}`;
 
   const [hotel, setHotel] = useState<HotelSearchResult | null>(null);
   const [selectedRooms, setSelectedRooms] = useState<HotelRoom[]>([]);
@@ -84,21 +216,39 @@ function RoomSelectionContent() {
     );
   }
 
+  const starMatch = hotel.category_name.match(/(\d)/);
+  const starCount = starMatch ? parseInt(starMatch[1], 10) : 0;
+
   return (
     <div className="pt-32 pb-32">
       <div className="max-w-7xl mx-auto px-6">
-        {/* Back + Hotel Info */}
-        <Link href="/hotels/search" className="inline-flex items-center gap-2 text-[var(--text-muted)] hover:text-primary text-xs uppercase tracking-widest font-sans mb-6 transition-colors">
+        {/* Back */}
+        <Link href={backToSearchHref} className="inline-flex items-center gap-2 text-[var(--text-muted)] hover:text-primary text-xs uppercase tracking-widest font-sans mb-6 transition-colors">
           <ArrowLeft size={14} />
           Back to Results
         </Link>
 
-        <div className="mb-10">
-          <p className="text-primary text-[10px] font-bold uppercase tracking-[0.3em] font-sans mb-2">{hotel.category_name}</p>
+        {/* Image gallery */}
+        <ImageGallery hotelCode={hotelCode} />
+
+        {/* Hotel header */}
+        <div className="mb-6">
+          <div className="flex items-center gap-3 mb-2">
+            {starCount > 0 && (
+              <div className="flex items-center gap-0.5">
+                {Array.from({ length: starCount }, (_, i) => (
+                  <Star key={i} size={14} className="fill-primary text-primary" />
+                ))}
+              </div>
+            )}
+          </div>
           <h1 className="text-3xl md:text-5xl font-serif text-[var(--text-primary)] mb-2">{hotel.hotel_name}</h1>
           <p className="text-sm text-[var(--text-muted)] font-sans">{hotel.destination_name} &middot; {checkIn} to {checkOut}</p>
           <div className="mt-4 w-24 h-[1px] bg-gradient-to-r from-transparent via-primary to-transparent" />
         </div>
+
+        {/* Hotel info (description, address, facilities) */}
+        <HotelInfo hotelCode={hotelCode} categoryName={hotel.category_name} destinationName={hotel.destination_name} />
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Rooms list */}
@@ -135,6 +285,13 @@ function RoomSelectionContent() {
                           <div className="mt-2 flex items-start gap-2">
                             <Info size={14} className="text-primary shrink-0 mt-0.5" />
                             <p className="text-xs text-primary font-sans">{room.promotions[0]}</p>
+                          </div>
+                        )}
+
+                        {room.rate_comments && (
+                          <div className="mt-2 flex items-start gap-2">
+                            <Info size={14} className="text-[var(--text-muted)] shrink-0 mt-0.5" />
+                            <p className="text-xs text-[var(--text-muted)] font-sans">{room.rate_comments}</p>
                           </div>
                         )}
                       </div>
