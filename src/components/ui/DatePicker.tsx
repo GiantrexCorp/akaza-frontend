@@ -2,6 +2,18 @@
 
 import { useState, useRef, useEffect, useId, type ReactNode } from 'react';
 import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
+import {
+  MONTHS,
+  WEEKDAYS,
+  parseDate,
+  toDateString,
+  isSameDay,
+  isBefore,
+  isAfter,
+  getToday,
+  generateCalendarGrid,
+  formatDateDisplay,
+} from './calendar-utils';
 
 interface DatePickerProps {
   label?: string;
@@ -24,66 +36,6 @@ const sizes = {
   md: 'py-2 text-lg',
   lg: 'py-3 text-xl',
 };
-
-const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-];
-
-const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-function parseDate(str: string): { year: number; month: number; day: number } | null {
-  if (!str) return null;
-  const [y, m, d] = str.split('-').map(Number);
-  if (!y || !m || !d) return null;
-  return { year: y, month: m - 1, day: d };
-}
-
-function toDateString(year: number, month: number, day: number): string {
-  return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-}
-
-function isSameDay(a: { year: number; month: number; day: number }, b: { year: number; month: number; day: number }): boolean {
-  return a.year === b.year && a.month === b.month && a.day === b.day;
-}
-
-function isBefore(dateStr: string, refStr: string): boolean {
-  return dateStr < refStr;
-}
-
-function isAfter(dateStr: string, refStr: string): boolean {
-  return dateStr > refStr;
-}
-
-function getToday(): { year: number; month: number; day: number } {
-  const now = new Date();
-  return { year: now.getFullYear(), month: now.getMonth(), day: now.getDate() };
-}
-
-function getDaysInMonth(year: number, month: number): number {
-  return new Date(year, month + 1, 0).getDate();
-}
-
-function getFirstDayOfMonth(year: number, month: number): number {
-  return new Date(year, month, 1).getDay();
-}
-
-function generateCalendarGrid(year: number, month: number): (number | null)[] {
-  const firstDay = getFirstDayOfMonth(year, month);
-  const daysInMonth = getDaysInMonth(year, month);
-  const grid: (number | null)[] = [];
-  for (let i = 0; i < firstDay; i++) grid.push(null);
-  for (let d = 1; d <= daysInMonth; d++) grid.push(d);
-  while (grid.length < 42) grid.push(null);
-  return grid;
-}
-
-function formatDateDisplay(str: string): string {
-  const parsed = parseDate(str);
-  if (!parsed) return '';
-  const date = new Date(parsed.year, parsed.month, parsed.day);
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-}
 
 export default function DatePicker({
   label,
