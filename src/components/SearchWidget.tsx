@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from '@/i18n/navigation';
 import {
   Hotel,
@@ -21,52 +22,52 @@ import { useDestinationSearch } from "@/hooks/useDestinationSearch";
 export type TabId = "hotels" | "excursions" | "transfers";
 
 const tabs = [
-  { id: "hotels" as TabId, label: "Stays", icon: Hotel },
-  { id: "excursions" as TabId, label: "Experiences", icon: Ship },
-  { id: "transfers" as TabId, label: "Transfers", icon: Car },
+  { id: "hotels" as TabId, labelKey: "tabStays" as const, icon: Hotel },
+  { id: "excursions" as TabId, labelKey: "tabExperiences" as const, icon: Ship },
+  { id: "transfers" as TabId, labelKey: "tabTransfers" as const, icon: Car },
 ];
 
 interface FieldConfig {
   key: string;
-  label: string;
-  placeholder: string;
+  labelKey: string;
+  placeholderKey: string;
   icon: React.ComponentType<{ size?: number; className?: string }>;
 }
 
 const fieldConfigs: Record<TabId, FieldConfig[]> = {
   hotels: [
-    { key: "destination", label: "Destination", placeholder: "Destination", icon: MapPin },
-    { key: "checkIn", label: "Check-in", placeholder: "Select date", icon: Calendar },
-    { key: "checkOut", label: "Check-out", placeholder: "Select date", icon: Calendar },
-    { key: "guests", label: "Guests", placeholder: "2", icon: Users },
+    { key: "destination", labelKey: "destination", placeholderKey: "destination", icon: MapPin },
+    { key: "checkIn", labelKey: "checkIn", placeholderKey: "selectDate", icon: Calendar },
+    { key: "checkOut", labelKey: "checkOut", placeholderKey: "selectDate", icon: Calendar },
+    { key: "guests", labelKey: "guests", placeholderKey: "guests", icon: Users },
   ],
   excursions: [
     {
       key: "destination",
-      label: "Excursion Destination",
-      placeholder: "e.g. Giza Pyramids",
+      labelKey: "excursionDest",
+      placeholderKey: "excursionPlaceholder",
       icon: MapPin,
     },
-    { key: "date", label: "Excursion Date", placeholder: "Select Date", icon: Calendar },
-    { key: "participants", label: "Participants", placeholder: "1 Participant", icon: User },
+    { key: "date", labelKey: "excursionDate", placeholderKey: "selectDate", icon: Calendar },
+    { key: "participants", labelKey: "participants", placeholderKey: "oneParticipant", icon: User },
   ],
   transfers: [
     {
       key: "pickup",
-      label: "Pick-up Location",
-      placeholder: "From airport or hotel",
+      labelKey: "pickupLocation",
+      placeholderKey: "pickupPlaceholder",
       icon: MapPin,
     },
-    { key: "dropoff", label: "Drop-off Location", placeholder: "To destination", icon: Navigation },
-    { key: "date", label: "Date & Time", placeholder: "Select date", icon: Clock },
-    { key: "passengers", label: "Passengers", placeholder: "How many", icon: User },
+    { key: "dropoff", labelKey: "dropoffLocation", placeholderKey: "dropoffPlaceholder", icon: Navigation },
+    { key: "date", labelKey: "dateTime", placeholderKey: "selectDate", icon: Clock },
+    { key: "passengers", labelKey: "passengersLabel", placeholderKey: "howMany", icon: User },
   ],
 };
 
-const buttonLabels: Record<TabId, string> = {
-  hotels: "Find Hotel",
-  excursions: "Find Excursion",
-  transfers: "Find Transfer",
+const buttonLabelKeys: Record<TabId, string> = {
+  hotels: "findHotel",
+  excursions: "findExcursion",
+  transfers: "findTransfer",
 };
 
 const searchRoutes: Record<TabId, string> = {
@@ -84,6 +85,8 @@ export default function SearchWidget({
   activeTab,
   onTabChange,
 }: SearchWidgetProps) {
+  const t = useTranslations('search');
+  const cT = useTranslations('common');
   const router = useRouter();
   const fields = fieldConfigs[activeTab];
   const [values, setValues] = useState<Record<string, string>>({});
@@ -176,7 +179,7 @@ export default function SearchWidget({
                 >
                   <Icon size={17} />
                   <span className="text-xs uppercase tracking-[0.2em]">
-                    {tab.label}
+                    {t(tab.labelKey)}
                   </span>
                   {isActive && (
                     <span className="absolute inset-x-4 -bottom-px h-px bg-gradient-to-r from-transparent via-primary to-transparent" />
@@ -193,13 +196,13 @@ export default function SearchWidget({
               <>
                 <div className="space-y-2" ref={destContainerRef}>
                   <label className="block text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-[0.22em]">
-                    Destination
+                    {t('destination')}
                   </label>
                   <div className="relative group border border-[var(--search-widget-field-border)] bg-[var(--search-widget-field-bg)] px-3 py-3 transition-all hover:border-primary/45 focus-within:border-primary/55 focus-within:shadow-[0_0_0_1px_rgba(185,117,50,0.2)]">
                     <MapPin size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-primary group-hover:text-primary-dark transition-colors" />
                     <input
                       type="text"
-                      placeholder="Search destination"
+                      placeholder={t('searchDest')}
                       value={destinationName || destSearch.query}
                       onChange={(e) => {
                         if (destinationName) {
@@ -221,10 +224,10 @@ export default function SearchWidget({
                       <ul className="absolute z-50 left-0 right-0 top-full mt-1 max-h-60 overflow-auto bg-[var(--surface-card)] border border-[var(--line-soft)] shadow-xl">
                         {destSearch.isLoading ? (
                           <li className="flex items-center justify-center py-4">
-                            <span className="text-xs text-[var(--text-muted)] font-sans">Searching...</span>
+                            <span className="text-xs text-[var(--text-muted)] font-sans">{t('searching')}</span>
                           </li>
                         ) : destinationOptions.length === 0 ? (
-                          <li className="px-4 py-3 text-sm text-[var(--text-muted)] font-sans">No destinations found</li>
+                          <li className="px-4 py-3 text-sm text-[var(--text-muted)] font-sans">{t('noDestinations')}</li>
                         ) : (
                           destinationOptions.map((opt) => (
                             <li
@@ -248,7 +251,7 @@ export default function SearchWidget({
                 </div>
                 <div className="space-y-2">
                   <label className="block text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-[0.22em]">
-                    Check-in
+                    {t('checkIn')}
                   </label>
                   <DatePicker
                     value={hotelCheckIn}
@@ -261,7 +264,7 @@ export default function SearchWidget({
                       >
                         <Calendar size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-primary group-hover:text-primary-dark transition-colors pointer-events-none" />
                         <span className={`block pl-8 pr-2 py-1 text-[1.15rem] font-serif ${displayValue ? 'text-[var(--field-text)]' : 'text-[var(--field-placeholder)]'}`}>
-                          {displayValue || "Select date"}
+                          {displayValue || cT('selectDate')}
                         </span>
                       </div>
                     )}
@@ -269,7 +272,7 @@ export default function SearchWidget({
                 </div>
                 <div className="space-y-2">
                   <label className="block text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-[0.22em]">
-                    Check-out
+                    {t('checkOut')}
                   </label>
                   <DatePicker
                     value={hotelCheckOut}
@@ -282,7 +285,7 @@ export default function SearchWidget({
                       >
                         <Calendar size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-primary group-hover:text-primary-dark transition-colors pointer-events-none" />
                         <span className={`block pl-8 pr-2 py-1 text-[1.15rem] font-serif ${displayValue ? 'text-[var(--field-text)]' : 'text-[var(--field-placeholder)]'}`}>
-                          {displayValue || "Select date"}
+                          {displayValue || cT('selectDate')}
                         </span>
                       </div>
                     )}
@@ -290,7 +293,7 @@ export default function SearchWidget({
                 </div>
                 <div className="space-y-2">
                   <label className="block text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-[0.22em]">
-                    Guests
+                    {t('guests')}
                   </label>
                   <div className="relative group border border-[var(--search-widget-field-border)] bg-[var(--search-widget-field-bg)] px-3 py-3 transition-all hover:border-primary/45 focus-within:border-primary/55 focus-within:shadow-[0_0_0_1px_rgba(185,117,50,0.2)]">
                     <Users size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-primary group-hover:text-primary-dark transition-colors" />
@@ -313,7 +316,7 @@ export default function SearchWidget({
                 return (
                   <div key={field.key} className="space-y-2">
                     <label className="block text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-[0.22em]">
-                      {field.label}
+                      {t(field.labelKey)}
                     </label>
                     <div className="relative group border border-[var(--search-widget-field-border)] bg-[var(--search-widget-field-bg)] px-3 py-3 transition-all hover:border-primary/45 focus-within:border-primary/55 focus-within:shadow-[0_0_0_1px_rgba(185,117,50,0.2)]">
                       <Icon
@@ -322,7 +325,7 @@ export default function SearchWidget({
                       />
                       <input
                         type="text"
-                        placeholder={field.placeholder}
+                        placeholder={field.placeholderKey === 'selectDate' ? cT('selectDate') : t(field.placeholderKey)}
                         value={values[field.key] || ""}
                         onChange={(e) => handleChange(field.key, e.target.value)}
                         onKeyDown={(e) => { if (e.key === "Enter") handleSearch(); }}
@@ -340,7 +343,7 @@ export default function SearchWidget({
                 className="w-full border border-primary/60 bg-gradient-to-r from-primary to-primary-gradient-end text-white h-[50px] px-4 font-bold transition-all duration-300 flex items-center justify-center gap-2 uppercase tracking-[0.14em] text-[11px] shadow-[0_14px_28px_-18px_rgba(185,117,50,0.85)] hover:-translate-y-0.5 hover:brightness-105"
               >
                 <Search size={13} />
-                {buttonLabels[activeTab]}
+                {t(buttonLabelKeys[activeTab])}
               </button>
             </div>
           </div>

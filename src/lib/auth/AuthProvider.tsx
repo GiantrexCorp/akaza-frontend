@@ -65,6 +65,9 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     const response = await authApi.login({ email, password });
     localStorage.setItem('auth_token', response.access_token);
     document.cookie = 'logged_in=true; path=/; max-age=31536000; SameSite=Lax';
+    if (response.user.locale) {
+      localStorage.setItem('locale', response.user.locale);
+    }
     setUser(response.user);
     return response.user;
   }, []);

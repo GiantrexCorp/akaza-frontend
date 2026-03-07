@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
+import { useTranslations } from 'next-intl';
 import { useRouter, Link } from '@/i18n/navigation';
 import { useSearchParams } from 'next/navigation';
 import { ArrowLeft, User, Mail, Plane, Clock } from 'lucide-react';
@@ -15,6 +16,10 @@ import { ApiError } from '@/lib/api/client';
 import { formatPrice } from '@/lib/utils/format';
 
 export default function TransferBookingForm() {
+  const tt = useTranslations('transfers');
+  const bt = useTranslations('booking');
+  const ct = useTranslations('common');
+  const at = useTranslations('auth');
   const router = useRouter();
   const searchParams = useSearchParams();
   const { toast } = useToast();
@@ -93,63 +98,63 @@ export default function TransferBookingForm() {
       <div className="max-w-7xl mx-auto px-6">
         <Link href="/transfers" className="inline-flex items-center gap-2 text-[var(--text-muted)] hover:text-primary text-xs uppercase tracking-widest font-sans mb-6 transition-colors">
           <ArrowLeft size={14} />
-          Back to Transfers
+          {tt('backToTransfers')}
         </Link>
 
-        <h1 className="text-3xl md:text-5xl font-serif text-[var(--text-primary)] mb-2">Book Your Transfer</h1>
+        <h1 className="text-3xl md:text-5xl font-serif text-[var(--text-primary)] mb-2">{tt('bookYourTransfer')}</h1>
         <p className="text-sm text-[var(--text-muted)] font-sans mb-10">{pickup} &rarr; {dropoff}</p>
 
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-8">
               <div className="bg-[var(--surface-card)] border border-[var(--line-soft)] p-6">
-                <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-6">Contact Information</h2>
+                <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-6">{bt('contactInfo')}</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Input label="Full Name" placeholder="John Doe" value={contactName} onChange={(e) => { setContactName(e.target.value); clearError('contactName'); }} error={errors.contactName} icon={<User size={18} />} />
-                  <Input label="Email" type="email" placeholder="your@email.com" value={contactEmail} onChange={(e) => { setContactEmail(e.target.value); clearError('contactEmail'); }} error={errors.contactEmail} icon={<Mail size={18} />} />
-                  <PhoneInput label="Phone" value={contactPhone} onChange={setContactPhone} required />
+                  <Input label={bt('fullName')} placeholder={bt('fullNamePlaceholder')} value={contactName} onChange={(e) => { setContactName(e.target.value); clearError('contactName'); }} error={errors.contactName} icon={<User size={18} />} />
+                  <Input label={at('email')} type="email" placeholder={bt('emailPlaceholder')} value={contactEmail} onChange={(e) => { setContactEmail(e.target.value); clearError('contactEmail'); }} error={errors.contactEmail} icon={<Mail size={18} />} />
+                  <PhoneInput label={at('phone')} value={contactPhone} onChange={setContactPhone} required />
                 </div>
               </div>
 
               <div className="bg-[var(--surface-card)] border border-[var(--line-soft)] p-6">
-                <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-6">Trip Details</h2>
+                <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-6">{tt('tripDetails')}</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <DatePicker label="Pickup Date" value={pickupDate} onChange={(v) => { setPickupDate(v); clearError('pickupDate'); }} error={errors.pickupDate} minDate={new Date().toISOString().split('T')[0]} />
-                  <Input label="Pickup Time" type="time" value={pickupTime} onChange={(e) => { setPickupTime(e.target.value); clearError('pickupTime'); }} error={errors.pickupTime} icon={<Clock size={18} />} />
+                  <DatePicker label={tt('pickupDate')} value={pickupDate} onChange={(v) => { setPickupDate(v); clearError('pickupDate'); }} error={errors.pickupDate} minDate={new Date().toISOString().split('T')[0]} />
+                  <Input label={tt('pickupTime')} type="time" value={pickupTime} onChange={(e) => { setPickupTime(e.target.value); clearError('pickupTime'); }} error={errors.pickupTime} icon={<Clock size={18} />} />
                   <div>
-                    <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-3">Passengers</p>
+                    <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-3">{ct('passengers')}</p>
                     <div className="flex items-center gap-4">
                       <button type="button" onClick={() => setPassengers((p) => Math.max(1, p - 1))} className="w-11 h-11 border border-[var(--line-strong)] flex items-center justify-center text-[var(--text-muted)] hover:text-primary hover:border-primary transition-colors text-lg">-</button>
                       <span className="text-xl font-serif text-[var(--text-primary)] w-8 text-center">{passengers}</span>
                       <button type="button" onClick={() => setPassengers((p) => Math.min(maxPax, p + 1))} className="w-11 h-11 border border-[var(--line-strong)] flex items-center justify-center text-[var(--text-muted)] hover:text-primary hover:border-primary transition-colors text-lg">+</button>
-                      <span className="text-[10px] text-[var(--text-muted)] font-sans">Max {maxPax}</span>
+                      <span className="text-[10px] text-[var(--text-muted)] font-sans">{ct('max')} {maxPax}</span>
                     </div>
                   </div>
                   <div>
-                    <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-3">Luggage</p>
+                    <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-3">{ct('luggage')}</p>
                     <div className="flex items-center gap-4">
                       <button type="button" onClick={() => setLuggageCount((l) => Math.max(0, l - 1))} className="w-11 h-11 border border-[var(--line-strong)] flex items-center justify-center text-[var(--text-muted)] hover:text-primary hover:border-primary transition-colors text-lg">-</button>
                       <span className="text-xl font-serif text-[var(--text-primary)] w-8 text-center">{luggageCount}</span>
                       <button type="button" onClick={() => setLuggageCount((l) => Math.min(maxLuggage, l + 1))} className="w-11 h-11 border border-[var(--line-strong)] flex items-center justify-center text-[var(--text-muted)] hover:text-primary hover:border-primary transition-colors text-lg">+</button>
-                      <span className="text-[10px] text-[var(--text-muted)] font-sans">Max {maxLuggage}</span>
+                      <span className="text-[10px] text-[var(--text-muted)] font-sans">{ct('max')} {maxLuggage}</span>
                     </div>
                   </div>
                 </div>
               </div>
 
               <div className="bg-[var(--surface-card)] border border-[var(--line-soft)] p-6">
-                <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-6">Additional Information</h2>
+                <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-6">{tt('additionalInfo')}</h2>
                 {transferType === 'airport' && (
                   <div className="mb-6">
-                    <Input label="Flight Number (optional)" placeholder="MS 123" value={flightNumber} onChange={(e) => setFlightNumber(e.target.value)} icon={<Plane size={18} />} />
+                    <Input label={tt('flightNumber')} placeholder={tt('flightPlaceholder')} value={flightNumber} onChange={(e) => setFlightNumber(e.target.value)} icon={<Plane size={18} />} />
                   </div>
                 )}
                 <div>
-                  <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-3">Special Requests (optional)</p>
+                  <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-3">{bt('specialRequestsOptional')}</p>
                   <textarea
                     value={specialRequests}
                     onChange={(e) => setSpecialRequests(e.target.value)}
-                    placeholder="Child seat, wheelchair access, or any special requirements..."
+                    placeholder={tt('specialRequestsPlaceholder')}
                     rows={3}
                     className="w-full bg-transparent border-b border-[var(--line-strong)] focus:border-primary text-[var(--field-text)] placeholder-[var(--field-placeholder)] font-serif text-lg outline-none transition-colors resize-none"
                   />
@@ -159,52 +164,52 @@ export default function TransferBookingForm() {
               <label className="flex items-start gap-3 cursor-pointer">
                 <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} className="accent-primary mt-0.5" />
                 <span className="text-xs text-[var(--text-muted)] font-sans leading-relaxed">
-                  I accept the booking terms and confirm all details are correct.
+                  {tt('acceptTerms')}
                 </span>
               </label>
             </div>
 
             <div className="lg:col-span-1">
               <div className="lg:sticky lg:top-28 bg-[var(--surface-card)] border border-[var(--line-soft)] p-6">
-                <h3 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-6">Booking Summary</h3>
+                <h3 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-6">{tt('bookingSummary')}</h3>
                 <div className="space-y-3 mb-6">
                   <div className="flex justify-between">
-                    <p className="text-sm text-[var(--text-secondary)] font-sans">Route</p>
+                    <p className="text-sm text-[var(--text-secondary)] font-sans">{ct('route')}</p>
                     <p className="text-sm text-[var(--text-primary)] font-sans text-right">{pickup} &rarr; {dropoff}</p>
                   </div>
                   <div className="flex justify-between">
-                    <p className="text-sm text-[var(--text-secondary)] font-sans">Vehicle</p>
+                    <p className="text-sm text-[var(--text-secondary)] font-sans">{ct('vehicle')}</p>
                     <p className="text-sm text-[var(--text-primary)] font-sans">{vehicleName}</p>
                   </div>
                   <div className="flex justify-between">
-                    <p className="text-sm text-[var(--text-secondary)] font-sans">Passengers</p>
+                    <p className="text-sm text-[var(--text-secondary)] font-sans">{ct('passengers')}</p>
                     <p className="text-sm text-[var(--text-primary)] font-sans">{passengers}</p>
                   </div>
                   <div className="flex justify-between">
-                    <p className="text-sm text-[var(--text-secondary)] font-sans">Luggage</p>
+                    <p className="text-sm text-[var(--text-secondary)] font-sans">{ct('luggage')}</p>
                     <p className="text-sm text-[var(--text-primary)] font-sans">{luggageCount}</p>
                   </div>
                   {pickupDate && (
                     <div className="flex justify-between">
-                      <p className="text-sm text-[var(--text-secondary)] font-sans">Date</p>
+                      <p className="text-sm text-[var(--text-secondary)] font-sans">{ct('date')}</p>
                       <p className="text-sm text-[var(--text-primary)] font-sans">{pickupDate}</p>
                     </div>
                   )}
                   {pickupTime && (
                     <div className="flex justify-between">
-                      <p className="text-sm text-[var(--text-secondary)] font-sans">Time</p>
+                      <p className="text-sm text-[var(--text-secondary)] font-sans">{ct('time')}</p>
                       <p className="text-sm text-[var(--text-primary)] font-sans">{pickupTime}</p>
                     </div>
                   )}
                 </div>
                 <div className="border-t border-[var(--line-soft)] pt-4 mb-6">
                   <div className="flex items-end justify-between">
-                    <p className="text-xs text-[var(--text-muted)] font-sans uppercase tracking-wider">Total</p>
+                    <p className="text-xs text-[var(--text-muted)] font-sans uppercase tracking-wider">{ct('total')}</p>
                     <p className="text-2xl font-serif text-[var(--text-primary)]">{formatPrice(price, currency)}</p>
                   </div>
                 </div>
                 <Button type="submit" variant="gradient" loading={createBookingMutation.isPending} className="w-full">
-                  Confirm Booking
+                  {ct('confirmBooking')}
                 </Button>
               </div>
             </div>

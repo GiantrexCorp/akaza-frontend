@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
 import { ArrowRight } from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
 
 type DestinationLayout = 'mosaic' | 'grid' | 'programs';
 
@@ -17,114 +18,9 @@ type DestinationGroup = {
   basePath: string;
   layout: DestinationLayout;
   guideLabel: string;
+  exploreLabel?: string;
   destinations: Destination[];
 };
-
-const destinationGroups: DestinationGroup[] = [
-  {
-    title: 'Egypt',
-    subtitle: 'Ancient wonders and coastal luxury',
-    basePath: '/destinations/egypt',
-    layout: 'mosaic',
-    guideLabel: 'View Country Guide',
-    destinations: [
-      {
-        name: 'Cairo',
-        image: 'https://as2.ftcdn.net/v2/jpg/01/22/84/81/1000_F_122848186_G6tXIbaMJhdbY8kyfx0vM3h89YrxKutR.jpg',
-        teaser: 'Tailored city program through timeless Egyptian icons.',
-        eyebrow: 'The Eternal Capital',
-      },
-      {
-        name: 'Hurghada',
-        image: 'https://www.barcelo.com/guia-turismo/wp-content/uploads/2024/11/hurghada-2.jpg',
-        teaser: 'Luxury coast programs and private sea experiences.',
-        eyebrow: 'Red Sea Riviera',
-      },
-      {
-        name: 'Marsa Alam',
-        image: 'https://as1.ftcdn.net/v2/jpg/01/68/49/56/1000_F_168495607_hr4geq8zE1njFcWtBfA1fo5UwaVg9SXg.jpg',
-        teaser: 'Nature-forward escapes for slower premium travel.',
-        eyebrow: 'Pristine Nature',
-      },
-      {
-        name: 'Sharm El Sheikh',
-        image: 'https://as2.ftcdn.net/v2/jpg/03/31/99/77/1000_F_331997737_i57MDGC3zkWJ6yKmV0ZMTeWzv1IftSpS.jpg',
-        teaser: 'Elite resort living with curated itinerary flow.',
-        eyebrow: 'Luxury Escape',
-      },
-      {
-        name: 'Luxor',
-        image: 'https://as2.ftcdn.net/v2/jpg/02/54/71/23/1000_F_254712381_HRrNFsgBe0dimYClNIJqHm0aTZkXbzyj.jpg',
-        teaser: 'Historic depth with refined journey pacing.',
-        eyebrow: 'Ancient Wonders',
-      },
-      {
-        name: 'Aswan',
-        image: 'https://as1.ftcdn.net/v2/jpg/03/90/42/84/1000_F_390428494_weFBlxmMjCwgvKQQoQuyRgK7wKuH7pNt.jpg',
-        teaser: 'Nile-side elegance and private guided discovery.',
-        eyebrow: 'Nile Heritage',
-      },
-      {
-        name: 'North Coast',
-        image: 'https://www.deeproperties.com/wp-content/uploads/2025/07/1-26-1024x575.jpg',
-        teaser: 'Seasonal coastal luxury with smart concierge planning.',
-        eyebrow: 'Mediterranean Bliss',
-      },
-    ],
-  },
-  {
-    title: 'Turkey',
-    subtitle: 'Where East meets West in luxury',
-    basePath: '/destinations/turkey',
-    layout: 'grid',
-    guideLabel: 'View Country Guide',
-    destinations: [
-      {
-        name: 'Istanbul',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/c/cb/Historical_peninsula_and_modern_skyline_of_Istanbul.jpg',
-        teaser: 'City heritage blended with modern luxury rhythm.',
-      },
-      {
-        name: 'Antalya',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/7/73/Falezlerden_Antalya_Konyaalt%C4%B1_Plaj%C4%B1na_do%C4%9Fru_bir_g%C3%B6r%C3%BCn%C3%BCm.jpg',
-        teaser: 'Premium beach circuits and elevated resort stays.',
-      },
-      {
-        name: 'Bodrum',
-        image: 'https://as2.ftcdn.net/v2/jpg/02/13/56/29/1000_F_213562913_Q9OfARRhNoGwLpjIDxdeYSpYfCbz35wJ.jpg',
-        teaser: 'Yachting spirit and design-led coastal escapes.',
-      },
-      {
-        name: 'Trabzon',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/2/2b/Trebisonda%2C_ex-chiesa_della_panagia_Chrysokephalos%2C_oggi_moschea_fatih%2C_esterno_01.jpg',
-        teaser: 'Mountain scenery and curated nature itineraries.',
-      },
-    ],
-  },
-  {
-    title: 'Regional Programs',
-    subtitle: 'Curated Middle Eastern experiences',
-    basePath: '/destinations/regional',
-    layout: 'programs',
-    guideLabel: 'View Program Guide',
-    destinations: [
-      {
-        name: 'United Arab Emirates',
-        image: 'https://upload.wikimedia.org/wikipedia/commons/9/9c/Abu_dhabi_skylines_2014.jpg',
-        teaser:
-          'From the futuristic skyline of Dubai to the cultural heart of Abu Dhabi, experience Arabian hospitality at its peak.',
-        eyebrow: 'Emirati Luxury',
-      },
-      {
-        name: 'Oman',
-        image: 'https://as1.ftcdn.net/v2/jpg/00/98/96/34/1000_F_98963492_thbbpZ210qtEQdCpHpPz30tmPxWms2Ub.jpg',
-        teaser:
-          'Discover ancient forts, emerald wadis, and the dramatic Hajar Mountains in the Sultanate\'s hidden gems.',
-        eyebrow: 'Desert Majesty',
-      },
-    ],
-  },
-];
 
 function toSlug(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
@@ -242,7 +138,7 @@ function ProgramsLayout({ group }: { group: DestinationGroup }) {
                   </div>
 
                   <div className="mt-6 inline-flex flex-col items-start gap-2 text-[13px] uppercase tracking-[0.18em] font-sans font-bold text-[var(--destinations-title)]">
-                    Explore Program
+                    {group.exploreLabel}
                     <span className="h-px w-24 bg-primary transition-all duration-500 group-hover/program:w-32" />
                   </div>
                 </div>
@@ -264,7 +160,114 @@ const layoutComponents: Record<DestinationLayout, React.ComponentType<{ group: D
   programs: ProgramsLayout,
 };
 
-export default function DestinationGroups() {
+export default async function DestinationGroups() {
+  const t = await getTranslations('destinations');
+
+  const destinationGroups: DestinationGroup[] = [
+    {
+      title: t('egypt'),
+      subtitle: t('egyptDesc'),
+      basePath: '/destinations/egypt',
+      layout: 'mosaic',
+      guideLabel: t('viewCountryGuide'),
+      destinations: [
+        {
+          name: t('cairo'),
+          image: 'https://as2.ftcdn.net/v2/jpg/01/22/84/81/1000_F_122848186_G6tXIbaMJhdbY8kyfx0vM3h89YrxKutR.jpg',
+          teaser: t('cairoDesc'),
+          eyebrow: t('cairoTag'),
+        },
+        {
+          name: t('hurghada'),
+          image: 'https://www.barcelo.com/guia-turismo/wp-content/uploads/2024/11/hurghada-2.jpg',
+          teaser: t('hurghadaDesc'),
+          eyebrow: t('hurghadaTag'),
+        },
+        {
+          name: t('marsaAlam'),
+          image: 'https://as1.ftcdn.net/v2/jpg/01/68/49/56/1000_F_168495607_hr4geq8zE1njFcWtBfA1fo5UwaVg9SXg.jpg',
+          teaser: t('marsaAlamDesc'),
+          eyebrow: t('marsaAlamTag'),
+        },
+        {
+          name: t('sharmElSheikh'),
+          image: 'https://as2.ftcdn.net/v2/jpg/03/31/99/77/1000_F_331997737_i57MDGC3zkWJ6yKmV0ZMTeWzv1IftSpS.jpg',
+          teaser: t('sharmDesc'),
+          eyebrow: t('sharmTag'),
+        },
+        {
+          name: t('luxor'),
+          image: 'https://as2.ftcdn.net/v2/jpg/02/54/71/23/1000_F_254712381_HRrNFsgBe0dimYClNIJqHm0aTZkXbzyj.jpg',
+          teaser: t('luxorDesc'),
+          eyebrow: t('luxorTag'),
+        },
+        {
+          name: t('aswan'),
+          image: 'https://as1.ftcdn.net/v2/jpg/03/90/42/84/1000_F_390428494_weFBlxmMjCwgvKQQoQuyRgK7wKuH7pNt.jpg',
+          teaser: t('aswanDesc'),
+          eyebrow: t('aswanTag'),
+        },
+        {
+          name: t('northCoast'),
+          image: 'https://www.deeproperties.com/wp-content/uploads/2025/07/1-26-1024x575.jpg',
+          teaser: t('northCoastDesc'),
+          eyebrow: t('northCoastTag'),
+        },
+      ],
+    },
+    {
+      title: t('turkey'),
+      subtitle: t('turkeyDesc'),
+      basePath: '/destinations/turkey',
+      layout: 'grid',
+      guideLabel: t('viewCountryGuide'),
+      destinations: [
+        {
+          name: t('istanbul'),
+          image: 'https://upload.wikimedia.org/wikipedia/commons/c/cb/Historical_peninsula_and_modern_skyline_of_Istanbul.jpg',
+          teaser: t('istanbulDesc'),
+        },
+        {
+          name: t('antalya'),
+          image: 'https://upload.wikimedia.org/wikipedia/commons/7/73/Falezlerden_Antalya_Konyaalt%C4%B1_Plaj%C4%B1na_do%C4%9Fru_bir_g%C3%B6r%C3%BCm.jpg',
+          teaser: t('antalyaDesc'),
+        },
+        {
+          name: t('bodrum'),
+          image: 'https://as2.ftcdn.net/v2/jpg/02/13/56/29/1000_F_213562913_Q9OfARRhNoGwLpjIDxdeYSpYfCbz35wJ.jpg',
+          teaser: t('bodrumDesc'),
+        },
+        {
+          name: t('trabzon'),
+          image: 'https://upload.wikimedia.org/wikipedia/commons/2/2b/Trebisonda%2C_ex-chiesa_della_panagia_Chrysokephalos%2C_oggi_moschea_fatih%2C_esterno_01.jpg',
+          teaser: t('trabzonDesc'),
+        },
+      ],
+    },
+    {
+      title: t('regionalTitle'),
+      subtitle: t('regionalDesc'),
+      basePath: '/destinations/regional',
+      layout: 'programs',
+      guideLabel: t('viewProgramGuide'),
+      exploreLabel: t('ctaCta2'),
+      destinations: [
+        {
+          name: t('uae'),
+          image: 'https://upload.wikimedia.org/wikipedia/commons/9/9c/Abu_dhabi_skylines_2014.jpg',
+          teaser: t('uaeDesc'),
+          eyebrow: t('uaeTag'),
+        },
+        {
+          name: t('oman'),
+          image: 'https://as1.ftcdn.net/v2/jpg/00/98/96/34/1000_F_98963492_thbbpZ210qtEQdCpHpPz30tmPxWms2Ub.jpg',
+          teaser: t('omanDesc'),
+          eyebrow: t('omanTag'),
+        },
+      ],
+    },
+  ];
+
   return (
     <section id="destinations-grid" className="bg-[var(--destinations-surface)] px-6 pt-12 pb-24">
       <div className="max-w-7xl mx-auto space-y-16">
@@ -294,16 +297,16 @@ export default function DestinationGroups() {
 
         <section className="border border-[var(--line-soft)] bg-gradient-to-r from-primary/10 via-transparent to-accent/10 p-6 md:p-9 flex flex-col md:flex-row md:items-center md:justify-between gap-5">
           <div>
-            <p className="text-[10px] uppercase tracking-[0.24em] font-sans font-bold text-primary mb-2">Ready To Move</p>
+            <p className="text-[10px] uppercase tracking-[0.24em] font-sans font-bold text-primary mb-2">{t('ctaTitle')}</p>
             <h3 className="text-2xl md:text-3xl font-serif text-[var(--text-primary)]">
-              Let AKAZA plan the trip around your standards.
+              {t('ctaDesc')}
             </h3>
           </div>
           <Link
             href="/hotels/search"
             className="inline-flex items-center gap-2 bg-gradient-to-r from-primary to-primary-gradient-end text-white px-6 py-3 text-xs uppercase tracking-widest font-sans font-bold hover:shadow-lg hover:shadow-primary/20 transition-all"
           >
-            Book Your Journey
+            {t('ctaCta1')}
             <ArrowRight size={14} />
           </Link>
         </section>

@@ -1,14 +1,16 @@
 'use client';
 
 import PublicPageError from '@/components/PublicPageError';
+import { useTranslations } from 'next-intl';
 
 export default function RegisterError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  const t = useTranslations('auth');
   return (
     <PublicPageError
       error={error}
       reset={reset}
-      label="Registration Error"
-      message="Something went wrong with the registration page. Please try again."
+      label={t('registerError')}
+      message={t('registerErrorDesc')}
     />
   );
 }

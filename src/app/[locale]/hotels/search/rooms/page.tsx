@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
+import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
 import Image from 'next/image';
@@ -97,6 +98,7 @@ function ImageGallery({ hotelCode }: { hotelCode: string }) {
 }
 
 function HotelInfo({ hotelCode, categoryName, destinationName }: { hotelCode: string; categoryName: string; destinationName: string }) {
+  const ht = useTranslations('hotels');
   const { data: details } = useHotelDetails(hotelCode);
 
   const starMatch = categoryName.match(/(\d)/);
@@ -111,7 +113,7 @@ function HotelInfo({ hotelCode, categoryName, destinationName }: { hotelCode: st
     <>
       {details?.description && (
         <div className="mb-8">
-          <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-3">About This Hotel</h2>
+          <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-3">{ht('aboutHotel')}</h2>
           <p className="text-sm text-[var(--text-secondary)] font-sans leading-relaxed">{details.description}</p>
         </div>
       )}
@@ -127,7 +129,7 @@ function HotelInfo({ hotelCode, categoryName, destinationName }: { hotelCode: st
 
       {facilities.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-3">Facilities</h2>
+          <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-3">{ht('facilities')}</h2>
           <div className="flex flex-wrap gap-2">
             {facilities.map((f, i) => (
               <Badge key={i} label={f.description} color="gray" size="sm" />
@@ -140,6 +142,8 @@ function HotelInfo({ hotelCode, categoryName, destinationName }: { hotelCode: st
 }
 
 function RoomSelectionContent() {
+  const ht = useTranslations('hotels');
+  const ct = useTranslations('common');
   const searchParams = useSearchParams();
   const rateKeys = searchParams.get('rateKeys')?.split(',') || [];
   const hotelCode = searchParams.get('hotelCode') || '';
@@ -188,7 +192,7 @@ function RoomSelectionContent() {
     return (
       <div className="pt-36 pb-32">
         <Spinner size="lg" />
-        <p className="text-center text-sm text-[var(--text-muted)] font-sans mt-4">Verifying rates...</p>
+        <p className="text-center text-sm text-[var(--text-muted)] font-sans mt-4">{ht('verifyingRates')}</p>
       </div>
     );
   }
@@ -198,8 +202,8 @@ function RoomSelectionContent() {
       <div className="pt-36 pb-32 max-w-7xl mx-auto px-6">
         <PageError
           status={error?.status ?? 404}
-          title={error?.status === 404 ? 'Rates Unavailable' : undefined}
-          description={error?.status === 404 ? 'The selected hotel rates are no longer available. Please search again.' : undefined}
+          title={error?.status === 404 ? ht('ratesUnavailable') : undefined}
+          description={error?.status === 404 ? ht('ratesUnavailableDesc') : undefined}
           onRetry={() => checkRateMutation.mutate(
             { rate_keys: rateKeys },
             {
@@ -210,7 +214,7 @@ function RoomSelectionContent() {
             },
           )}
           backHref="/hotels/search"
-          backLabel="Back to Search"
+          backLabel={ht('backToSearch')}
         />
       </div>
     );
@@ -225,7 +229,7 @@ function RoomSelectionContent() {
         {/* Back */}
         <Link href={backToSearchHref} className="inline-flex items-center gap-2 text-[var(--text-muted)] hover:text-primary text-xs uppercase tracking-widest font-sans mb-6 transition-colors">
           <ArrowLeft size={14} />
-          Back to Results
+          {ht('backToResults')}
         </Link>
 
         {/* Image gallery */}
@@ -243,7 +247,7 @@ function RoomSelectionContent() {
             )}
           </div>
           <h1 className="text-3xl md:text-5xl font-serif text-[var(--text-primary)] mb-2">{hotel.hotel_name}</h1>
-          <p className="text-sm text-[var(--text-muted)] font-sans">{hotel.destination_name} &middot; {checkIn} to {checkOut}</p>
+          <p className="text-sm text-[var(--text-muted)] font-sans">{hotel.destination_name} &middot; {checkIn} {ct('to')} {checkOut}</p>
           <div className="mt-4 w-24 h-[1px] bg-gradient-to-r from-transparent via-primary to-transparent" />
         </div>
 
@@ -253,7 +257,7 @@ function RoomSelectionContent() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Rooms list */}
           <div className="lg:col-span-2 space-y-4">
-            <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-4">Available Rooms</h2>
+            <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-4">{ht('availableRooms')}</h2>
 
             {hotel.rooms.map((room) => {
               const isSelected = selectedRooms.some((r) => r.rate_key === room.rate_key);
@@ -268,15 +272,15 @@ function RoomSelectionContent() {
                         <h3 className="text-lg font-serif text-[var(--text-primary)]">{room.room_name}</h3>
                         <div className="flex flex-wrap items-center gap-3 mt-2">
                           <Badge label={room.board_name} color="blue" size="sm" />
-                          <Badge label={`${room.adults} Adults${room.children > 0 ? `, ${room.children} Children` : ''}`} color="gray" size="sm" />
-                          {room.packaging && <Badge label="Package" color="purple" size="sm" />}
+                          <Badge label={`${room.adults} ${ct('adults')}${room.children > 0 ? `, ${room.children} ${ct('children')}` : ''}`} color="gray" size="sm" />
+                          {room.packaging && <Badge label={ht('package')} color="purple" size="sm" />}
                         </div>
 
                         {room.cancellation_policies.length > 0 && (
                           <div className="mt-3 flex items-start gap-2">
                             <ShieldCheck size={14} className="text-emerald-400 shrink-0 mt-0.5" />
                             <p className="text-xs text-[var(--text-muted)] font-sans">
-                              Free cancellation before {new Date(room.cancellation_policies[0].from).toLocaleDateString()}
+                              {ct('freeCancelBefore')} {new Date(room.cancellation_policies[0].from).toLocaleDateString()}
                             </p>
                           </div>
                         )}
@@ -298,7 +302,7 @@ function RoomSelectionContent() {
 
                       <div className="text-right shrink-0">
                         <p className="text-2xl font-serif text-[var(--text-primary)]">{formatPrice(room.selling_price, room.currency)}</p>
-                        <p className="text-[10px] text-[var(--text-muted)] font-sans uppercase tracking-wider">total stay</p>
+                        <p className="text-[10px] text-[var(--text-muted)] font-sans uppercase tracking-wider">{ct('totalStay')}</p>
                         <button
                           onClick={() => toggleRoom(room)}
                           className={`mt-3 inline-flex items-center gap-2 px-5 py-2 text-[10px] font-bold uppercase tracking-widest font-sans transition-all duration-300 ${
@@ -307,7 +311,7 @@ function RoomSelectionContent() {
                               : 'border border-primary text-primary hover:bg-primary hover:text-white'
                           }`}
                         >
-                          {isSelected ? <><Check size={12} /> Selected</> : 'Select Room'}
+                          {isSelected ? <><Check size={12} /> {ct('selected')}</> : ht('selectRoom')}
                         </button>
                       </div>
                     </div>
@@ -320,10 +324,10 @@ function RoomSelectionContent() {
           {/* Booking summary sidebar */}
           <div className="lg:col-span-1">
             <div className="sticky top-28 bg-[var(--surface-card)] border border-[var(--line-soft)] p-6">
-              <h3 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-6">Booking Summary</h3>
+              <h3 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-6">{ht('bookingSummary')}</h3>
 
               {selectedRooms.length === 0 ? (
-                <p className="text-sm text-[var(--text-muted)] font-sans py-8 text-center">Select a room to continue</p>
+                <p className="text-sm text-[var(--text-muted)] font-sans py-8 text-center">{ht('selectRoomToContinue')}</p>
               ) : (
                 <>
                   <div className="space-y-3 mb-6">
@@ -345,7 +349,7 @@ function RoomSelectionContent() {
 
                   <div className="border-t border-[var(--line-soft)] pt-4 mb-6">
                     <div className="flex items-end justify-between">
-                      <p className="text-xs text-[var(--text-muted)] font-sans uppercase tracking-wider">Total</p>
+                      <p className="text-xs text-[var(--text-muted)] font-sans uppercase tracking-wider">{ct('total')}</p>
                       <p className="text-2xl font-serif text-[var(--text-primary)]">{formatPrice(totalPrice, hotel.currency)}</p>
                     </div>
                   </div>
@@ -361,7 +365,7 @@ function RoomSelectionContent() {
                     rooms: selectedRooms,
                   }))}`}>
                     <Button variant="gradient" className="w-full">
-                      Proceed to Booking
+                      {ht('proceedToBooking')}
                     </Button>
                   </Link>
                 </>

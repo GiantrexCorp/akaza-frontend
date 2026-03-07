@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import Image from 'next/image';
 import { MapPin, Clock, Users, Check, X, Calendar, ChevronLeft, ChevronRight, Minus, Plus } from 'lucide-react';
@@ -14,6 +15,9 @@ interface TourDetailContentProps {
 }
 
 export default function TourDetailContent({ tour, availabilities }: TourDetailContentProps) {
+  const t = useTranslations('tours');
+  const cT = useTranslations('common');
+  const bT = useTranslations('booking');
   const [selectedAvailability, setSelectedAvailability] = useState<TourAvailability | null>(null);
   const [guests, setGuests] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -76,7 +80,7 @@ export default function TourDetailContent({ tour, availabilities }: TourDetailCo
               <div>
                 <Link href="/tours" className="inline-flex items-center gap-2 text-[var(--text-muted)] hover:text-primary text-xs uppercase tracking-widest font-sans mb-4 transition-colors">
                   <ChevronLeft size={14} />
-                  All Tours
+                  {t('allTours')}
                 </Link>
                 <h1 className="text-3xl md:text-5xl font-serif text-[var(--text-primary)] mb-4">{tour.translated_title}</h1>
                 <div className="flex flex-wrap items-center gap-4 mb-4">
@@ -97,13 +101,13 @@ export default function TourDetailContent({ tour, availabilities }: TourDetailCo
               </div>
 
               <div>
-                <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-4">About This Tour</h2>
+                <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-4">{t('aboutTour')}</h2>
                 <p className="text-[var(--text-secondary)] font-sans leading-relaxed whitespace-pre-line">{tour.translated_description}</p>
               </div>
 
               {tour.highlights.length > 0 && (
                 <div>
-                  <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-4">Highlights</h2>
+                  <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-4">{t('highlights')}</h2>
                   <ul className="space-y-2">
                     {tour.highlights.map((h) => (
                       <li key={h} className="flex items-start gap-2">
@@ -118,7 +122,7 @@ export default function TourDetailContent({ tour, availabilities }: TourDetailCo
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {tour.includes.length > 0 && (
                   <div>
-                    <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-4">What&apos;s Included</h2>
+                    <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-4">{t('included')}</h2>
                     <ul className="space-y-2">
                       {tour.includes.map((item) => (
                         <li key={item} className="flex items-start gap-2">
@@ -131,7 +135,7 @@ export default function TourDetailContent({ tour, availabilities }: TourDetailCo
                 )}
                 {tour.excludes.length > 0 && (
                   <div>
-                    <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-4">Not Included</h2>
+                    <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-4">{t('excluded')}</h2>
                     <ul className="space-y-2">
                       {tour.excludes.map((item) => (
                         <li key={item} className="flex items-start gap-2">
@@ -146,7 +150,7 @@ export default function TourDetailContent({ tour, availabilities }: TourDetailCo
 
               {availabilities.length > 0 && (
                 <div>
-                  <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-4">Available Dates</h2>
+                  <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-4">{t('availableDates')}</h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                     {availabilities.map((avail) => {
                       const isSelected = selectedAvailability?.id === avail.id;
@@ -173,11 +177,11 @@ export default function TourDetailContent({ tour, availabilities }: TourDetailCo
                           <p className="text-[10px] text-[var(--text-muted)] font-sans">{avail.start_time}</p>
                           <p className="text-sm font-serif text-primary mt-1">{formatPrice(avail.effective_price, tour.currency)}</p>
                           {isSoldOut ? (
-                            <Badge label="Sold Out" color="red" size="sm" />
+                            <Badge label={cT('soldOut')} color="red" size="sm" />
                           ) : fewSpots ? (
-                            <p className="text-[10px] text-orange-400 font-sans mt-1">{avail.remaining_spots} spots left</p>
+                            <p className="text-[10px] text-orange-400 font-sans mt-1">{avail.remaining_spots} {cT('spotsLeft')}</p>
                           ) : (
-                            <p className="text-[10px] text-[var(--text-muted)] font-sans mt-1">{avail.remaining_spots} spots</p>
+                            <p className="text-[10px] text-[var(--text-muted)] font-sans mt-1">{avail.remaining_spots} {cT('spots')}</p>
                           )}
                         </button>
                       );
@@ -189,9 +193,9 @@ export default function TourDetailContent({ tour, availabilities }: TourDetailCo
 
             <div className="lg:col-span-1">
               <div className="lg:sticky lg:top-28 bg-[var(--surface-card)] border border-[var(--line-soft)] p-6">
-                <h3 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-6">Book This Tour</h3>
+                <h3 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-6">{t('bookThisTour')}</h3>
                 <div className="mb-6">
-                  <p className="text-[10px] text-[var(--text-muted)] font-sans uppercase tracking-wider">Price per person</p>
+                  <p className="text-[10px] text-[var(--text-muted)] font-sans uppercase tracking-wider">{cT('pricePerPerson')}</p>
                   <p className="text-3xl font-serif text-[var(--text-primary)]">{formatPrice(selectedPrice, tour.currency)}</p>
                 </div>
 
@@ -200,12 +204,12 @@ export default function TourDetailContent({ tour, availabilities }: TourDetailCo
                     <p className="text-xs text-primary font-sans font-bold">
                       {new Date(selectedAvailability.date).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
                     </p>
-                    <p className="text-[10px] text-[var(--text-muted)] font-sans mt-1">Starting at {selectedAvailability.start_time}</p>
+                    <p className="text-[10px] text-[var(--text-muted)] font-sans mt-1">{cT('startingFrom')} {selectedAvailability.start_time}</p>
                   </div>
                 )}
 
                 <div className="mb-6">
-                  <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-3">Number of Guests</p>
+                  <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-3">{t('numberOfGuests')}</p>
                   <div className="flex items-center gap-4">
                     <button
                       onClick={() => setGuests((g) => Math.max(1, g - 1))}
@@ -225,7 +229,7 @@ export default function TourDetailContent({ tour, availabilities }: TourDetailCo
 
                 <div className="border-t border-[var(--line-soft)] pt-4 mb-6">
                   <div className="flex items-end justify-between">
-                    <p className="text-xs text-[var(--text-muted)] font-sans uppercase tracking-wider">Total</p>
+                    <p className="text-xs text-[var(--text-muted)] font-sans uppercase tracking-wider">{cT('total')}</p>
                     <p className="text-2xl font-serif text-[var(--text-primary)]">{formatPrice(totalPrice, tour.currency)}</p>
                   </div>
                 </div>
@@ -233,11 +237,11 @@ export default function TourDetailContent({ tour, availabilities }: TourDetailCo
                 {selectedAvailability ? (
                   <Link href={`/tours/book?tourId=${tour.id}&availabilityId=${selectedAvailability.id}&guests=${guests}&price=${selectedPrice}&tourName=${encodeURIComponent(tour.translated_title)}&date=${selectedAvailability.date}&time=${selectedAvailability.start_time}&currency=${tour.currency}`}>
                     <Button variant="gradient" className="w-full">
-                      Book Now
+                      {bT('bookNow')}
                     </Button>
                   </Link>
                 ) : (
-                  <p className="text-sm text-[var(--text-muted)] font-sans text-center py-2">Select a date to book</p>
+                  <p className="text-sm text-[var(--text-muted)] font-sans text-center py-2">{t('selectDateToBook')}</p>
                 )}
               </div>
             </div>

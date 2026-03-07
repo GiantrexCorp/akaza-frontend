@@ -1,6 +1,7 @@
 'use client';
 
 import { use } from 'react';
+import { useTranslations } from 'next-intl';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import TourDetailContent from '@/components/TourDetailContent';
@@ -10,6 +11,7 @@ import { ApiError } from '@/lib/api/client';
 import type { TourAvailability } from '@/types/tour';
 
 export default function TourDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const t = useTranslations('tours');
   const { slug } = use(params);
   const { data: tour, isLoading, error, refetch } = useTourDetail(slug);
 
@@ -40,10 +42,10 @@ export default function TourDetailPage({ params }: { params: Promise<{ slug: str
         <div className="pt-36 pb-32 max-w-7xl mx-auto px-6">
           <PageError
             status={apiError?.status ?? 404}
-            title={apiError?.status === 404 ? 'Tour Not Found' : undefined}
+            title={apiError?.status === 404 ? t('tourNotFound') : undefined}
             onRetry={() => refetch()}
             backHref="/tours"
-            backLabel="Browse Tours"
+            backLabel={t('browseTours')}
           />
         </div>
         <Footer />

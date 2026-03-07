@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 
 type Program = {
   eyebrow: string;
@@ -12,33 +13,36 @@ type Program = {
   alt: string;
 };
 
-const signaturePrograms: Program[] = [
-  {
-    eyebrow: 'Bespoke Celebrations',
-    title: 'Special Occasions',
-    body: 'From private anniversaries to destination milestones, we craft moments that feel deeply personal and flawlessly executed.',
-    bullets: [
-      'Tailored event design and production',
-      'Access to private venues and invitation-only spaces',
-    ],
-    cta: 'Inquire Now',
-    href: '/contact',
-    image: '/images/hotel-four-seasons.jpg',
-    alt: 'Luxury celebration setup',
-  },
-  {
-    eyebrow: 'Oceanic Freedom',
-    title: 'Yacht Charters',
-    body: 'Navigate iconic coastlines aboard curated vessels with private crew, refined onboard hospitality, and complete itinerary control.',
-    bullets: ['Private fleet access', 'Chef-led dining experiences'],
-    cta: 'View Fleet',
-    href: '/contact',
-    image: '/images/hurghada.jpg',
-    alt: 'Luxury yacht on open water',
-  },
-];
-
 export default function SignaturePrograms() {
+  const t = useTranslations('concierge');
+  const tc = useTranslations('common');
+
+  const signaturePrograms: Program[] = [
+    {
+      eyebrow: t('sigBespoke'),
+      title: t('sigSpecialOccasions'),
+      body: t('sigSpecialDesc'),
+      bullets: [
+        t('sigSpecialF1'),
+        t('sigSpecialF2'),
+      ],
+      cta: tc('inquireNow'),
+      href: '/contact',
+      image: '/images/hotel-four-seasons.jpg',
+      alt: 'Luxury celebration setup',
+    },
+    {
+      eyebrow: t('sigYacht'),
+      title: t('sigYachtTitle'),
+      body: t('sigYachtDesc'),
+      bullets: [t('sigYachtF1'), t('sigYachtF2')],
+      cta: t('viewFleet'),
+      href: '/contact',
+      image: '/images/hurghada.jpg',
+      alt: 'Luxury yacht on open water',
+    },
+  ];
+
   return (
     <section id="signature-programs" className="bg-[var(--surface-section)] px-6 py-16 md:py-24">
       <div className="mx-auto max-w-7xl space-y-14">

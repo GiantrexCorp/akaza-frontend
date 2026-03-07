@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Bell, Mail, MessageSquare, Check, CheckCheck } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -19,11 +20,12 @@ const channelIcons: Record<string, typeof Mail> = {
   in_app: Bell,
 };
 export default function NotificationsPage() {
+  const t = useTranslations('dashboard');
   const { toast } = useToast();
   const [currentPage, setCurrentPage] = useState(1);
 
   const { data, isLoading: loading, error } = useNotificationList(`page=${currentPage}`);
-  useQueryErrorToast(!!error, error, 'Failed to load notifications');
+  useQueryErrorToast(!!error, error, t('failedLoadNotifications'));
   const markReadMutation = useMarkRead();
   const markAllReadMutation = useMarkAllRead();
 
@@ -32,14 +34,14 @@ export default function NotificationsPage() {
 
   const handleMarkAsRead = (id: string) => {
     markReadMutation.mutate(id, {
-      onError: () => toast('error', 'Failed to mark as read'),
+      onError: () => toast('error', t('failedMarkRead')),
     });
   };
 
   const handleMarkAllAsRead = () => {
     markAllReadMutation.mutate(undefined, {
-      onSuccess: () => toast('success', 'All notifications marked as read'),
-      onError: () => toast('error', 'Failed to mark all as read'),
+      onSuccess: () => toast('success', t('allMarkedRead')),
+      onError: () => toast('error', t('failedMarkAllRead')),
     });
   };
 
@@ -49,10 +51,10 @@ export default function NotificationsPage() {
       <DashboardLayout>
         <div>
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-serif text-[var(--text-primary)]">Notifications</h1>
+            <h1 className="text-2xl font-serif text-[var(--text-primary)]">{t('notifications')}</h1>
             {notifications.length > 0 && (
               <Button variant="ghost" size="sm" icon={<CheckCheck size={14} />} onClick={handleMarkAllAsRead}>
-                Mark All Read
+                {t('markAllRead')}
               </Button>
             )}
           </div>
@@ -60,7 +62,7 @@ export default function NotificationsPage() {
           {loading ? (
             <div className="py-16"><Spinner size="lg" /></div>
           ) : notifications.length === 0 ? (
-            <EmptyState title="No Notifications" description="You're all caught up." />
+            <EmptyState title={t('noNotifications')} description={t('noNotificationsDesc')} />
           ) : (
             <>
               <div className="space-y-3">

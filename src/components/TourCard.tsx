@@ -1,6 +1,7 @@
 import { Link } from '@/i18n/navigation';
 import Image from 'next/image';
 import { Clock, Users, ArrowRight } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import type { Tour } from '@/types/tour';
 
 interface TourCardProps {
@@ -9,6 +10,7 @@ interface TourCardProps {
 }
 
 export default function TourCard({ tour, formatPrice }: TourCardProps) {
+  const t = useTranslations('common');
   const heroImage = tour.images?.[0] ?? null;
 
   return (
@@ -46,15 +48,15 @@ export default function TourCard({ tour, formatPrice }: TourCardProps) {
             </span>
           )}
           <span className="flex items-center gap-1 text-slate-300 text-xs font-sans">
-            <Users size={12} /> Up to {tour.max_capacity}
+            <Users size={12} /> {t('upTo')} {tour.max_capacity}
           </span>
         </div>
 
         <div className="flex items-end justify-between">
           <div>
-            <p className="text-[10px] text-slate-400 font-sans uppercase tracking-wider">from</p>
+            <p className="text-[10px] text-slate-400 font-sans uppercase tracking-wider">{t('from')}</p>
             <p className="text-xl font-serif text-white">{formatPrice(tour.price_per_person, tour.currency)}</p>
-            <p className="text-[10px] text-slate-400 font-sans">per person</p>
+            <p className="text-[10px] text-slate-400 font-sans">{t('perPerson')}</p>
           </div>
           <div className="w-10 h-10 border border-white/30 flex items-center justify-center group-hover:border-primary group-hover:bg-primary transition-all">
             <ArrowRight size={16} className="text-white" />

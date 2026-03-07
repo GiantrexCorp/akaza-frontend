@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, use } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { ArrowLeft, Calendar, Clock, MapPin, Car, Users, Briefcase, Plane, Download } from 'lucide-react';
 import Navbar from '@/components/Navbar';
@@ -17,9 +18,13 @@ import { ProtectedRoute } from '@/lib/auth';
 import { CUSTOMER_BOOKING_STATUS_COLORS } from '@/lib/constants';
 
 function TransferBookingDetail({ id }: { id: string }) {
+  const trt = useTranslations('transfers');
+  const ct = useTranslations('common');
+  const bt = useTranslations('booking');
+  const dt = useTranslations('dashboard');
   const { toast } = useToast();
   const { data: booking, isLoading: loading, error: queryError, refetch } = useTransferBookingDetail(id);
-  useQueryErrorToast(!!queryError, queryError, 'Failed to load booking');
+  useQueryErrorToast(!!queryError, queryError, trt('failedLoadBooking'));
   const error = queryError instanceof ApiError ? queryError : null;
   const cancelMutation = useCancelTransferBooking();
   const [cancelModal, setCancelModal] = useState(false);
@@ -64,10 +69,10 @@ function TransferBookingDetail({ id }: { id: string }) {
       <div className="py-16">
         <PageError
           status={error?.status ?? 404}
-          title={error?.status === 404 ? 'Booking Not Found' : undefined}
+          title={error?.status === 404 ? ct('bookingNotFound') : undefined}
           onRetry={() => refetch()}
           backHref="/dashboard/bookings"
-          backLabel="Back to Bookings"
+          backLabel={ct('backToBookings')}
         />
       </div>
     );
@@ -76,13 +81,13 @@ function TransferBookingDetail({ id }: { id: string }) {
   return (
     <div>
       <Link href="/dashboard/bookings" className="inline-flex items-center gap-2 text-[var(--text-muted)] hover:text-primary text-xs uppercase tracking-widest font-sans mb-6 transition-colors">
-        <ArrowLeft size={14} /> Back to Bookings
+        <ArrowLeft size={14} /> {ct('backToBookings')}
       </Link>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-serif text-[var(--text-primary)]">{booking.pickup_location} &rarr; {booking.dropoff_location}</h1>
-          <p className="text-sm text-[var(--text-muted)] font-sans mt-1">Ref: {booking.booking_reference}</p>
+          <p className="text-sm text-[var(--text-muted)] font-sans mt-1">{ct('ref')} {booking.booking_reference}</p>
         </div>
         <Badge label={booking.status_label} color={CUSTOMER_BOOKING_STATUS_COLORS[booking.status] || 'gray'} />
       </div>
@@ -94,7 +99,7 @@ function TransferBookingDetail({ id }: { id: string }) {
             <MapPin size={16} className="text-primary" />
             <div>
               <p className="text-sm text-[var(--text-secondary)] font-sans">{booking.pickup_location}</p>
-              <p className="text-xs text-[var(--text-muted)] font-sans mt-0.5">to {booking.dropoff_location}</p>
+              <p className="text-xs text-[var(--text-muted)] font-sans mt-0.5">{ct('to')} {booking.dropoff_location}</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -124,14 +129,14 @@ function TransferBookingDetail({ id }: { id: string }) {
           {booking.flight_number && (
             <div className="flex items-center gap-3">
               <Plane size={16} className="text-primary" />
-              <p className="text-sm text-[var(--text-secondary)] font-sans">Flight {booking.flight_number}</p>
+              <p className="text-sm text-[var(--text-secondary)] font-sans">{ct('flight')} {booking.flight_number}</p>
             </div>
           )}
         </div>
 
         {/* Contact */}
         <div className="p-6">
-          <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-3">Contact</p>
+          <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-3">{dt('contact')}</p>
           <p className="text-sm text-[var(--text-secondary)] font-sans">{booking.contact_name}</p>
           <p className="text-xs text-[var(--text-muted)] font-sans mt-1">{booking.contact_email} {booking.contact_phone && `&middot; ${booking.contact_phone}`}</p>
         </div>
@@ -139,21 +144,21 @@ function TransferBookingDetail({ id }: { id: string }) {
         {/* Special requests */}
         {booking.special_requests && (
           <div className="p-6">
-            <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-2">Special Requests</p>
+            <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-2">{bt('specialRequests')}</p>
             <p className="text-sm text-[var(--text-secondary)] font-sans">{booking.special_requests}</p>
           </div>
         )}
 
         {/* Price */}
         <div className="p-6 flex items-end justify-between">
-          <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans">Total</p>
+          <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans">{ct('total')}</p>
           <p className="text-2xl font-serif text-[var(--text-primary)]">{booking.formatted_price}</p>
         </div>
 
         {/* Status history */}
         {booking.status_logs.length > 0 && (
           <div className="p-6">
-            <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-3">Status History</p>
+            <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-3">{trt('statusHistory')}</p>
             <div className="space-y-2">
               {booking.status_logs.map((log) => (
                 <div key={log.id} className="flex items-center justify-between">
@@ -173,36 +178,36 @@ function TransferBookingDetail({ id }: { id: string }) {
       <div className="flex flex-col sm:flex-row gap-4 mt-6">
         {booking.voucher_path && (
           <Button variant="outline" icon={<Download size={14} />} onClick={handleDownloadVoucher}>
-            Download Voucher
+            {bt('downloadVoucher')}
           </Button>
         )}
         {booking.is_cancellable && (
           <Button variant="ghost" onClick={() => setCancelModal(true)} className="text-red-400 hover:text-red-300">
-            Cancel Booking
+            {dt('cancelBooking')}
           </Button>
         )}
       </div>
 
-      <Modal open={cancelModal} onClose={() => setCancelModal(false)} title="Cancel Transfer">
+      <Modal open={cancelModal} onClose={() => setCancelModal(false)} title={trt('cancelTransfer')}>
         <p className="text-sm text-[var(--text-secondary)] font-sans mb-4">
-          Are you sure you want to cancel this transfer?
+          {trt('cancelConfirm')}
         </p>
         <div className="mb-6">
           <label className="block text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans mb-2">
-            Reason (optional)
+            {trt('cancelReason')}
           </label>
           <textarea
             value={cancelReason}
             onChange={(e) => setCancelReason(e.target.value)}
             rows={3}
             className="w-full bg-transparent border border-[var(--line-soft)] focus:border-primary text-[var(--field-text)] font-serif text-sm px-4 py-3 outline-none transition-colors duration-300 resize-y"
-            placeholder="Reason for cancellation"
+            placeholder={trt('cancelReasonPlaceholder')}
           />
         </div>
         <div className="flex gap-3">
-          <Button variant="ghost" onClick={() => setCancelModal(false)}>Keep Booking</Button>
+          <Button variant="ghost" onClick={() => setCancelModal(false)}>{trt('keepBooking')}</Button>
           <Button variant="primary" onClick={handleCancel} loading={cancelMutation.isPending} className="bg-red-500 hover:bg-red-600">
-            Confirm Cancel
+            {trt('confirmCancel')}
           </Button>
         </div>
       </Modal>

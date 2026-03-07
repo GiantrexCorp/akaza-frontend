@@ -1,29 +1,32 @@
 import { Shield, Sparkles, Globe2 } from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
 
-const standards = [
-  {
-    icon: Shield,
-    title: 'Ultimate Privacy',
-    body: 'Every detail is handled with layered discretion and security from inquiry to return.',
-  },
-  {
-    icon: Sparkles,
-    title: 'Bespoke Curation',
-    body: 'No templates. Every experience is composed around your preferences and pace.',
-  },
-  {
-    icon: Globe2,
-    title: 'Global Reach',
-    body: 'Our trusted network unlocks experiences and access beyond the ordinary.',
-  },
-];
+export default async function AkazaStandard() {
+  const t = await getTranslations('experiences');
 
-export default function AkazaStandard() {
+  const standards = [
+    {
+      icon: Shield,
+      title: t('privacy'),
+      body: t('privacyDesc'),
+    },
+    {
+      icon: Sparkles,
+      title: t('bespoke'),
+      body: t('bespokeDesc'),
+    },
+    {
+      icon: Globe2,
+      title: t('globalReach'),
+      body: t('globalReachDesc'),
+    },
+  ];
+
   return (
     <section className="bg-[var(--experiences-surface)] px-6 py-16 md:py-22">
       <div className="mx-auto max-w-7xl">
         <h3 className="text-center text-4xl font-serif text-[var(--text-primary)] md:text-5xl">
-          The Akaza Standard
+          {t('standardTitle')}
         </h3>
         <div className="mt-12 grid gap-5 md:grid-cols-3">
           {standards.map((item) => {

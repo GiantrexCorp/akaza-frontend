@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
+import { useTranslations } from 'next-intl';
 import { useRouter, Link } from '@/i18n/navigation';
 import { useSearchParams } from 'next/navigation';
 import { ArrowLeft, User, Mail } from 'lucide-react';
@@ -31,6 +32,10 @@ interface RoomGuests {
 }
 
 export default function HotelBookingForm() {
+  const ht = useTranslations('hotels');
+  const bt = useTranslations('booking');
+  const ct = useTranslations('common');
+  const at = useTranslations('auth');
   const router = useRouter();
   const searchParams = useSearchParams();
   const { toast } = useToast();
@@ -63,9 +68,9 @@ export default function HotelBookingForm() {
   if (!bookingData || !bookingData.rooms?.length) {
     return (
       <div className="pt-36 pb-32 max-w-7xl mx-auto px-6 text-center">
-        <h2 className="text-2xl font-serif text-[var(--text-primary)] mb-4">No Room Selected</h2>
-        <p className="text-sm text-[var(--text-muted)] font-sans mb-8">Please select a room before booking.</p>
-        <Link href="/hotels/search"><Button variant="outline">Search Hotels</Button></Link>
+        <h2 className="text-2xl font-serif text-[var(--text-primary)] mb-4">{ht('noRoomSelected')}</h2>
+        <p className="text-sm text-[var(--text-muted)] font-sans mb-8">{ht('noRoomSelectedDesc')}</p>
+        <Link href="/hotels/search"><Button variant="outline">{ht('searchHotels')}</Button></Link>
       </div>
     );
   }
@@ -142,45 +147,45 @@ export default function HotelBookingForm() {
       <div className="max-w-7xl mx-auto px-6">
         <Link href="/hotels/search" className="inline-flex items-center gap-2 text-[var(--text-muted)] hover:text-primary text-xs uppercase tracking-widest font-sans mb-6 transition-colors">
           <ArrowLeft size={14} />
-          Back
+          {ct('back')}
         </Link>
 
-        <h1 className="text-3xl md:text-5xl font-serif text-[var(--text-primary)] mb-2">Complete Your Booking</h1>
+        <h1 className="text-3xl md:text-5xl font-serif text-[var(--text-primary)] mb-2">{ht('completeBooking')}</h1>
         <p className="text-sm text-[var(--text-muted)] font-sans mb-10">{bookingData.hotelName} &middot; {bookingData.checkIn} to {bookingData.checkOut}</p>
 
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-8">
               <div className="bg-[var(--surface-card)] border border-[var(--line-soft)] p-6">
-                <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-6">Contact Information</h2>
+                <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-6">{bt('contactInfo')}</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Input label="First Name" placeholder="John" value={holderName} onChange={(e) => { setHolderName(e.target.value); clearError('holderName'); }} error={errors.holderName} icon={<User size={18} />} />
-                  <Input label="Last Name" placeholder="Doe" value={holderSurname} onChange={(e) => { setHolderSurname(e.target.value); clearError('holderSurname'); }} error={errors.holderSurname} icon={<User size={18} />} />
-                  <Input label="Email" type="email" placeholder="your@email.com" value={holderEmail} onChange={(e) => { setHolderEmail(e.target.value); clearError('holderEmail'); }} error={errors.holderEmail} icon={<Mail size={18} />} />
-                  <PhoneInput label="Phone" value={holderPhone} onChange={setHolderPhone} />
+                  <Input label={bt('firstName')} placeholder={bt('firstNamePlaceholder')} value={holderName} onChange={(e) => { setHolderName(e.target.value); clearError('holderName'); }} error={errors.holderName} icon={<User size={18} />} />
+                  <Input label={bt('lastName')} placeholder={bt('lastNamePlaceholder')} value={holderSurname} onChange={(e) => { setHolderSurname(e.target.value); clearError('holderSurname'); }} error={errors.holderSurname} icon={<User size={18} />} />
+                  <Input label={at('email')} type="email" placeholder={bt('emailPlaceholder')} value={holderEmail} onChange={(e) => { setHolderEmail(e.target.value); clearError('holderEmail'); }} error={errors.holderEmail} icon={<Mail size={18} />} />
+                  <PhoneInput label={at('phone')} value={holderPhone} onChange={setHolderPhone} />
                 </div>
               </div>
 
               {bookingData.rooms.map((room, roomIdx) => (
                 <div key={room.rate_key} className="bg-[var(--surface-card)] border border-[var(--line-soft)] p-6">
                   <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans">Room {roomIdx + 1}: {room.room_name}</h2>
+                    <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans">{ct('room')} {roomIdx + 1}: {room.room_name}</h2>
                     <Badge label={room.board_name} color="blue" size="sm" />
                   </div>
                   <div className="space-y-4">
                     {roomGuests[roomIdx]?.guests.map((guest, guestIdx) => (
                       <div key={`${roomIdx}-${guestIdx}-${guest.type}`} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 items-end">
-                        <Input label={`Guest ${guestIdx + 1} First Name`} placeholder="First name" value={guest.name} onChange={(e) => updateGuest(roomIdx, guestIdx, 'name', e.target.value)} size="sm" />
-                        <Input label="Last Name" placeholder="Last name" value={guest.surname} onChange={(e) => updateGuest(roomIdx, guestIdx, 'surname', e.target.value)} size="sm" />
+                        <Input label={`${ht('guestLabel')} ${guestIdx + 1} ${bt('firstName')}`} placeholder={bt('firstName')} value={guest.name} onChange={(e) => updateGuest(roomIdx, guestIdx, 'name', e.target.value)} size="sm" />
+                        <Input label={bt('lastName')} placeholder={bt('lastName')} value={guest.surname} onChange={(e) => updateGuest(roomIdx, guestIdx, 'surname', e.target.value)} size="sm" />
                         <Select
-                          label="Type"
-                          options={[{ value: 'AD', label: 'Adult' }, { value: 'CH', label: 'Child' }]}
+                          label={ct('type')}
+                          options={[{ value: 'AD', label: ct('adult') }, { value: 'CH', label: ct('child') }]}
                           value={guest.type}
                           onChange={(e) => updateGuest(roomIdx, guestIdx, 'type', e.target.value)}
                           size="sm"
                         />
                         {guest.type === 'CH' && (
-                          <Input label="Age" type="number" min="0" max="17" placeholder="Age" value={guest.age?.toString() || ''} onChange={(e) => updateGuest(roomIdx, guestIdx, 'age', parseInt(e.target.value) || null)} size="sm" />
+                          <Input label={ct('age')} type="number" min="0" max="17" placeholder={ct('age')} value={guest.age?.toString() || ''} onChange={(e) => updateGuest(roomIdx, guestIdx, 'age', parseInt(e.target.value) || null)} size="sm" />
                         )}
                       </div>
                     ))}
@@ -191,14 +196,14 @@ export default function HotelBookingForm() {
               <label className="flex items-start gap-3 cursor-pointer">
                 <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} className="accent-primary mt-0.5" />
                 <span className="text-xs text-[var(--text-muted)] font-sans leading-relaxed">
-                  I accept the booking terms, cancellation policy, and confirm all guest details are correct.
+                  {ht('acceptTerms')}
                 </span>
               </label>
             </div>
 
             <div className="lg:col-span-1">
               <div className="lg:sticky lg:top-28 bg-[var(--surface-card)] border border-[var(--line-soft)] p-6">
-                <h3 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-6">Price Summary</h3>
+                <h3 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-6">{bt('priceSummary')}</h3>
                 <div className="space-y-3 mb-6">
                   {bookingData.rooms.map((room) => (
                     <div key={room.rate_key} className="flex justify-between">
@@ -209,12 +214,12 @@ export default function HotelBookingForm() {
                 </div>
                 <div className="border-t border-[var(--line-soft)] pt-4 mb-6">
                   <div className="flex items-end justify-between">
-                    <p className="text-xs text-[var(--text-muted)] font-sans uppercase tracking-wider">Total</p>
+                    <p className="text-xs text-[var(--text-muted)] font-sans uppercase tracking-wider">{ct('total')}</p>
                     <p className="text-2xl font-serif text-[var(--text-primary)]">{formatPrice(totalPrice, bookingData!.currency)}</p>
                   </div>
                 </div>
                 <Button type="submit" variant="gradient" loading={createBookingMutation.isPending} className="w-full">
-                  Confirm Booking
+                  {ct('confirmBooking')}
                 </Button>
               </div>
             </div>

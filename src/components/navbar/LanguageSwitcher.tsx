@@ -3,6 +3,7 @@
 import { useLocale } from 'next-intl';
 import { useRouter, usePathname } from '@/i18n/navigation';
 import { locales, type Locale } from '@/i18n/config';
+import { profileApi } from '@/lib/api/profile';
 
 const labels: Record<Locale, string> = { en: 'EN', de: 'DE', fr: 'FR' };
 
@@ -20,6 +21,10 @@ export default function LanguageSwitcher({ isLight, mobile }: LanguageSwitcherPr
     if (locale === currentLocale) return;
     localStorage.setItem('locale', locale);
     router.replace(pathname, { locale });
+
+    if (localStorage.getItem('auth_token')) {
+      profileApi.update({ locale }).catch(() => {});
+    }
   };
 
   if (mobile) {

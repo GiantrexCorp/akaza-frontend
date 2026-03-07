@@ -1,28 +1,24 @@
+import { getTranslations } from 'next-intl/server';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import SubpageHero from '@/components/SubpageHero';
 import MarketsContent from '@/components/markets/MarketsContent';
 
-export default function MarketsWeServePage() {
+export default async function MarketsWeServePage() {
+  const t = await getTranslations('markets');
   return (
     <>
       <Navbar />
 
       <main className="bg-[var(--surface-page)] text-[var(--text-primary)]">
         <SubpageHero
-          badge="Global Reach"
-          title={
-            <>
-              Markets
-              <br />
-              We Serve
-            </>
-          }
-          subtitle="Explore AKAZA's active corporate markets through an immersive global interface."
+          badge={t('superTitle')}
+          title={t('title')}
+          subtitle={t('subtitle')}
           imageSrc="/images/hero/hero-main.png"
-          imageAlt="Global corporate market coverage"
-          primaryCta={{ label: 'Explore Globe', href: '#markets-globe' }}
-          secondaryCta={{ label: 'Partner With Us', href: '/contact' }}
+          imageAlt={t('heroAlt')}
+          primaryCta={{ label: t('heroCta1'), href: '#markets-globe' }}
+          secondaryCta={{ label: t('heroCta2'), href: '/contact' }}
         />
 
         <MarketsContent />

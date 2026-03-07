@@ -1,6 +1,7 @@
 'use client';
 
 import { use } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { CheckCircle, Download, Calendar, MapPin, Users, Clock, ArrowRight } from 'lucide-react';
 import Navbar from '@/components/Navbar';
@@ -16,6 +17,9 @@ import { CUSTOMER_BOOKING_STATUS_COLORS } from '@/lib/constants';
 import { formatPrice } from '@/lib/utils/format';
 
 function ConfirmationContent({ id }: { id: string }) {
+  const tt = useTranslations('tours');
+  const ct = useTranslations('common');
+  const bt = useTranslations('booking');
   const { toast } = useToast();
   const { data: booking, isLoading: loading, error: queryError, refetch } = useTourBookingDetail(id);
   useQueryErrorToast(!!queryError, queryError, 'Failed to load booking');
@@ -33,7 +37,7 @@ function ConfirmationContent({ id }: { id: string }) {
       a.remove();
       URL.revokeObjectURL(url);
     } catch {
-      toast('error', 'Failed to download voucher');
+      toast('error', ct('failedDownloadVoucher'));
     }
   };
 
@@ -50,10 +54,10 @@ function ConfirmationContent({ id }: { id: string }) {
       <div className="pt-36 pb-32 max-w-7xl mx-auto px-6">
         <PageError
           status={error?.status ?? 404}
-          title={error?.status === 404 ? 'Booking Not Found' : undefined}
+          title={error?.status === 404 ? ct('bookingNotFound') : undefined}
           onRetry={() => refetch()}
           backHref="/dashboard/bookings"
-          backLabel="My Bookings"
+          backLabel={ct('myBookings')}
         />
       </div>
     );
@@ -67,8 +71,8 @@ function ConfirmationContent({ id }: { id: string }) {
           <div className="flex justify-center mb-6">
             <CheckCircle size={56} strokeWidth={1} className="text-emerald-400" />
           </div>
-          <h1 className="text-3xl md:text-4xl font-serif text-[var(--text-primary)] mb-3">Booking Submitted</h1>
-          <p className="text-sm text-[var(--text-muted)] font-sans">Your booking reference is</p>
+          <h1 className="text-3xl md:text-4xl font-serif text-[var(--text-primary)] mb-3">{tt('submitted')}</h1>
+          <p className="text-sm text-[var(--text-muted)] font-sans">{tt('yourRefIs')}</p>
           <p className="text-2xl font-serif text-primary mt-2">{booking.booking_reference}</p>
         </div>
 
@@ -76,7 +80,7 @@ function ConfirmationContent({ id }: { id: string }) {
         <div className="bg-[var(--surface-card)] border border-[var(--line-soft)] divide-y divide-[var(--line-soft)]">
           {/* Status */}
           <div className="p-6 flex items-center justify-between">
-            <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans">Status</p>
+            <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans">{ct('status')}</p>
             <Badge label={booking.status_label} color={CUSTOMER_BOOKING_STATUS_COLORS[booking.status] || 'gray'} />
           </div>
 
@@ -112,11 +116,11 @@ function ConfirmationContent({ id }: { id: string }) {
           {/* Guests */}
           {booking.guests.length > 0 && (
             <div className="p-6">
-              <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-3">Guests</p>
+              <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-3">{tt('guests')}</p>
               <div className="space-y-1">
                 {booking.guests.map((guest, i) => (
                   <p key={`${guest.name}-${guest.surname}-${i}`} className="text-xs text-[var(--text-muted)] font-sans">
-                    {guest.name} {guest.surname} ({guest.type === 'AD' ? 'Adult' : `Child, ${guest.age}y`})
+                    {guest.name} {guest.surname} ({guest.type === 'AD' ? ct('adult') : `${ct('child')}, ${guest.age}y`})
                   </p>
                 ))}
               </div>
@@ -126,7 +130,7 @@ function ConfirmationContent({ id }: { id: string }) {
           {/* Special requests */}
           {booking.special_requests && (
             <div className="p-6">
-              <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-2">Special Requests</p>
+              <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-2">{bt('specialRequests')}</p>
               <p className="text-sm text-[var(--text-secondary)] font-sans">{booking.special_requests}</p>
             </div>
           )}
@@ -134,11 +138,11 @@ function ConfirmationContent({ id }: { id: string }) {
           {/* Price */}
           <div className="p-6">
             <div className="flex justify-between mb-2">
-              <p className="text-sm text-[var(--text-secondary)] font-sans">Price per person</p>
+              <p className="text-sm text-[var(--text-secondary)] font-sans">{ct('pricePerPerson')}</p>
               <p className="text-sm font-serif text-[var(--text-primary)]">{formatPrice(booking.price_per_person, booking.currency)}</p>
             </div>
             <div className="flex items-end justify-between">
-              <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans">Total</p>
+              <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans">{ct('total')}</p>
               <p className="text-2xl font-serif text-[var(--text-primary)]">{formatPrice(booking.total_price, booking.currency)}</p>
             </div>
           </div>
@@ -148,12 +152,12 @@ function ConfirmationContent({ id }: { id: string }) {
         <div className="flex flex-col sm:flex-row gap-4 mt-8">
           {booking.voucher_path && (
             <Button variant="outline" icon={<Download size={14} />} onClick={handleDownloadVoucher} className="flex-1">
-              Download Voucher
+              {bt('downloadVoucher')}
             </Button>
           )}
           <Link href="/dashboard/bookings" className="flex-1">
             <Button variant="ghost" icon={<ArrowRight size={14} />} className="w-full">
-              My Bookings
+              {ct('myBookings')}
             </Button>
           </Link>
         </div>

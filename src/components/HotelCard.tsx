@@ -3,6 +3,7 @@
 import { Link } from '@/i18n/navigation';
 import Image from 'next/image';
 import { Star, ArrowRight, Utensils } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useHotelDetails } from '@/hooks/useHotels';
 import type { HotelSearchResult } from '@/types/hotel';
 
@@ -69,6 +70,7 @@ function HotelImage({ hotelCode }: { hotelCode: string }) {
 }
 
 export default function HotelCard({ hotel, viewMode, formatPrice, checkIn, checkOut, adults, childrenCount }: HotelCardProps) {
+  const t = useTranslations('common');
   const rateKeys = hotel.rooms.map((r) => r.rate_key).join(',');
   const href = `/hotels/search/rooms?rateKeys=${encodeURIComponent(rateKeys)}&hotelCode=${hotel.hotel_code}&checkIn=${checkIn}&checkOut=${checkOut}&adults=${adults}&children=${childrenCount}&destination=${hotel.destination_code}&destinationName=${encodeURIComponent(hotel.destination_name)}`;
 
@@ -90,12 +92,12 @@ export default function HotelCard({ hotel, viewMode, formatPrice, checkIn, check
               </div>
               <h3 className="text-xl font-serif text-[var(--text-primary)] group-hover:text-primary transition-colors">{hotel.hotel_name}</h3>
               <p className="text-xs text-[var(--text-muted)] font-sans mt-1">{hotel.destination_name}</p>
-              <p className="text-xs text-[var(--text-muted)] font-sans mt-1">{hotel.rooms.length} room type{hotel.rooms.length !== 1 ? 's' : ''} available</p>
+              <p className="text-xs text-[var(--text-muted)] font-sans mt-1">{hotel.rooms.length} {hotel.rooms.length !== 1 ? t('roomTypes') : t('roomType')} available</p>
             </div>
             <div className="text-right shrink-0">
-              <p className="text-[10px] text-[var(--text-muted)] font-sans uppercase tracking-wider">from</p>
+              <p className="text-[10px] text-[var(--text-muted)] font-sans uppercase tracking-wider">{t('from')}</p>
               <p className="text-2xl font-serif text-[var(--text-primary)]">{formatPrice(hotel.min_selling_price, hotel.currency)}</p>
-              <p className="text-[10px] text-[var(--text-muted)] font-sans">per night</p>
+              <p className="text-[10px] text-[var(--text-muted)] font-sans">{t('perNight')}</p>
             </div>
           </div>
           <div className="hidden md:flex items-center pr-6">
@@ -118,11 +120,11 @@ export default function HotelCard({ hotel, viewMode, formatPrice, checkIn, check
         </div>
         <h3 className="text-lg font-serif text-[var(--text-primary)] group-hover:text-primary transition-colors mb-1">{hotel.hotel_name}</h3>
         <p className="text-xs text-[var(--text-muted)] font-sans mb-1">{hotel.destination_name}</p>
-        <p className="text-xs text-[var(--text-muted)] font-sans mb-4">{hotel.rooms.length} room type{hotel.rooms.length !== 1 ? 's' : ''}</p>
+        <p className="text-xs text-[var(--text-muted)] font-sans mb-4">{hotel.rooms.length} {hotel.rooms.length !== 1 ? t('roomTypes') : t('roomType')}</p>
         <div className="w-10 h-[1px] bg-primary mb-4" />
         <div className="flex items-end justify-between">
           <div>
-            <p className="text-[10px] text-[var(--text-muted)] font-sans uppercase tracking-wider">from</p>
+            <p className="text-[10px] text-[var(--text-muted)] font-sans uppercase tracking-wider">{t('from')}</p>
             <p className="text-xl font-serif text-[var(--text-primary)]">{formatPrice(hotel.min_selling_price, hotel.currency)}</p>
           </div>
           <div className="w-10 h-10 border border-[var(--line-strong)] flex items-center justify-center group-hover:border-primary group-hover:bg-primary transition-all">

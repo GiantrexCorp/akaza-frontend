@@ -1,3 +1,4 @@
+import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import ThemeToggle from './ThemeToggle';
 import LanguageSwitcher from './LanguageSwitcher';
@@ -20,6 +21,7 @@ interface MobileMenuProps {
 }
 
 export default function MobileMenu({ links, isActiveLink, isLight, theme, onToggleTheme, user, onLogout, onClose }: MobileMenuProps) {
+  const t = useTranslations('nav');
   return (
     <div
       className={`md:hidden border-t border-[var(--line-soft)] ${
@@ -63,13 +65,13 @@ export default function MobileMenu({ links, isActiveLink, isLight, theme, onTogg
                 onClick={onClose}
                 className="block px-3 py-3 text-[var(--text-secondary)] hover:text-primary transition-colors text-xs uppercase tracking-widest font-medium"
               >
-                Dashboard
+                {t('dashboard')}
               </Link>
               <button
                 onClick={() => { onClose(); onLogout(); }}
                 className="block px-3 py-3 text-[var(--text-secondary)] hover:text-red-400 transition-colors text-xs uppercase tracking-widest font-medium text-left w-full"
               >
-                Logout
+                {t('logout')}
               </button>
             </>
           ) : (
@@ -78,7 +80,7 @@ export default function MobileMenu({ links, isActiveLink, isLight, theme, onTogg
               onClick={onClose}
               className="block px-3 py-3 text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-colors text-xs uppercase tracking-widest font-medium"
             >
-              Login / Register
+              {t('loginRegister')}
             </Link>
           )}
           <Link
@@ -86,7 +88,7 @@ export default function MobileMenu({ links, isActiveLink, isLight, theme, onTogg
             onClick={onClose}
             className="rounded-full border border-[var(--nav-avatar-border)] bg-gradient-to-r from-primary to-primary-gradient-end px-8 py-3 font-sans uppercase tracking-widest text-xs font-bold text-white w-full text-center"
           >
-            Book Now
+            {t('bookNow')}
           </Link>
         </div>
       </div>

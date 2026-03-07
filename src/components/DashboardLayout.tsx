@@ -1,23 +1,26 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { usePathname, Link } from '@/i18n/navigation';
 import { Hotel, User, Bell, LogOut, ChevronRight } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import type { ReactNode } from 'react';
-
-const sidebarLinks = [
-  { label: 'My Bookings', href: '/dashboard/bookings', icon: Hotel },
-  { label: 'Profile', href: '/dashboard/profile', icon: User },
-  { label: 'Notifications', href: '/dashboard/notifications', icon: Bell },
-];
 
 interface DashboardLayoutProps {
   children: ReactNode;
 }
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
+  const t = useTranslations('dashboard');
+  const nav = useTranslations('nav');
   const pathname = usePathname();
   const { user, logout } = useAuth();
+
+  const sidebarLinks = [
+    { label: t('myBookings'), href: '/dashboard/bookings', icon: Hotel },
+    { label: t('profile'), href: '/dashboard/profile', icon: User },
+    { label: t('notifications'), href: '/dashboard/notifications', icon: Bell },
+  ];
 
   return (
     <div className="min-h-screen pt-24 bg-[var(--surface-page)]">
@@ -58,7 +61,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                 className="hidden md:flex w-full items-center gap-3 px-4 py-3 text-xs uppercase tracking-widest font-sans font-medium text-[var(--text-muted)] hover:text-red-400 hover:bg-red-500/5 transition-all duration-300"
               >
                 <LogOut size={16} />
-                Logout
+                {nav('logout')}
               </button>
             </nav>
           </aside>

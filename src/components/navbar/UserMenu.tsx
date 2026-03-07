@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { User, LogOut, LayoutDashboard } from 'lucide-react';
 import type { User as UserType } from '@/types/auth';
@@ -12,6 +13,7 @@ interface UserMenuProps {
 }
 
 export default function UserMenu({ user, isLight, onLogout }: UserMenuProps) {
+  const t = useTranslations('nav');
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -61,7 +63,7 @@ export default function UserMenu({ user, isLight, onLogout }: UserMenuProps) {
               className="flex items-center gap-2 px-4 py-3 text-xs text-[var(--text-secondary)] hover:text-primary hover:bg-white/5 transition-colors uppercase tracking-wider font-sans"
             >
               <LayoutDashboard size={14} />
-              Dashboard
+              {t('dashboard')}
             </Link>
             <Link
               href="/dashboard/profile"
@@ -70,7 +72,7 @@ export default function UserMenu({ user, isLight, onLogout }: UserMenuProps) {
               className="flex items-center gap-2 px-4 py-3 text-xs text-[var(--text-secondary)] hover:text-primary hover:bg-white/5 transition-colors uppercase tracking-wider font-sans"
             >
               <User size={14} />
-              Profile
+              {t('profile')}
             </Link>
             <button
               onClick={() => { setOpen(false); onLogout(); }}
@@ -78,7 +80,7 @@ export default function UserMenu({ user, isLight, onLogout }: UserMenuProps) {
               className="w-full flex items-center gap-2 px-4 py-3 text-xs text-[var(--text-secondary)] hover:text-red-400 hover:bg-red-500/5 transition-colors uppercase tracking-wider font-sans"
             >
               <LogOut size={14} />
-              Logout
+              {t('logout')}
             </button>
           </div>
         </div>

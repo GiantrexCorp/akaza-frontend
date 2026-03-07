@@ -11,6 +11,7 @@ import { useTransferVehicles, useTransferRoutes, useTransferRoutePrices } from '
 import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import type { TransferRoute } from '@/types/transfer';
 import { formatPrice } from '@/lib/utils/format';
+import { useTranslations } from 'next-intl';
 
 const typeIcons: Record<string, typeof Plane> = {
   airport: Plane,
@@ -19,6 +20,8 @@ const typeIcons: Record<string, typeof Plane> = {
 };
 
 export default function TransfersPage() {
+  const tt = useTranslations('transfers');
+  const ct = useTranslations('common');
   const [selectedType, setSelectedType] = useState<string>('all');
   const [selectedRoute, setSelectedRoute] = useState<TransferRoute | null>(null);
 
@@ -42,10 +45,10 @@ export default function TransfersPage() {
   const filteredRoutes = selectedType === 'all' ? routes : routes.filter((r) => r.transfer_type === selectedType);
 
   const transferTypes = [
-    { value: 'all', label: 'All' },
-    { value: 'airport', label: 'Airport' },
-    { value: 'city', label: 'City' },
-    { value: 'chauffeur', label: 'Chauffeur' },
+    { value: 'all', label: tt('filterAll') },
+    { value: 'airport', label: tt('filterAirport') },
+    { value: 'city', label: tt('filterCity') },
+    { value: 'chauffeur', label: tt('filterChauffeur') },
   ];
 
   const getVehicleById = (id: string) => vehicles.find((v) => v.id === id);
@@ -60,12 +63,12 @@ export default function TransfersPage() {
       <section className="pt-32 pb-8 bg-[var(--surface-page)]">
         <div className="max-w-7xl mx-auto px-6">
           <div className="mb-10">
-            <p className="text-primary font-bold uppercase tracking-[0.3em] text-xs font-sans mb-3">Private Transfers</p>
+            <p className="text-primary font-bold uppercase tracking-[0.3em] text-xs font-sans mb-3">{tt('title')}</p>
             <h1 className="text-4xl md:text-6xl font-serif text-[var(--text-primary)] leading-none mb-4">
-              Travel in <span className="italic">Style</span>
+              {tt('heading')} <span className="italic">{tt('headingItalic')}</span>
             </h1>
             <p className="text-lg text-[var(--text-muted)] font-sans font-light max-w-2xl">
-              Premium private transfers across Egypt with professional drivers and luxury vehicles
+              {tt('subtitle')}
             </p>
             <div className="mt-6 w-24 h-[1px] bg-gradient-to-r from-transparent via-primary to-transparent" />
           </div>
@@ -75,12 +78,12 @@ export default function TransfersPage() {
       {/* Vehicles Showcase */}
       <section className="pb-16 bg-[var(--surface-page)]">
         <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-6">Our Fleet</h2>
+          <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-6">{tt('ourFleet')}</h2>
 
           {loading ? (
             <div className="py-12"><Spinner size="lg" /></div>
           ) : vehicles.length === 0 ? (
-            <EmptyState title="No Vehicles Available" description="Check back later." />
+            <EmptyState title={tt('noVehicles')} description={tt('noVehiclesDesc')} />
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {vehicles.map((vehicle) => (
@@ -100,10 +103,10 @@ export default function TransfersPage() {
                     <p className="text-xs text-[var(--text-muted)] font-sans mb-3 line-clamp-2">{vehicle.translated_description}</p>
                     <div className="flex items-center gap-4">
                       <span className="flex items-center gap-1.5 text-xs text-[var(--text-muted)] font-sans">
-                        <Users size={12} className="text-primary" /> {vehicle.max_passengers} pax
+                        <Users size={12} className="text-primary" /> {vehicle.max_passengers} {ct('pax')}
                       </span>
                       <span className="flex items-center gap-1.5 text-xs text-[var(--text-muted)] font-sans">
-                        <Briefcase size={12} className="text-primary" /> {vehicle.max_luggage} bags
+                        <Briefcase size={12} className="text-primary" /> {vehicle.max_luggage} {ct('bags')}
                       </span>
                     </div>
                   </div>
@@ -118,7 +121,7 @@ export default function TransfersPage() {
       <section className="pb-32 bg-[var(--surface-page)]">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
-            <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans">Available Routes</h2>
+            <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans">{tt('availableRoutes')}</h2>
             <div className="flex gap-2">
               {transferTypes.map((t) => (
                 <button
@@ -139,7 +142,7 @@ export default function TransfersPage() {
           {loading ? (
             <div className="py-12"><Spinner size="lg" /></div>
           ) : filteredRoutes.length === 0 ? (
-            <EmptyState title="No Routes Found" description="Try a different transfer type." />
+            <EmptyState title={tt('noRoutes')} description={tt('noRoutesDesc')} />
           ) : (
             <div className="space-y-4">
               {filteredRoutes.map((route) => {
@@ -167,7 +170,7 @@ export default function TransfersPage() {
                           </div>
                         </div>
                         <div className="hidden sm:block">
-                          <p className="text-xs text-[var(--text-muted)] font-sans">{isSelected ? 'Tap to close' : 'View prices'}</p>
+                          <p className="text-xs text-[var(--text-muted)] font-sans">{isSelected ? ct('tapToClose') : ct('viewPrices')}</p>
                         </div>
                       </div>
                     </button>
@@ -178,7 +181,7 @@ export default function TransfersPage() {
                         {loadingPrices ? (
                           <Spinner size="sm" />
                         ) : effectivePrices.length === 0 ? (
-                          <p className="text-sm text-[var(--text-muted)] font-sans">No prices available for this route.</p>
+                          <p className="text-sm text-[var(--text-muted)] font-sans">{tt('noPrices')}</p>
                         ) : (
                           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                             {effectivePrices.map((rp) => {
@@ -187,15 +190,15 @@ export default function TransfersPage() {
                                 <div key={rp.id} className="border border-[var(--line-soft)] p-4 hover:border-primary/40 transition-colors">
                                   <div className="flex items-center gap-3 mb-3">
                                     <Car size={16} className="text-primary" />
-                                    <p className="text-sm font-serif text-[var(--text-primary)]">{vehicle?.translated_name || 'Vehicle'}</p>
+                                    <p className="text-sm font-serif text-[var(--text-primary)]">{vehicle?.translated_name || ct('vehicle')}</p>
                                   </div>
                                   {vehicle && (
                                     <div className="flex items-center gap-3 mb-3">
                                       <span className="text-[10px] text-[var(--text-muted)] font-sans">
-                                        <Users size={10} className="inline mr-1" />{vehicle.max_passengers} pax
+                                        <Users size={10} className="inline mr-1" />{vehicle.max_passengers} {ct('pax')}
                                       </span>
                                       <span className="text-[10px] text-[var(--text-muted)] font-sans">
-                                        <Briefcase size={10} className="inline mr-1" />{vehicle.max_luggage} bags
+                                        <Briefcase size={10} className="inline mr-1" />{vehicle.max_luggage} {ct('bags')}
                                       </span>
                                     </div>
                                   )}
@@ -204,7 +207,7 @@ export default function TransfersPage() {
                                     href={`/transfers/book?routeId=${route.id}&vehicleId=${rp.transfer_vehicle_id}&price=${rp.price}&currency=${rp.currency}&pickup=${encodeURIComponent(route.translated_pickup_name)}&dropoff=${encodeURIComponent(route.translated_dropoff_name)}&type=${route.transfer_type}&vehicleName=${encodeURIComponent(vehicle?.translated_name || '')}&maxPax=${vehicle?.max_passengers || 4}&maxLuggage=${vehicle?.max_luggage || 4}`}
                                   >
                                     <Button variant="primary" size="sm" className="w-full">
-                                      Book Now
+                                      {ct('bookNow')}
                                     </Button>
                                   </Link>
                                 </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useId, Suspense, type FormEvent } from 'react';
+import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
 import { useSearchParams } from 'next/navigation';
 import { Link } from '@/i18n/navigation';
@@ -20,6 +21,10 @@ import type { TourBookingGuest } from '@/types/tour';
 import { formatPrice } from '@/lib/utils/format';
 
 function TourBookingForm() {
+  const tt = useTranslations('tours');
+  const bt = useTranslations('booking');
+  const ct = useTranslations('common');
+  const at = useTranslations('auth');
   const router = useRouter();
   const searchParams = useSearchParams();
   const { toast } = useToast();
@@ -69,7 +74,7 @@ function TourBookingForm() {
       return;
     }
     if (!agreed) {
-      toast('error', 'Please accept the terms');
+      toast('error', tt('acceptTermsError'));
       return;
     }
 
@@ -102,10 +107,10 @@ function TourBookingForm() {
       <div className="max-w-7xl mx-auto px-6">
         <Link href="/tours" className="inline-flex items-center gap-2 text-[var(--text-muted)] hover:text-primary text-xs uppercase tracking-widest font-sans mb-6 transition-colors">
           <ArrowLeft size={14} />
-          Back to Tours
+          {tt('backToTours')}
         </Link>
 
-        <h1 className="text-3xl md:text-5xl font-serif text-[var(--text-primary)] mb-2">Book Your Tour</h1>
+        <h1 className="text-3xl md:text-5xl font-serif text-[var(--text-primary)] mb-2">{tt('bookYourTour')}</h1>
         <p className="text-sm text-[var(--text-muted)] font-sans mb-10">{tourName} &middot; {date} at {time}</p>
 
         <form onSubmit={handleSubmit}>
@@ -113,36 +118,36 @@ function TourBookingForm() {
             <div className="lg:col-span-2 space-y-8">
               {/* Contact info */}
               <div className="bg-[var(--surface-card)] border border-[var(--line-soft)] p-6">
-                <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-6">Contact Information</h2>
+                <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-6">{bt('contactInfo')}</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <Input label="Full Name" placeholder="John Doe" value={contactName} onChange={(e) => { setContactName(e.target.value); clearError('contactName'); }} error={errors.contactName} icon={<User size={18} />} />
-                  <Input label="Email" type="email" placeholder="your@email.com" value={contactEmail} onChange={(e) => { setContactEmail(e.target.value); clearError('contactEmail'); }} error={errors.contactEmail} icon={<Mail size={18} />} />
-                  <PhoneInput label="Phone" value={contactPhone} onChange={setContactPhone} />
+                  <Input label={bt('fullName')} placeholder={bt('fullNamePlaceholder')} value={contactName} onChange={(e) => { setContactName(e.target.value); clearError('contactName'); }} error={errors.contactName} icon={<User size={18} />} />
+                  <Input label={at('email')} type="email" placeholder={bt('emailPlaceholder')} value={contactEmail} onChange={(e) => { setContactEmail(e.target.value); clearError('contactEmail'); }} error={errors.contactEmail} icon={<Mail size={18} />} />
+                  <PhoneInput label={at('phone')} value={contactPhone} onChange={setContactPhone} />
                 </div>
               </div>
 
               {/* Guests */}
               <div className="bg-[var(--surface-card)] border border-[var(--line-soft)] p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans">Guest Details</h2>
+                  <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans">{tt('guestDetails')}</h2>
                   <button type="button" onClick={addGuest} className="flex items-center gap-1 text-xs text-primary hover:text-primary-dark font-sans font-bold uppercase tracking-wider transition-colors">
-                    <Plus size={14} /> Add Guest
+                    <Plus size={14} /> {tt('addGuest')}
                   </button>
                 </div>
                 <div className="space-y-4">
                   {guests.map((guest, idx) => (
                     <div key={guest._key} className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
-                      <Input label={`Guest ${idx + 1} First Name`} placeholder="First name" value={guest.name} onChange={(e) => updateGuest(idx, 'name', e.target.value)} size="sm" />
-                      <Input label="Last Name" placeholder="Last name" value={guest.surname} onChange={(e) => updateGuest(idx, 'surname', e.target.value)} size="sm" />
+                      <Input label={tt('guestFirstName', { n: idx + 1 })} placeholder={tt('firstName')} value={guest.name} onChange={(e) => updateGuest(idx, 'name', e.target.value)} size="sm" />
+                      <Input label={tt('lastName')} placeholder={tt('lastName')} value={guest.surname} onChange={(e) => updateGuest(idx, 'surname', e.target.value)} size="sm" />
                       <Select
-                        label="Type"
-                        options={[{ value: 'AD', label: 'Adult' }, { value: 'CH', label: 'Child' }]}
+                        label={ct('type')}
+                        options={[{ value: 'AD', label: ct('adult') }, { value: 'CH', label: ct('child') }]}
                         value={guest.type}
                         onChange={(e) => updateGuest(idx, 'type', e.target.value)}
                         size="sm"
                       />
                       {guest.type === 'CH' && (
-                        <Input label="Age" type="number" min="0" max="17" value={guest.age?.toString() || ''} onChange={(e) => updateGuest(idx, 'age', parseInt(e.target.value) || null)} size="sm" />
+                        <Input label={ct('age')} type="number" min="0" max="17" value={guest.age?.toString() || ''} onChange={(e) => updateGuest(idx, 'age', parseInt(e.target.value) || null)} size="sm" />
                       )}
                       {guests.length > 1 && (
                         <button type="button" onClick={() => removeGuest(idx)} className="text-[var(--text-muted)] hover:text-red-400 transition-colors pb-2">
@@ -156,12 +161,12 @@ function TourBookingForm() {
 
               {/* Special requests */}
               <div className="bg-[var(--surface-card)] border border-[var(--line-soft)] p-6">
-                <label htmlFor={specialRequestsId} className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-4 block">Special Requests (optional)</label>
+                <label htmlFor={specialRequestsId} className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-4 block">{bt('specialRequestsOptional')}</label>
                 <textarea
                   id={specialRequestsId}
                   value={specialRequests}
                   onChange={(e) => setSpecialRequests(e.target.value)}
-                  placeholder="Any dietary requirements, accessibility needs, or special requests..."
+                  placeholder={tt('specialRequestsPlaceholder')}
                   rows={3}
                   className="w-full bg-transparent border-b border-[var(--line-strong)] focus:border-primary text-[var(--field-text)] placeholder-[var(--field-placeholder)] font-serif text-lg outline-none transition-colors resize-none"
                 />
@@ -170,7 +175,7 @@ function TourBookingForm() {
               <label className="flex items-start gap-3 cursor-pointer">
                 <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} className="accent-primary mt-0.5" />
                 <span className="text-xs text-[var(--text-muted)] font-sans leading-relaxed">
-                  I accept the booking terms and confirm all guest details are correct.
+                  {tt('acceptTerms')}
                 </span>
               </label>
             </div>
@@ -178,36 +183,36 @@ function TourBookingForm() {
             {/* Price sidebar */}
             <div className="lg:col-span-1">
               <div className="sticky top-28 bg-[var(--surface-card)] border border-[var(--line-soft)] p-6">
-                <h3 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-6">Booking Summary</h3>
+                <h3 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-6">{tt('bookingSummary')}</h3>
 
                 <div className="space-y-3 mb-6">
                   <div className="flex justify-between">
-                    <p className="text-sm text-[var(--text-secondary)] font-sans">Tour</p>
+                    <p className="text-sm text-[var(--text-secondary)] font-sans">{tt('tour')}</p>
                     <p className="text-sm text-[var(--text-primary)] font-sans">{tourName}</p>
                   </div>
                   <div className="flex justify-between">
-                    <p className="text-sm text-[var(--text-secondary)] font-sans">Date</p>
+                    <p className="text-sm text-[var(--text-secondary)] font-sans">{ct('date')}</p>
                     <p className="text-sm text-[var(--text-primary)] font-sans">{date}</p>
                   </div>
                   <div className="flex justify-between">
-                    <p className="text-sm text-[var(--text-secondary)] font-sans">Guests</p>
+                    <p className="text-sm text-[var(--text-secondary)] font-sans">{tt('guests')}</p>
                     <p className="text-sm text-[var(--text-primary)] font-sans">{guests.length}</p>
                   </div>
                   <div className="flex justify-between">
-                    <p className="text-sm text-[var(--text-secondary)] font-sans">Price/person</p>
+                    <p className="text-sm text-[var(--text-secondary)] font-sans">{ct('pricePerPerson')}</p>
                     <p className="text-sm font-serif text-[var(--text-primary)]">{formatPrice(price, currency)}</p>
                   </div>
                 </div>
 
                 <div className="border-t border-[var(--line-soft)] pt-4 mb-6">
                   <div className="flex items-end justify-between">
-                    <p className="text-xs text-[var(--text-muted)] font-sans uppercase tracking-wider">Total</p>
+                    <p className="text-xs text-[var(--text-muted)] font-sans uppercase tracking-wider">{ct('total')}</p>
                     <p className="text-2xl font-serif text-[var(--text-primary)]">{formatPrice(totalPrice, currency)}</p>
                   </div>
                 </div>
 
                 <Button type="submit" variant="gradient" loading={createBookingMutation.isPending} className="w-full">
-                  Confirm Booking
+                  {ct('confirmBooking')}
                 </Button>
               </div>
             </div>

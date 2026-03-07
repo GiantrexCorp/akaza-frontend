@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { MapPin, Search } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -11,6 +12,8 @@ import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import { formatPrice } from '@/lib/utils/format';
 
 export default function ToursPage() {
+  const t = useTranslations('tours');
+  const cT = useTranslations('common');
   const [searchQuery, setSearchQuery] = useState('');
   const [appliedSearch, setAppliedSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -37,12 +40,12 @@ export default function ToursPage() {
       <section className="pt-32 pb-8 bg-[var(--surface-page)]">
         <div className="max-w-7xl mx-auto px-6">
           <div className="mb-10">
-            <p className="text-primary font-bold uppercase tracking-[0.3em] text-xs font-sans mb-3">Curated Experiences</p>
+            <p className="text-primary font-bold uppercase tracking-[0.3em] text-xs font-sans mb-3">{t('superTitle')}</p>
             <h1 className="text-4xl md:text-6xl font-serif text-[var(--text-primary)] leading-none mb-4">
-              Explore Egypt&apos;s <span className="italic">Finest Tours</span>
+              {t('title')}
             </h1>
             <p className="text-lg text-[var(--text-muted)] font-sans font-light max-w-2xl">
-              Handpicked experiences across Egypt&apos;s most iconic destinations
+              {t('subtitle')}
             </p>
             <div className="mt-6 w-24 h-[1px] bg-gradient-to-r from-transparent via-primary to-transparent" />
           </div>
@@ -51,7 +54,7 @@ export default function ToursPage() {
           <div className="flex gap-4 max-w-lg">
             <div className="flex-1">
               <Input
-                placeholder="Search by location..."
+                placeholder={t('searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
@@ -60,7 +63,7 @@ export default function ToursPage() {
               />
             </div>
             <Button variant="primary" size="sm" onClick={handleSearch} icon={<Search size={14} />}>
-              Search
+              {cT('search')}
             </Button>
           </div>
         </div>
@@ -74,7 +77,7 @@ export default function ToursPage() {
               <Spinner size="lg" />
             </div>
           ) : tours.length === 0 ? (
-            <EmptyState title="No Tours Found" description="Check back later for new experiences." />
+            <EmptyState title={t('noTours')} description={t('noToursDesc')} />
           ) : (
             <>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

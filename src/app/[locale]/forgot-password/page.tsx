@@ -10,8 +10,10 @@ import { Input, Button } from '@/components/ui';
 import { useFormValidation } from '@/hooks/useFormValidation';
 import { forgotPasswordSchema } from '@/lib/validation/schemas';
 import AkazaLogo from '@/components/AkazaLogo';
+import { useTranslations } from 'next-intl';
 
 export default function ForgotPasswordPage() {
+  const t = useTranslations('auth');
   const { toast } = useToast();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
@@ -54,32 +56,32 @@ export default function ForgotPasswordPage() {
               <div className="flex justify-center mb-6">
                 <CheckCircle size={48} strokeWidth={1} className="text-emerald-400" />
               </div>
-              <h1 className="text-2xl font-serif text-[var(--text-primary)] mb-3">Check Your Email</h1>
+              <h1 className="text-2xl font-serif text-[var(--text-primary)] mb-3">{t('checkEmail')}</h1>
               <p className="text-sm text-[var(--text-muted)] font-sans leading-relaxed mb-8">
-                We&apos;ve sent a password reset link to <span className="text-primary">{email}</span>. Please check your inbox and follow the instructions.
+                {t('resetLinkSent')} <span className="text-primary">{email}</span>. {t('checkInbox')}
               </p>
               <Link
                 href="/login"
                 className="inline-flex items-center gap-2 text-primary hover:text-primary-dark text-xs uppercase tracking-widest font-bold font-sans transition-colors"
               >
                 <ArrowLeft size={14} />
-                Back to Login
+                {t('backToLogin')}
               </Link>
             </div>
           ) : (
             <>
               <div className="mb-8">
-                <h1 className="text-3xl font-serif text-[var(--text-primary)] mb-2">Reset Password</h1>
+                <h1 className="text-3xl font-serif text-[var(--text-primary)] mb-2">{t('resetPassword')}</h1>
                 <p className="text-sm text-[var(--text-muted)] font-sans">
-                  Enter your email and we&apos;ll send you a reset link
+                  {t('resetSubtitle')}
                 </p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <Input
-                  label="Email Address"
+                  label={t('emailAddress')}
                   type="email"
-                  placeholder="your@email.com"
+                  placeholder={t('emailPlaceholder')}
                   value={email}
                   onChange={(e) => { setEmail(e.target.value); clearError('email'); }}
                   error={errors.email}
@@ -93,7 +95,7 @@ export default function ForgotPasswordPage() {
                   loading={loading}
                   className="w-full"
                 >
-                  Send Reset Link
+                  {t('sendResetLink')}
                 </Button>
               </form>
 
@@ -103,7 +105,7 @@ export default function ForgotPasswordPage() {
                   className="inline-flex items-center gap-2 text-[var(--text-muted)] hover:text-primary text-xs uppercase tracking-widest font-medium font-sans transition-colors"
                 >
                   <ArrowLeft size={14} />
-                  Back to Login
+                  {t('backToLogin')}
                 </Link>
               </div>
             </>

@@ -3,18 +3,23 @@
 import { useMemo, useState } from 'react';
 import { ArrowRight, Building2, Globe2, Sparkles } from 'lucide-react';
 import { Link } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { useScrollReveal } from '@/hooks/useScrollReveal';
 import type { MarketPoint } from '@/components/MarketsGlobe';
 
+const MarketsGlobeLoading = () => {
+  return (
+    <div className="flex h-[300px] sm:h-[430px] w-full items-center justify-center border border-[var(--line-soft)] bg-[linear-gradient(140deg,rgba(18,38,46,0.75),rgba(8,17,22,0.9))] text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)] md:h-[590px]">
+      ...
+    </div>
+  );
+};
+
 const MarketsGlobe = dynamic(() => import('@/components/MarketsGlobe'), {
   ssr: false,
-  loading: () => (
-    <div className="flex h-[300px] sm:h-[430px] w-full items-center justify-center border border-[var(--line-soft)] bg-[linear-gradient(140deg,rgba(18,38,46,0.75),rgba(8,17,22,0.9))] text-[11px] font-semibold uppercase tracking-[0.2em] text-[var(--text-muted)] md:h-[590px]">
-      Initializing Global Interface
-    </div>
-  ),
+  loading: () => <MarketsGlobeLoading />,
 });
 
 type MarketInfo = MarketPoint & {
@@ -24,80 +29,82 @@ type MarketInfo = MarketPoint & {
   image: string;
 };
 
-const markets: MarketInfo[] = [
-  {
-    id: 'germany',
-    name: 'Germany',
-    lat: 51.2,
-    lon: 10.4,
-    region: 'Central Europe',
-    summary: 'Enterprise and executive travel orchestration for precision-driven markets.',
-    highlights: ['Frankfurt corporate corridors', 'Berlin executive mobility', 'Private transfer reliability'],
-    image: '/images/hotel-marriott.jpg',
-  },
-  {
-    id: 'france',
-    name: 'France',
-    lat: 46.4,
-    lon: 2.2,
-    region: 'Western Europe',
-    summary: 'Luxury business travel blended with cultural high-touch programming.',
-    highlights: ['Paris board-level logistics', 'Cannes event handling', 'Discreet VIP support'],
-    image: '/images/hotel-four-seasons.jpg',
-  },
-  {
-    id: 'italy',
-    name: 'Italy',
-    lat: 42.8,
-    lon: 12.5,
-    region: 'Southern Europe',
-    summary: 'Concierge-led travel across finance, design, and private investment networks.',
-    highlights: ['Milan fashion & finance routes', 'Rome diplomatic scheduling', 'Coastal executive retreats'],
-    image: '/images/cairo.jpg',
-  },
-  {
-    id: 'gcc',
-    name: 'GCC',
-    lat: 24.4,
-    lon: 47.6,
-    region: 'Gulf Cooperation Council',
-    summary: 'High-trust mobility and protocol-driven service for Gulf corporate partners.',
-    highlights: ['Riyadh / Dubai / Doha coverage', 'Protocol-grade meet & assist', 'Private aviation coordination'],
-    image: '/images/hero/hero-main-v2.png',
-  },
-  {
-    id: 'united-kingdom',
-    name: 'United Kingdom',
-    lat: 54.4,
-    lon: -2.8,
-    region: 'Northwestern Europe',
-    summary: 'Boardroom-to-destination execution for institutions and private offices.',
-    highlights: ['London executive operations', 'Regional business circuits', 'White-label fulfillment'],
-    image: '/images/hurghada.jpg',
-  },
-  {
-    id: 'poland',
-    name: 'Poland',
-    lat: 52.0,
-    lon: 19.1,
-    region: 'Central Europe',
-    summary: 'Rapidly scaling corporate travel infrastructure with premium oversight.',
-    highlights: ['Warsaw commercial hubs', 'Cross-border route planning', 'Business-class accommodation network'],
-    image: '/images/vehicle-limousine.jpg',
-  },
-  {
-    id: 'russia',
-    name: 'Russia',
-    lat: 56.0,
-    lon: 37.6,
-    region: 'Eastern Europe / Eurasia',
-    summary: 'Complex-route management with discretion, compliance awareness, and resilience.',
-    highlights: ['Moscow strategic operations', 'Regional partner vetting', 'Mission-critical traveler support'],
-    image: '/images/hotel-steigenberger.jpg',
-  },
-];
-
 export default function MarketsContent() {
+  const t = useTranslations('markets');
+
+  const markets: MarketInfo[] = useMemo(() => [
+    {
+      id: 'germany',
+      name: t('germany'),
+      lat: 51.2,
+      lon: 10.4,
+      region: t('germanyCat'),
+      summary: t('germanyDesc'),
+      highlights: [t('germanyF1'), t('germanyF2'), t('germanyF3')],
+      image: '/images/hotel-marriott.jpg',
+    },
+    {
+      id: 'france',
+      name: t('france'),
+      lat: 46.4,
+      lon: 2.2,
+      region: t('franceCat'),
+      summary: t('franceDesc'),
+      highlights: [t('franceF1'), t('franceF2'), t('franceF3')],
+      image: '/images/hotel-four-seasons.jpg',
+    },
+    {
+      id: 'italy',
+      name: t('italy'),
+      lat: 42.8,
+      lon: 12.5,
+      region: t('italyCat'),
+      summary: t('italyDesc'),
+      highlights: [t('italyF1'), t('italyF2'), t('italyF3')],
+      image: '/images/cairo.jpg',
+    },
+    {
+      id: 'gcc',
+      name: t('gcc'),
+      lat: 24.4,
+      lon: 47.6,
+      region: t('gccCat'),
+      summary: t('gccDesc'),
+      highlights: [t('gccF1'), t('gccF2'), t('gccF3')],
+      image: '/images/hero/hero-main-v2.png',
+    },
+    {
+      id: 'united-kingdom',
+      name: t('uk'),
+      lat: 54.4,
+      lon: -2.8,
+      region: t('ukCat'),
+      summary: t('ukDesc'),
+      highlights: [t('ukF1'), t('ukF2'), t('ukF3')],
+      image: '/images/hurghada.jpg',
+    },
+    {
+      id: 'poland',
+      name: t('poland'),
+      lat: 52.0,
+      lon: 19.1,
+      region: t('polandCat'),
+      summary: t('polandDesc'),
+      highlights: [t('polandF1'), t('polandF2'), t('polandF3')],
+      image: '/images/vehicle-limousine.jpg',
+    },
+    {
+      id: 'russia',
+      name: t('russia'),
+      lat: 56.0,
+      lon: 37.6,
+      region: t('russiaCat'),
+      summary: t('russiaDesc'),
+      highlights: [t('russiaF1'), t('russiaF2'), t('russiaF3')],
+      image: '/images/hotel-steigenberger.jpg',
+    },
+  ], [t]);
+
   const [selectedId, setSelectedId] = useState(markets[0].id);
   const [hoverId, setHoverId] = useState<string | null>(null);
 
@@ -121,15 +128,15 @@ export default function MarketsContent() {
           <div data-reveal className="reveal-item mb-9 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <span className="inline-flex rounded-full border border-primary/40 bg-primary/10 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
-                Market Command Center
+                {t('commandCenter')}
               </span>
               <h2 className="mt-4 text-3xl md:text-5xl font-serif text-[var(--text-primary)]">
-                Strategic Coverage
-                <span className="block italic text-[var(--color-accent-light)]">Across Priority Regions</span>
+                {t('strategicCoverage')}
+                <span className="block italic text-[var(--color-accent-light)]">{t('acrossPriority')}</span>
               </h2>
             </div>
             <p className="max-w-md text-sm leading-relaxed text-[var(--text-muted)]">
-              Rotate the globe to inspect key markets and select any region for a focused operational profile.
+              {t('rotateGlobe')}
             </p>
           </div>
 
@@ -161,7 +168,7 @@ export default function MarketsContent() {
               <div className="flex items-center justify-between gap-3">
                 <span className="inline-flex items-center gap-2 rounded-full border border-primary/35 bg-primary/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
                   <Globe2 size={12} />
-                  Active Market
+                  {t('activeMarket')}
                 </span>
                 <span className="text-[11px] uppercase tracking-[0.2em] text-[var(--text-muted)]">
                   {activeMarket.region}
@@ -184,7 +191,7 @@ export default function MarketsContent() {
                 href="/contact"
                 className="mt-8 inline-flex items-center gap-2 border border-primary/70 bg-primary px-6 py-3 text-xs font-bold uppercase tracking-[0.18em] text-white transition-all hover:-translate-y-0.5 hover:bg-primary-gradient-end hover:shadow-[0_16px_32px_-18px_rgba(185,117,50,0.95)]"
               >
-                Start Partnership
+                {t('startPartnership')}
                 <ArrowRight size={13} />
               </Link>
             </aside>
@@ -195,9 +202,9 @@ export default function MarketsContent() {
       <section className="bg-[var(--surface-page)] px-6 pb-24">
         <div className="mx-auto max-w-7xl">
           <div className="mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-            <h3 className="text-3xl md:text-4xl font-serif">Priority Markets</h3>
+            <h3 className="text-3xl md:text-4xl font-serif">{t('priorityMarkets')}</h3>
             <span className="text-[11px] uppercase tracking-[0.2em] text-[var(--text-muted)]">
-              Click a market to focus on the globe
+              {t('clickMarket')}
             </span>
           </div>
 
@@ -243,16 +250,16 @@ export default function MarketsContent() {
           data-reveal
           className="reveal-item mx-auto max-w-5xl border border-[var(--line-soft)] bg-[linear-gradient(120deg,rgba(185,117,50,0.2),rgba(16,33,39,0.52),rgba(185,117,50,0.18))] p-8 md:p-11 text-center"
         >
-          <h3 className="text-4xl md:text-6xl font-serif text-[var(--text-primary)]">Built For Cross-Border Excellence</h3>
+          <h3 className="text-4xl md:text-6xl font-serif text-[var(--text-primary)]">{t('ctaTitle')}</h3>
           <p className="mt-4 max-w-3xl mx-auto text-[var(--text-secondary)]">
-            Our corporate framework scales across regions while preserving discretion, reliability, and premium execution for your teams.
+            {t('ctaDesc')}
           </p>
           <div className="mt-7 flex justify-center">
             <Link
               href="/corporate-partnerships"
               className="inline-flex items-center gap-2 border border-primary/65 bg-primary px-8 py-3 text-xs font-bold uppercase tracking-[0.18em] text-white transition-all hover:bg-primary-gradient-end hover:-translate-y-0.5"
             >
-              View Corporate Partnerships
+              {t('ctaCta')}
               <Sparkles size={13} />
             </Link>
           </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from 'next-intl';
 import { Menu, X } from "lucide-react";
 import { Link, usePathname } from '@/i18n/navigation';
 import { useAuth } from "@/lib/auth";
@@ -12,17 +13,18 @@ import UserMenu from "./navbar/UserMenu";
 import MobileMenu from "./navbar/MobileMenu";
 import LanguageSwitcher from "./navbar/LanguageSwitcher";
 
-const navLinks = [
-  { label: "Destinations", href: "/destinations" },
-  { label: "Tours", href: "/tours" },
-  { label: "Experiences", href: "/experiences" },
-  { label: "Transfers", href: "/transfers" },
-  { label: "VIP Services", href: "/#vip" },
-];
-
 export default function Navbar() {
+  const t = useTranslations('nav');
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user, logout } = useAuth();
+
+  const navLinks = [
+    { label: t('destinations'), href: "/destinations" },
+    { label: t('tours'), href: "/tours" },
+    { label: t('experiences'), href: "/experiences" },
+    { label: t('transfers'), href: "/transfers" },
+    { label: t('vipServices'), href: "/#vip" },
+  ];
   const pathname = usePathname();
   const { theme, isLight, toggleTheme } = useTheme();
 
@@ -85,7 +87,7 @@ export default function Navbar() {
                     href="/login"
                     className="rounded-full border border-[var(--line-soft)] px-4 py-2 text-[11px] uppercase tracking-[0.18em] font-semibold text-[var(--text-secondary)] transition-colors hover:border-white/20 hover:text-[var(--text-primary)]"
                   >
-                    Login / Register
+                    {t('loginRegister')}
                   </Link>
                 )}
 
@@ -93,7 +95,7 @@ export default function Navbar() {
                   href="/hotels/search"
                   className="rounded-full border border-[var(--nav-avatar-border)] bg-gradient-to-r from-primary to-primary-gradient-end px-6 py-2.5 text-[11px] font-bold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_-16px_rgba(226,175,109,0.8)] transition-all hover:translate-y-[-1px] hover:shadow-[0_14px_34px_-14px_rgba(226,175,109,0.95)]"
                 >
-                  Book Now
+                  {t('bookNow')}
                 </Link>
               </div>
 

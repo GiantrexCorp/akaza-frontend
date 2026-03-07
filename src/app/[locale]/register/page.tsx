@@ -13,8 +13,10 @@ import { validatePhone } from '@/lib/validation/phone';
 import { useFormValidation } from '@/hooks/useFormValidation';
 import { registerSchema } from '@/lib/validation/schemas';
 import AkazaLogo from '@/components/AkazaLogo';
+import { useTranslations } from 'next-intl';
 
 export default function RegisterPage() {
+  const t = useTranslations('auth');
   const router = useRouter();
   const { register } = useAuth();
   const { toast } = useToast();
@@ -46,7 +48,7 @@ export default function RegisterPage() {
     const phoneErr = validatePhone(form.phone);
     const manualErrors: Record<string, string> = {};
     if (phoneErr) manualErrors.phone = phoneErr;
-    if (!agreed) manualErrors.agreed = 'You must accept the terms';
+    if (!agreed) manualErrors.agreed = t('mustAcceptTerms');
 
     const isValid = validate({ name: form.name, email: form.email, password: form.password, password_confirmation: form.password_confirmation });
     if (Object.keys(manualErrors).length > 0) {
@@ -91,15 +93,15 @@ export default function RegisterPage() {
         {/* Card */}
         <div className="bg-[var(--surface-card)] border border-[var(--line-soft)] p-8 md:p-10 shadow-2xl">
           <div className="mb-8">
-            <h1 className="text-3xl font-serif text-[var(--text-primary)] mb-2">Create Account</h1>
-            <p className="text-sm text-[var(--text-muted)] font-sans">Join Akaza Travel for premium experiences</p>
+            <h1 className="text-3xl font-serif text-[var(--text-primary)] mb-2">{t('createAccount')}</h1>
+            <p className="text-sm text-[var(--text-muted)] font-sans">{t('joinSubtitle')}</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <Input
-              label="Full Name"
+              label={t('name')}
               type="text"
-              placeholder="John Doe"
+              placeholder={t('namePlaceholder')}
               value={form.name}
               onChange={(e) => update('name', e.target.value)}
               error={errors.name}
@@ -107,9 +109,9 @@ export default function RegisterPage() {
             />
 
             <Input
-              label="Email Address"
+              label={t('emailAddress')}
               type="email"
-              placeholder="your@email.com"
+              placeholder={t('emailPlaceholder')}
               value={form.email}
               onChange={(e) => update('email', e.target.value)}
               error={errors.email}
@@ -117,16 +119,16 @@ export default function RegisterPage() {
             />
 
             <PhoneInput
-              label="Phone (optional)"
+              label={t('phoneOptional')}
               value={form.phone}
               onChange={(value) => { setForm((prev) => ({ ...prev, phone: value })); setErrors((prev) => ({ ...prev, phone: '' })); }}
               error={errors.phone}
             />
 
             <Input
-              label="Password"
+              label={t('password')}
               type="password"
-              placeholder="Minimum 8 characters"
+              placeholder={t('minChars')}
               value={form.password}
               onChange={(e) => update('password', e.target.value)}
               error={errors.password}
@@ -134,9 +136,9 @@ export default function RegisterPage() {
             />
 
             <Input
-              label="Confirm Password"
+              label={t('confirmPassword')}
               type="password"
-              placeholder="Repeat your password"
+              placeholder={t('repeatPassword')}
               value={form.password_confirmation}
               onChange={(e) => update('password_confirmation', e.target.value)}
               error={errors.password_confirmation}
@@ -151,10 +153,10 @@ export default function RegisterPage() {
                 className="accent-primary mt-0.5"
               />
               <span className="text-xs text-[var(--text-muted)] font-sans leading-relaxed">
-                I agree to the{' '}
-                <Link href="/terms" className="text-primary hover:text-primary-dark">Terms & Conditions</Link>
-                {' '}and{' '}
-                <Link href="/privacy" className="text-primary hover:text-primary-dark">Privacy Policy</Link>
+                {t('agreeToTerms')}{' '}
+                <Link href="/terms" className="text-primary hover:text-primary-dark">{t('termsAndConditions')}</Link>
+                {' '}{t('and')}{' '}
+                <Link href="/privacy" className="text-primary hover:text-primary-dark">{t('privacyPolicy')}</Link>
               </span>
             </label>
             {errors.agreed && <p className="text-red-400 text-xs font-sans -mt-4">{errors.agreed}</p>}
@@ -166,15 +168,15 @@ export default function RegisterPage() {
               loading={loading}
               className="w-full"
             >
-              Create Account
+              {t('createAccount')}
             </Button>
           </form>
 
           <div className="mt-8 pt-6 border-t border-[var(--line-soft)] text-center">
             <p className="text-sm text-[var(--text-muted)] font-sans">
-              Already have an account?{' '}
+              {t('alreadyHaveAccount')}{' '}
               <Link href="/login" className="text-primary hover:text-primary-dark transition-colors font-medium">
-                Sign in
+                {t('signInLink')}
               </Link>
             </p>
           </div>

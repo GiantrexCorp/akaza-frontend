@@ -1,31 +1,34 @@
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
 import { ArrowRight } from 'lucide-react';
-
-const insightHighlights = [
-  {
-    category: 'Curation',
-    title: 'A Guide to Mindful Travel',
-    body: 'How to connect deeply with your surroundings through sensory awareness and intentional disconnection.',
-  },
-  {
-    category: 'Heritage',
-    title: 'Preserving the Intangible',
-    body: 'Supporting local craftsmanship and ancestral knowledge through conscious travel choices.',
-  },
-];
+import { useTranslations } from 'next-intl';
 
 export default function TravelInsights() {
+  const t = useTranslations('journal');
+  const common = useTranslations('common');
+
+  const insightHighlights = [
+    {
+      category: t('insight2Tag'),
+      title: t('insight2Title'),
+      body: t('insight2Desc'),
+    },
+    {
+      category: t('insight3Tag'),
+      title: t('insight3Title'),
+      body: t('insight3Desc'),
+    },
+  ];
   return (
     <section id="travel-insights" className="bg-[var(--surface-section)] px-6 py-16 md:py-20">
       <div className="mx-auto max-w-7xl">
         <div className="flex items-end justify-between gap-4 border-b border-[var(--line-soft)] pb-5">
-          <h2 className="text-4xl md:text-5xl font-serif italic">Travel Insights</h2>
+          <h2 className="text-4xl md:text-5xl font-serif italic">{t('insightsTitle')}</h2>
           <Link
             href="#"
             className="text-[11px] uppercase tracking-[0.2em] font-semibold text-primary hover:text-primary-gradient-end transition-colors"
           >
-            View Archive
+            {t('viewArchive')}
           </Link>
         </div>
 
@@ -44,17 +47,16 @@ export default function TravelInsights() {
               />
             </div>
             <div className="p-6">
-              <p className="text-[10px] uppercase tracking-[0.2em] text-primary font-semibold">Philosophy</p>
-              <h3 className="mt-3 text-4xl font-serif">The Philosophy of Wandering</h3>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-primary font-semibold">{t('insight1Tag')}</p>
+              <h3 className="mt-3 text-4xl font-serif">{t('insight1Title')}</h3>
               <p className="mt-4 text-sm leading-relaxed text-[var(--text-muted)]">
-                A renewed perspective on curated anonymity and meaningful movement
-                for travelers who prioritize depth over spectacle.
+                {t('insight1Desc')}
               </p>
               <Link
                 href="#"
                 className="mt-5 inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] font-bold text-primary hover:text-primary-gradient-end transition-colors"
               >
-                Read More
+                {common('readMore')}
                 <ArrowRight size={13} />
               </Link>
             </div>
@@ -74,7 +76,7 @@ export default function TravelInsights() {
                   href="#"
                   className="mt-4 inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] font-semibold text-[var(--text-secondary)] hover:text-primary transition-colors"
                 >
-                  8 Min Read
+                  {t('insight3Read')}
                 </Link>
               </article>
             ))}

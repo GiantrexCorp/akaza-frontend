@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ContactForm from '@/components/contact/ContactForm';
@@ -9,6 +10,7 @@ import { useScrollReveal } from '@/hooks/useScrollReveal';
 
 export default function ContactPage() {
   useScrollReveal();
+  const t = useTranslations('contact');
 
   return (
     <>
@@ -19,7 +21,7 @@ export default function ContactPage() {
           <article className="group relative h-[68vh] min-h-[540px] overflow-hidden border-y border-[var(--line-soft)]">
             <Image
               src="/images/hotel-four-seasons.jpg"
-              alt="Private concierge ambiance"
+              alt={t('heroAlt')}
               fill
               priority
               sizes="100vw"
@@ -30,12 +32,11 @@ export default function ContactPage() {
 
             <div className="relative z-10 mx-auto flex h-full max-w-5xl flex-col items-center justify-center px-6 text-center">
               <span className="rounded-full border border-primary/40 bg-primary/12 px-5 py-2 text-[11px] font-semibold uppercase tracking-[0.24em] text-primary">
-                Your Private Concierge
+                {t('superTitle')}
               </span>
-              <h1 className="mt-6 text-3xl sm:text-5xl font-serif leading-[0.92] text-white md:text-7xl">Start Your Journey</h1>
+              <h1 className="mt-6 text-3xl sm:text-5xl font-serif leading-[0.92] text-white md:text-7xl">{t('title')}</h1>
               <p className="mt-5 max-w-3xl text-base sm:text-lg text-slate-200/90 md:text-2xl">
-                Bespoke experiences tailored to the world&apos;s most discerning travelers. Tell us your vision, and we
-                will curate the reality.
+                {t('subtitle')}
               </p>
             </div>
           </article>

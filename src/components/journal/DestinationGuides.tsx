@@ -1,38 +1,40 @@
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
-
-const guideCards = [
-  {
-    title: "Kyoto's Hidden Ryokans",
-    body: 'Finding serenity in the quiet districts of Gion and beyond.',
-    image: '/images/hotel-marriott.jpg',
-    alt: 'Quiet Japanese room',
-  },
-  {
-    title: 'The Golden Triangle Revisited',
-    body: "A new perspective on Rajasthan's most iconic landmarks.",
-    image: '/images/map-egypt.jpg',
-    alt: 'Architectural landmark',
-  },
-  {
-    title: 'Venetian Sovereignty',
-    body: 'Exploring the private islands of the Venetian Lagoon.',
-    image: '/images/hurghada.jpg',
-    alt: 'Canal waters and city reflections',
-  },
-];
+import { useTranslations } from 'next-intl';
 
 export default function DestinationGuides() {
+  const t = useTranslations('journal');
+
+  const guideCards = [
+    {
+      title: t('guide1Title'),
+      body: t('guide1Desc'),
+      image: '/images/hotel-marriott.jpg',
+      alt: 'Quiet Japanese room',
+    },
+    {
+      title: t('guide2Title'),
+      body: t('guide2Desc'),
+      image: '/images/map-egypt.jpg',
+      alt: 'Architectural landmark',
+    },
+    {
+      title: t('guide3Title'),
+      body: t('guide3Desc'),
+      image: '/images/hurghada.jpg',
+      alt: 'Canal waters and city reflections',
+    },
+  ];
   return (
     <section id="destination-guides" className="bg-[var(--surface-page)] px-6 py-16 md:py-22">
       <div className="mx-auto max-w-7xl">
         <div className="flex items-end justify-between gap-4 border-b border-[var(--line-soft)] pb-5">
-          <h3 className="text-4xl md:text-5xl font-serif italic">Destination Guides</h3>
+          <h3 className="text-4xl md:text-5xl font-serif italic">{t('guidesTitle')}</h3>
           <Link
             href="/destinations"
             className="text-[11px] uppercase tracking-[0.2em] font-semibold text-primary hover:text-primary-gradient-end transition-colors"
           >
-            Explore All
+            {t('exploreAll')}
           </Link>
         </div>
 

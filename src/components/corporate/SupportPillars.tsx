@@ -1,39 +1,40 @@
 import { Headphones, ShieldCheck, ReceiptText, Globe2 } from 'lucide-react';
-
-const supportPillars = [
-  {
-    icon: Headphones,
-    title: '24/7 Hotline',
-    body: 'Instant access to senior logistics teams any hour, globally.',
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Risk Management',
-    body: 'Proactive traveler safety protocols and contingency controls.',
-  },
-  {
-    icon: ReceiptText,
-    title: 'Centralized Billing',
-    body: 'Consolidated reporting and corporate-grade invoicing workflows.',
-  },
-  {
-    icon: Globe2,
-    title: 'Local Liaison',
-    body: 'Trusted in-market representation across priority destinations.',
-  },
-];
+import { useTranslations } from 'next-intl';
 
 export default function SupportPillars() {
+  const t = useTranslations('corporate');
+
+  const supportPillars = [
+    {
+      icon: Headphones,
+      title: t('hotline'),
+      body: t('hotlineDesc'),
+    },
+    {
+      icon: ShieldCheck,
+      title: t('riskMgmt'),
+      body: t('riskMgmtDesc'),
+    },
+    {
+      icon: ReceiptText,
+      title: t('billing'),
+      body: t('billingDesc'),
+    },
+    {
+      icon: Globe2,
+      title: t('liaison'),
+      body: t('liaisonDesc'),
+    },
+  ];
   return (
     <section className="bg-[var(--surface-page)] px-6 py-16 md:py-22">
       <div className="mx-auto max-w-7xl">
         <div className="text-center">
           <h3 className="text-4xl md:text-6xl font-serif text-[var(--text-primary)]">
-            Concierge-Level Operational Support
+            {t('pillarsTitle')}
           </h3>
           <p className="mt-3 text-[var(--text-muted)] max-w-3xl mx-auto">
-            Reliability is core to our standard. Every route and workflow is managed to
-            safeguard partner expectations and traveler confidence.
+            {t('pillarsDesc')}
           </p>
         </div>
 

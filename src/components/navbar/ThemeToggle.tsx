@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from 'react';
+import { useTranslations } from 'next-intl';
 import { Moon, Sun } from 'lucide-react';
 
 type ThemeMode = 'dark' | 'light';
@@ -44,6 +45,7 @@ interface ThemeToggleProps {
 }
 
 export default function ThemeToggle({ isLight, theme, onToggle, mobile }: ThemeToggleProps) {
+  const t = useTranslations('nav');
   if (mobile) {
     return (
       <button
@@ -55,7 +57,7 @@ export default function ThemeToggle({ isLight, theme, onToggle, mobile }: ThemeT
         type="button"
       >
         {theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
-        {theme === 'dark' ? 'Light Theme' : 'Dark Theme'}
+        {theme === 'dark' ? t('lightTheme') : t('darkTheme')}
       </button>
     );
   }

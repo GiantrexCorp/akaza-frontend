@@ -1,41 +1,45 @@
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
 import { ArrowRight, Car, Plane, Ticket } from 'lucide-react';
-
-const essentials = [
-  {
-    icon: Car,
-    title: 'Private Transfers',
-    body: 'Professional chauffeur-led mobility with route-level precision and premium vehicle standards.',
-    image: '/images/vehicle-limousine.jpg',
-    alt: 'Private transfer vehicle',
-  },
-  {
-    icon: Plane,
-    title: 'VIP Airport Services',
-    body: 'Fast-track immigration, private lounge access, and seamless handover from runway to residence.',
-    image: '/images/vehicle-van.jpg',
-    alt: 'VIP transport and airport support',
-  },
-  {
-    icon: Ticket,
-    title: 'Exclusive Access',
-    body: 'Hard-to-secure tickets, closed-door events, and private cultural programs beyond the public schedule.',
-    image: '/images/hotel-marriott.jpg',
-    alt: 'Exclusive private dining table',
-  },
-];
+import { useTranslations } from 'next-intl';
 
 export default function EssentialsGrid() {
+  const t = useTranslations('concierge');
+  const tc = useTranslations('common');
+
+  const essentials = [
+    {
+      icon: Car,
+      title: t('privateTransfers'),
+      body: t('privateTransfersDesc'),
+      image: '/images/vehicle-limousine.jpg',
+      alt: 'Private transfer vehicle',
+    },
+    {
+      icon: Plane,
+      title: t('vipAirport'),
+      body: t('vipAirportDesc'),
+      image: '/images/vehicle-van.jpg',
+      alt: 'VIP transport and airport support',
+    },
+    {
+      icon: Ticket,
+      title: t('exclusiveAccess'),
+      body: t('exclusiveAccessDesc'),
+      image: '/images/hotel-marriott.jpg',
+      alt: 'Exclusive private dining table',
+    },
+  ];
+
   return (
     <section className="bg-[var(--surface-section)] px-6 pb-18">
       <div className="mx-auto max-w-7xl">
         <div className="mb-10 text-center">
           <h3 className="text-4xl md:text-5xl font-serif text-[var(--text-primary)]">
-            Seamless Sophistication
+            {t('essentialsTitle')}
           </h3>
           <p className="mt-3 text-[var(--text-muted)]">
-            Elevating each stage of your itinerary through proactive concierge execution.
+            {t('essentialsDesc')}
           </p>
         </div>
 
@@ -66,7 +70,7 @@ export default function EssentialsGrid() {
                   href="/contact"
                   className="mt-5 inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.2em] text-primary transition-colors hover:text-primary-gradient-end"
                 >
-                  Learn More
+                  {tc('learnMore')}
                   <ArrowRight size={13} />
                 </Link>
               </article>

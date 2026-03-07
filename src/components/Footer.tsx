@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from 'next-intl';
 import {
   ArrowRight,
   Instagram,
@@ -24,38 +25,41 @@ type SocialLink = {
   icon: LucideIcon;
 };
 
-const siteLinks: NavLink[] = [
-  { label: "Destinations", href: "/destinations" },
-  { label: "Tours", href: "/tours" },
-  { label: "Experiences", href: "/experiences" },
-  { label: "Transfers", href: "/transfers" },
-  { label: "Markets We Serve", href: "/markets-we-serve" },
-  { label: "Journal", href: "/journal" },
-];
-
-const serviceLinks: NavLink[] = [
-  { label: "Concierge Services", href: "/concierge-services" },
-  { label: "How We Work", href: "/how-we-work" },
-  { label: "Corporate Partnerships", href: "/corporate-partnerships" },
-  { label: "VIP Services", href: "/#vip" },
-  { label: "Contact Akaza", href: "/contact" },
-];
-
-const companyLinks: NavLink[] = [
-  { label: "About", href: "/about" },
-  { label: "Privacy Policy", href: "/privacy" },
-  { label: "Terms of Service", href: "/terms" },
-];
-
-const socialLinks: SocialLink[] = [
-  { label: "Instagram", href: "https://instagram.com", icon: Instagram },
-  { label: "LinkedIn", href: "https://linkedin.com", icon: Linkedin },
-  { label: "YouTube", href: "https://youtube.com", icon: Youtube },
-  { label: "Email", href: "mailto:concierge@akazatravel.com", icon: Mail },
-];
-
 export default function Footer() {
+  const t = useTranslations('footer');
+  const nav = useTranslations('nav');
+  const common = useTranslations('common');
   const currentYear = new Date().getFullYear();
+
+  const siteLinks: NavLink[] = [
+    { label: nav('destinations'), href: "/destinations" },
+    { label: nav('tours'), href: "/tours" },
+    { label: nav('experiences'), href: "/experiences" },
+    { label: nav('transfers'), href: "/transfers" },
+    { label: t('marketsWeServe'), href: "/markets-we-serve" },
+    { label: t('journal'), href: "/journal" },
+  ];
+
+  const serviceLinks: NavLink[] = [
+    { label: t('conciergeServices'), href: "/concierge-services" },
+    { label: t('howWeWork'), href: "/how-we-work" },
+    { label: t('corporatePartnerships'), href: "/corporate-partnerships" },
+    { label: t('vipServices'), href: "/#vip" },
+    { label: t('contactAkaza'), href: "/contact" },
+  ];
+
+  const companyLinks: NavLink[] = [
+    { label: t('about'), href: "/about" },
+    { label: t('privacy'), href: "/privacy" },
+    { label: t('terms'), href: "/terms" },
+  ];
+
+  const socialLinks: SocialLink[] = [
+    { label: t('instagram'), href: "https://instagram.com", icon: Instagram },
+    { label: t('linkedin'), href: "https://linkedin.com", icon: Linkedin },
+    { label: t('youtube'), href: "https://youtube.com", icon: Youtube },
+    { label: t('emailLabel'), href: "mailto:concierge@akazatravel.com", icon: Mail },
+  ];
 
   return (
     <footer className="relative overflow-hidden border-t border-[var(--line-soft)] bg-[var(--surface-footer)]">
@@ -67,14 +71,14 @@ export default function Footer() {
           <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
             <div className="max-w-2xl">
               <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-primary">
-                Global Concierge Network
+                {t('tagline')}
               </p>
               <h3 className="mt-3 text-2xl sm:text-3xl font-serif text-[var(--text-primary)] md:text-5xl">
-                Built For Discreet
-                <span className="ml-0 sm:ml-2 block sm:inline italic text-[var(--color-accent-light)]">Cross-Border Execution</span>
+                {t('builtFor')}
+                <span className="ml-0 sm:ml-2 block sm:inline italic text-[var(--color-accent-light)]">{t('crossBorder')}</span>
               </h3>
               <p className="mt-3 text-sm leading-relaxed text-[var(--text-secondary)]">
-                From executive schedules to private leisure circuits, Akaza orchestrates every detail with precision.
+                {t('description')}
               </p>
             </div>
 
@@ -83,14 +87,14 @@ export default function Footer() {
                 href="/contact"
                 className="inline-flex items-center justify-center gap-2 border border-primary/70 bg-primary px-6 py-3 text-xs font-bold uppercase tracking-[0.18em] text-white transition-all hover:-translate-y-0.5 hover:bg-primary-gradient-end"
               >
-                Inquire Now
+                {common('inquireNow')}
                 <ArrowRight size={13} />
               </Link>
               <Link
                 href="/how-we-work"
                 className="inline-flex items-center justify-center border border-[var(--line-strong)] px-6 py-3 text-xs font-bold uppercase tracking-[0.18em] text-[var(--text-secondary)] transition-colors hover:border-primary/55 hover:text-primary"
               >
-                How We Work
+                {t('howWeWork')}
               </Link>
             </div>
           </div>
@@ -116,24 +120,24 @@ export default function Footer() {
             </Link>
 
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-[var(--text-muted)]">
-              Luxury travel intelligence and concierge-grade delivery for travelers and partners who expect certainty.
+              {t('bottomDesc')}
             </p>
 
             <div className="mt-6 space-y-2.5 text-sm text-[var(--text-secondary)]">
               <p className="inline-flex items-center gap-2">
                 <MapPin size={14} className="text-primary" />
-                Cairo, London, Dubai
+                {t('locations')}
               </p>
               <a
                 href="mailto:concierge@akazatravel.com"
                 className="inline-flex items-center gap-2 transition-colors hover:text-primary"
               >
                 <Mail size={14} className="text-primary" />
-                concierge@akazatravel.com
+                {t('emailAddress')}
               </a>
               <a href="tel:+201000123456" className="inline-flex items-center gap-2 transition-colors hover:text-primary">
                 <Phone size={14} className="text-primary" />
-                +20 100 012 3456
+                {t('phoneNumber')}
               </a>
             </div>
 
@@ -157,22 +161,22 @@ export default function Footer() {
             </div>
           </div>
 
-          <FooterColumn title="Site Links" links={siteLinks} />
-          <FooterColumn title="Services" links={serviceLinks} />
-          <FooterColumn title="Company" links={companyLinks} />
+          <FooterColumn title={t('siteLinks')} links={siteLinks} />
+          <FooterColumn title={t('services')} links={serviceLinks} />
+          <FooterColumn title={t('company')} links={companyLinks} />
         </div>
 
         <div className="flex flex-col gap-4 pt-6 text-[11px] uppercase tracking-[0.16em] text-[var(--text-muted)] md:flex-row md:items-center md:justify-between">
-          <p>&copy; {currentYear} AKAZA Travel. All rights reserved.</p>
+          <p>{t('copyright', { year: currentYear })}</p>
           <div className="flex flex-wrap items-center gap-5">
             <Link href="/privacy" className="transition-colors hover:text-primary">
-              Privacy
+              {t('privacyShort')}
             </Link>
             <Link href="/terms" className="transition-colors hover:text-primary">
-              Terms
+              {t('termsShort')}
             </Link>
             <Link href="/contact" className="transition-colors hover:text-primary">
-              Contact
+              {t('contact')}
             </Link>
           </div>
         </div>

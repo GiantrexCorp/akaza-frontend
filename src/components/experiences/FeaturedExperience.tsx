@@ -4,48 +4,49 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
 import { ArrowRight } from 'lucide-react';
-
-const categories = [
-  'Private Sea Escapes',
-  'Cultural Heritage',
-  'Luxury Family',
-  'Executive Travel',
-  'Romantic Getaways',
-  'VIP & Discreet',
-];
-
-const featuredExperiences = [
-  {
-    title: 'Private Sea Escapes',
-    subtitle: 'Set sail on a journey defined by absolute privacy and bespoke service.',
-    description:
-      'From secluded Mediterranean coves to untouched Red Sea routes, our yacht charters combine refined hospitality, precise logistics, and complete discretion.',
-    image: '/images/hurghada.jpg',
-    price: '$12,500 / Day',
-    tags: ['Luxury Charters', 'Private Chef', 'Hidden Bays'],
-  },
-  {
-    title: 'Cultural Heritage',
-    subtitle: 'Exclusive entry windows and expert-led storytelling at iconic sites.',
-    description:
-      'Designed for travelers who value depth without crowds, with seamless handling from VIP transfers to private fine dining transitions.',
-    image: '/images/cairo.jpg',
-    price: '$3,900 / Program',
-    tags: ['Private Access', 'Expert Curator', 'Executive Logistics'],
-  },
-  {
-    title: 'Luxury Family',
-    subtitle: 'Thoughtfully paced programs balancing comfort, wonder, and privacy.',
-    description:
-      'From villa stays to marine adventures, each moment is curated to align with your family rhythm while preserving premium standards.',
-    image: '/images/marsa-alam.jpg',
-    price: '$6,400 / Program',
-    tags: ['Bespoke Pacing', 'Private Stays', 'Concierge Support'],
-  },
-];
+import { useTranslations } from 'next-intl';
 
 export default function FeaturedExperience() {
+  const t = useTranslations('experiences');
+  const tc = useTranslations('common');
   const [activeCategory, setActiveCategory] = useState(0);
+
+  const categories = [
+    t('seaTitle'),
+    t('heritageTitle'),
+    t('familyTitle'),
+    'Executive Travel',
+    'Romantic Getaways',
+    'VIP & Discreet',
+  ];
+
+  const featuredExperiences = [
+    {
+      title: t('seaTitle'),
+      subtitle: t('seaDesc'),
+      description: t('seaLong'),
+      image: '/images/hurghada.jpg',
+      price: t('seaPrice'),
+      tags: [t('seaTag1'), t('seaTag2'), t('seaTag3')],
+    },
+    {
+      title: t('heritageTitle'),
+      subtitle: t('heritageDesc'),
+      description: t('heritageLong'),
+      image: '/images/cairo.jpg',
+      price: t('heritagePrice'),
+      tags: [t('heritageTag1'), t('heritageTag2'), t('heritageTag3')],
+    },
+    {
+      title: t('familyTitle'),
+      subtitle: t('familyDesc'),
+      description: t('familyLong'),
+      image: '/images/marsa-alam.jpg',
+      price: t('familyPrice'),
+      tags: [t('familyTag1'), t('familyTag2'), t('familyTag3')],
+    },
+  ];
+
   const featured = featuredExperiences[activeCategory % featuredExperiences.length];
 
   return (
@@ -95,7 +96,7 @@ export default function FeaturedExperience() {
 
           <div className="relative self-center">
             <span className="mb-5 inline-flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.24em] text-primary">
-              <span className="h-px w-8 bg-primary/65" /> Featured Experience
+              <span className="h-px w-8 bg-primary/65" /> {t('featuredTitle')}
             </span>
             <h2 className="text-4xl font-serif leading-[0.95] text-[var(--text-primary)] md:text-6xl">
               {featured.title}
@@ -119,7 +120,7 @@ export default function FeaturedExperience() {
             <div className="mt-9 flex flex-col gap-4 border-t border-[var(--line-soft)] pt-7 sm:flex-row sm:items-end sm:justify-between">
               <div>
                 <p className="text-[10px] uppercase tracking-[0.2em] text-[var(--text-muted)]">
-                  Starting From
+                  {tc('startingFrom')}
                 </p>
                 <p className="mt-1 text-2xl font-serif text-primary">{featured.price}</p>
               </div>
@@ -127,7 +128,7 @@ export default function FeaturedExperience() {
                 href="/contact"
                 className="inline-flex h-12 items-center justify-center gap-2 border border-primary/65 bg-primary px-7 text-xs font-bold uppercase tracking-[0.18em] text-white transition-all hover:bg-primary-gradient-end"
               >
-                Inquire Now
+                {tc('inquireNow')}
                 <ArrowRight size={14} />
               </Link>
             </div>

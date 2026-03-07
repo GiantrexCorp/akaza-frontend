@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react";
+import { useTranslations } from "next-intl";
 import DestinationCard from "./DestinationCard";
 
 type TabId = "hotels" | "excursions" | "transfers";
@@ -24,141 +25,6 @@ interface SectionConfig {
   cards: CardData[];
 }
 
-const sectionData: Record<TabId, SectionConfig> = {
-  excursions: {
-    label: "Core Destination Focus",
-    heading: "Egypt Signature Journeys",
-    subheading: "curated with operational precision",
-    linkText: "Explore All Journeys",
-    cards: [
-      {
-        image: "/images/hurghada.jpg",
-        alt: "Hurghada Coastline",
-        category: "Red Sea Luxury",
-        title: "Hurghada",
-        description:
-          "Red Sea programs with private handling, sea experiences, and seamless day planning.",
-        price: "$299",
-        grayscale: "30",
-      },
-      {
-        image: "/images/marsa-alam.jpg",
-        alt: "Diving in Marsa Alam",
-        category: "Nature & Serenity",
-        title: "Marsa Alam",
-        description:
-          "Nature-first coastal escapes planned for comfort, privacy, and smooth movement.",
-        price: "$450",
-        grayscale: "30",
-      },
-      {
-        image: "/images/cairo.jpg",
-        alt: "Cairo Skyline and Nile",
-        category: "Historic Grandeur",
-        title: "Cairo & Giza",
-        description:
-          "Cultural depth with trusted local experts, premium logistics, and clear execution.",
-        price: "$1,200",
-        grayscale: "30",
-      },
-    ],
-  },
-  hotels: {
-    label: "Handpicked Premium Stays",
-    heading: "Hotels Aligned To Intent",
-    subheading: "quality, location, reliability",
-    linkText: "View All Stays",
-    cards: [
-      {
-        image: "/images/hotel-four-seasons.jpg",
-        alt: "Four Seasons Resort Sharm El Sheikh Luxury Pool",
-        category: "Sharm El Sheikh",
-        title: "Four Seasons Resort Sharm El Sheikh",
-        description:
-          "Experience a hillside sanctuary with panoramic Red Sea views, featuring private beaches and world-class diving.",
-        price: "$420",
-        titleSize: "sm",
-        grayscale: "20",
-      },
-      {
-        image: "/images/hotel-marriott.jpg",
-        alt: "Marriott Mena House Cairo Pyramid View Terrace",
-        category: "Cairo & Giza",
-        title: "Marriott Mena House Cairo",
-        description:
-          "Wake up to breathtaking views of the Great Pyramids from this historic palace nestled in 40 acres of lush gardens.",
-        price: "$380",
-        titleSize: "sm",
-        grayscale: "20",
-      },
-      {
-        image: "/images/hotel-steigenberger.jpg",
-        alt: "Steigenberger Al Dau Beach Hotel Luxury Resort Grounds",
-        category: "Hurghada",
-        title: "Steigenberger Al Dau Beach",
-        description:
-          "A haven of luxury featuring an expansive lazy river, private beach, and impeccable service along the Red Sea coast.",
-        price: "$265",
-        titleSize: "sm",
-        grayscale: "20",
-      },
-    ],
-  },
-  transfers: {
-    label: "Trusted Mobility Network",
-    heading: "Premium Transfer Services",
-    subheading: "private, reliable, human-led",
-    linkText: "View All Vehicles",
-    cards: [
-      {
-        image: "/images/vehicle-limousine.jpg",
-        alt: "Luxury Private Limousine Sedan",
-        category: "First Class Sedan",
-        title: "Luxury Private Limousine",
-        features: [
-          "Professional Chauffeur",
-          "Coordinated Arrival Handling",
-          "Concierge Support on Request",
-        ],
-        price: "$120",
-        pricePrefix: "starting from",
-        titleSize: "sm",
-        grayscale: "20",
-      },
-      {
-        image: "/images/vehicle-suv.jpg",
-        alt: "Premium SUV Luxury Travel",
-        category: "All-Terrain Luxury",
-        title: "Premium SUV",
-        features: [
-          "Priority Pick-up Reliability",
-          "Ample Luggage Capacity",
-          "Executive Comfort Standards",
-        ],
-        price: "$180",
-        pricePrefix: "starting from",
-        titleSize: "sm",
-        grayscale: "20",
-      },
-      {
-        image: "/images/vehicle-van.jpg",
-        alt: "VIP Executive Van Interior",
-        category: "Group Excellence",
-        title: "VIP Executive Van",
-        features: [
-          "Group Transfer Coordination",
-          "Flexible Multi-stop Routing",
-          "Human Oversight at Every Stage",
-        ],
-        price: "$250",
-        pricePrefix: "starting from",
-        titleSize: "sm",
-        grayscale: "20",
-      },
-    ],
-  },
-};
-
 interface DestinationsSectionProps {
   activeTab: TabId;
 }
@@ -166,6 +32,137 @@ interface DestinationsSectionProps {
 export default function DestinationsSection({
   activeTab,
 }: DestinationsSectionProps) {
+  const t = useTranslations('home');
+
+  const sectionData: Record<TabId, SectionConfig> = {
+    excursions: {
+      label: t('destSuperTitle'),
+      heading: t('destTitle'),
+      subheading: t('destSubtitle'),
+      linkText: t('destCta'),
+      cards: [
+        {
+          image: "/images/hurghada.jpg",
+          alt: t('destHurghada'),
+          category: t('destRedSea'),
+          title: t('destHurghada'),
+          description: t('destHurghadaDesc'),
+          price: "$299",
+          grayscale: "30",
+        },
+        {
+          image: "/images/marsa-alam.jpg",
+          alt: t('destMarsaAlam'),
+          category: t('destNature'),
+          title: t('destMarsaAlam'),
+          description: t('destMarsaAlamDesc'),
+          price: "$450",
+          grayscale: "30",
+        },
+        {
+          image: "/images/cairo.jpg",
+          alt: t('destCairo'),
+          category: t('destHistoric'),
+          title: t('destCairo'),
+          description: t('destCairoDesc'),
+          price: "$1,200",
+          grayscale: "30",
+        },
+      ],
+    },
+    hotels: {
+      label: t('hotelSuperTitle'),
+      heading: t('hotelTitle'),
+      subheading: t('hotelSubtitle'),
+      linkText: t('hotelCta'),
+      cards: [
+        {
+          image: "/images/hotel-four-seasons.jpg",
+          alt: t('hotelSharmAlt'),
+          category: t('hotelSharm'),
+          title: t('hotelSharmName'),
+          description: t('hotelSharmDesc'),
+          price: "$420",
+          titleSize: "sm",
+          grayscale: "20",
+        },
+        {
+          image: "/images/hotel-marriott.jpg",
+          alt: t('hotelCairoAlt'),
+          category: t('hotelCairo'),
+          title: t('hotelCairoName'),
+          description: t('hotelCairoDesc'),
+          price: "$380",
+          titleSize: "sm",
+          grayscale: "20",
+        },
+        {
+          image: "/images/hotel-steigenberger.jpg",
+          alt: t('hotelHurghadaAlt'),
+          category: t('hotelHurghada'),
+          title: t('hotelHurghadaName'),
+          description: t('hotelHurghadaDesc'),
+          price: "$265",
+          titleSize: "sm",
+          grayscale: "20",
+        },
+      ],
+    },
+    transfers: {
+      label: t('transferSuperTitle'),
+      heading: t('transferTitle'),
+      subheading: t('transferSubtitle'),
+      linkText: t('transferCta'),
+      cards: [
+        {
+          image: "/images/vehicle-limousine.jpg",
+          alt: t('transferSedanAlt'),
+          category: t('transferSedan'),
+          title: t('transferSedanName'),
+          features: [
+            t('transferSedanF1'),
+            t('transferSedanF2'),
+            t('transferSedanF3'),
+          ],
+          price: "$120",
+          pricePrefix: t('startingFrom'),
+          titleSize: "sm",
+          grayscale: "20",
+        },
+        {
+          image: "/images/vehicle-suv.jpg",
+          alt: t('transferSuvAlt'),
+          category: t('transferSuv'),
+          title: t('transferSuvName'),
+          features: [
+            t('transferSuvF1'),
+            t('transferSuvF2'),
+            t('transferSuvF3'),
+          ],
+          price: "$180",
+          pricePrefix: t('startingFrom'),
+          titleSize: "sm",
+          grayscale: "20",
+        },
+        {
+          image: "/images/vehicle-van.jpg",
+          alt: t('transferVanAlt'),
+          category: t('transferVan'),
+          title: t('transferVanName'),
+          features: [
+            t('transferVanF1'),
+            t('transferVanF2'),
+            t('transferVanF3'),
+          ],
+          price: "$250",
+          pricePrefix: t('startingFrom'),
+          titleSize: "sm",
+          grayscale: "20",
+        },
+      ],
+    },
+  };
+
   const section = sectionData[activeTab];
 
   return (

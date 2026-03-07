@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import { Hotel, Ship, Car, Calendar, MapPin, Users, ArrowRight } from 'lucide-react';
 import Navbar from '@/components/Navbar';
@@ -16,6 +17,7 @@ import { formatPrice } from '@/lib/utils/format';
 type Tab = 'hotels' | 'tours' | 'transfers';
 
 export default function BookingsPage() {
+  const t = useTranslations('dashboard');
   const [activeTab, setActiveTab] = useState<Tab>('hotels');
   const [hotelPage, setHotelPage] = useState(1);
   const [tourPage, setTourPage] = useState(1);
@@ -25,9 +27,9 @@ export default function BookingsPage() {
   const tourQuery = useTourBookings(`page=${tourPage}`, activeTab === 'tours');
   const transferQuery = useTransferBookings(`page=${transferPage}`, activeTab === 'transfers');
 
-  useQueryErrorToast(!!hotelQuery.error, hotelQuery.error, 'Failed to load hotel bookings');
-  useQueryErrorToast(!!tourQuery.error, tourQuery.error, 'Failed to load tour bookings');
-  useQueryErrorToast(!!transferQuery.error, transferQuery.error, 'Failed to load transfer bookings');
+  useQueryErrorToast(!!hotelQuery.error, hotelQuery.error, t('failedLoadHotels'));
+  useQueryErrorToast(!!tourQuery.error, tourQuery.error, t('failedLoadTours'));
+  useQueryErrorToast(!!transferQuery.error, transferQuery.error, t('failedLoadTransfers'));
 
   const hotelBookings = hotelQuery.data?.data ?? [];
   const tourBookings = tourQuery.data?.data ?? [];
@@ -40,9 +42,9 @@ export default function BookingsPage() {
   const loading = activeTab === 'hotels' ? hotelQuery.isLoading : activeTab === 'tours' ? tourQuery.isLoading : transferQuery.isLoading;
 
   const tabs: { key: Tab; label: string; icon: typeof Hotel }[] = [
-    { key: 'hotels', label: 'Hotels', icon: Hotel },
-    { key: 'tours', label: 'Tours', icon: Ship },
-    { key: 'transfers', label: 'Transfers', icon: Car },
+    { key: 'hotels', label: t('hotels'), icon: Hotel },
+    { key: 'tours', label: t('tours'), icon: Ship },
+    { key: 'transfers', label: t('transfers'), icon: Car },
   ];
 
   return (
@@ -50,7 +52,7 @@ export default function BookingsPage() {
       <Navbar />
       <DashboardLayout>
         <div>
-          <h1 className="text-2xl font-serif text-[var(--text-primary)] mb-6">My Bookings</h1>
+          <h1 className="text-2xl font-serif text-[var(--text-primary)] mb-6">{t('myBookings')}</h1>
 
           {/* Tabs */}
           <div className="flex overflow-x-auto border-b border-[var(--line-soft)] mb-8">
@@ -81,7 +83,7 @@ export default function BookingsPage() {
               {/* Hotel bookings */}
               {activeTab === 'hotels' && (
                 hotelBookings.length === 0 ? (
-                  <EmptyState title="No Hotel Bookings" description="Book a hotel to see your reservations here." />
+                  <EmptyState title={t('noHotelBookings')} description={t('noHotelBookingsDesc')} />
                 ) : (
                   <>
                     <div className="space-y-4">
@@ -121,7 +123,7 @@ export default function BookingsPage() {
               {/* Tour bookings */}
               {activeTab === 'tours' && (
                 tourBookings.length === 0 ? (
-                  <EmptyState title="No Tour Bookings" description="Book a tour to see your reservations here." />
+                  <EmptyState title={t('noTourBookings')} description={t('noTourBookingsDesc')} />
                 ) : (
                   <>
                     <div className="space-y-4">
@@ -166,7 +168,7 @@ export default function BookingsPage() {
               {/* Transfer bookings */}
               {activeTab === 'transfers' && (
                 transferBookings.length === 0 ? (
-                  <EmptyState title="No Transfer Bookings" description="Book a transfer to see your reservations here." />
+                  <EmptyState title={t('noTransferBookings')} description={t('noTransferBookingsDesc')} />
                 ) : (
                   <>
                     <div className="space-y-4">

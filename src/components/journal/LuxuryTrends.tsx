@@ -1,39 +1,41 @@
 import Image from 'next/image';
 import { Leaf, UtensilsCrossed, Plane, Sparkles } from 'lucide-react';
-
-const trendCards = [
-  {
-    icon: Plane,
-    title: 'Private Aviation: The New Standard',
-    body: 'Why exclusivity and security are driving growth in private global mobility.',
-    image: '/images/vehicle-limousine.jpg',
-  },
-  {
-    icon: Leaf,
-    title: 'Ultra-Eco Estates',
-    body: 'The rise of carbon-negative retreats offering luxury without compromise.',
-    image: '/images/hotel-steigenberger.jpg',
-  },
-  {
-    icon: UtensilsCrossed,
-    title: 'Regenerative Fine Dining',
-    body: 'How Michelin-level chefs are leading farm-to-table evolution on remote estates.',
-    image: '/images/hotel-four-seasons.jpg',
-  },
-  {
-    icon: Sparkles,
-    title: 'Longevity Retreats',
-    body: 'Medical-grade wellness integrated into bespoke travel itineraries.',
-    image: '/images/marsa-alam.jpg',
-  },
-];
+import { useTranslations } from 'next-intl';
 
 export default function LuxuryTrends() {
+  const t = useTranslations('journal');
+
+  const trendCards = [
+    {
+      icon: Plane,
+      title: t('trend1Title'),
+      body: t('trend1Desc'),
+      image: '/images/vehicle-limousine.jpg',
+    },
+    {
+      icon: Leaf,
+      title: t('trend2Title'),
+      body: t('trend2Desc'),
+      image: '/images/hotel-steigenberger.jpg',
+    },
+    {
+      icon: UtensilsCrossed,
+      title: t('trend3Title'),
+      body: t('trend3Desc'),
+      image: '/images/hotel-four-seasons.jpg',
+    },
+    {
+      icon: Sparkles,
+      title: t('trend4Title'),
+      body: t('trend4Desc'),
+      image: '/images/marsa-alam.jpg',
+    },
+  ];
   return (
     <section className="bg-[var(--surface-page)] px-6 pb-20">
       <div className="mx-auto max-w-7xl">
         <div className="border-b border-[var(--line-soft)] pb-5">
-          <h3 className="text-4xl md:text-5xl font-serif italic">Luxury Travel Trends</h3>
+          <h3 className="text-4xl md:text-5xl font-serif italic">{t('trendsTitle')}</h3>
         </div>
 
         <div className="mt-8 grid gap-4 md:grid-cols-2">

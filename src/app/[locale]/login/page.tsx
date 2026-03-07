@@ -12,8 +12,12 @@ import { Input, Button, Spinner } from '@/components/ui';
 import { useFormValidation } from '@/hooks/useFormValidation';
 import { loginSchema } from '@/lib/validation/schemas';
 import AkazaLogo from '@/components/AkazaLogo';
+import { useTranslations, useLocale } from 'next-intl';
+import type { Locale } from '@/i18n/config';
 
 function LoginForm() {
+  const t = useTranslations('auth');
+  const currentLocale = useLocale() as Locale;
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect') || '/';
@@ -33,16 +37,18 @@ function LoginForm() {
     try {
       const authenticatedUser = await login(email, password);
       toast('success', 'Welcome back!');
+      const userLocale = authenticatedUser.locale || currentLocale;
+      const localeOpt = userLocale !== currentLocale ? { locale: userLocale as Locale } : undefined;
       const isAdminPath = redirect.startsWith('/admin');
       const isCustomerPath = redirect.startsWith('/dashboard') || redirect.startsWith('/hotels/book') || redirect.startsWith('/tours/book') || redirect.startsWith('/transfers/book');
       if (authenticatedUser.type !== 'customer') {
         router.push('/admin');
       } else if (isAdminPath) {
-        router.push('/dashboard/bookings');
+        router.push('/dashboard/bookings', localeOpt);
       } else if (isCustomerPath || redirect === '/') {
-        router.push(redirect);
+        router.push(redirect, localeOpt);
       } else {
-        router.push('/dashboard/bookings');
+        router.push('/dashboard/bookings', localeOpt);
       }
     } catch (err) {
       if (err instanceof ApiError) {
@@ -56,15 +62,15 @@ function LoginForm() {
   return (
     <>
       <div className="mb-8">
-        <h1 className="text-3xl font-serif text-[var(--text-primary)] mb-2">Welcome Back</h1>
-        <p className="text-sm text-[var(--text-secondary)] font-sans">Sign in to manage your bookings</p>
+        <h1 className="text-3xl font-serif text-[var(--text-primary)] mb-2">{t('welcomeBack')}</h1>
+        <p className="text-sm text-[var(--text-secondary)] font-sans">{t('signInSubtitle')}</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <Input
-          label="Email Address"
+          label={t('emailAddress')}
           type="email"
-          placeholder="your@email.com"
+          placeholder={t('emailPlaceholder')}
           value={email}
           onChange={(e) => { setEmail(e.target.value); clearError('email'); }}
           error={errors.email}
@@ -73,9 +79,9 @@ function LoginForm() {
         />
 
         <Input
-          label="Password"
+          label={t('password')}
           type="password"
-          placeholder="Enter your password"
+          placeholder={t('passwordPlaceholder')}
           value={password}
           onChange={(e) => { setPassword(e.target.value); clearError('password'); }}
           error={errors.password}
@@ -86,10 +92,10 @@ function LoginForm() {
         <div className="flex items-center justify-between">
           <label className="flex items-center gap-2 cursor-pointer">
             <input type="checkbox" className="accent-primary h-4 w-4 rounded border-[var(--line-strong)] bg-transparent" />
-            <span className="text-xs text-[var(--text-secondary)] font-sans">Remember me</span>
+            <span className="text-xs text-[var(--text-secondary)] font-sans">{t('rememberMe')}</span>
           </label>
           <Link href="/forgot-password" className="text-xs text-primary hover:text-primary-dark transition-colors font-sans">
-            Forgot password?
+            {t('forgotPasswordLink')}
           </Link>
         </div>
 
@@ -100,15 +106,15 @@ function LoginForm() {
           loading={loading}
           className="w-full"
         >
-          Sign In
+          {t('signIn')}
         </Button>
       </form>
 
       <div className="mt-8 pt-6 border-t border-[var(--line-soft)] text-center">
         <p className="text-sm text-[var(--text-muted)] font-sans">
-          Don&apos;t have an account?{' '}
+          {t('noAccount')}{' '}
           <Link href="/register" className="text-primary hover:text-primary-dark transition-colors font-medium">
-            Create one
+            {t('createOne')}
           </Link>
         </p>
       </div>

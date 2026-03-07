@@ -2,22 +2,26 @@
 
 import { useState, type FormEvent } from 'react';
 import { ArrowRight, ChevronDown } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useToast } from '@/components/ui/Toast';
 import { PhoneInput, type E164Number } from '@/components/ui';
 import { validatePhone } from '@/lib/validation/phone';
 import { useFormValidation } from '@/hooks/useFormValidation';
 import { contactSchema } from '@/lib/validation/schemas/contact';
 
-const destinations = [
-  'Cairo & Giza',
-  'Red Sea & Hurghada',
-  'Luxor & Aswan',
-  'Marsa Alam',
-  'Sharm El Sheikh',
-  'Multi-Destination Journey',
+type DestinationKey = 'cairoGiza' | 'redSeaHurghada' | 'luxorAswan' | 'marsaAlam' | 'sharmElSheikh' | 'multiDestination';
+
+const destinationKeys: DestinationKey[] = [
+  'cairoGiza',
+  'redSeaHurghada',
+  'luxorAswan',
+  'marsaAlam',
+  'sharmElSheikh',
+  'multiDestination',
 ];
 
 export default function ContactForm() {
+  const t = useTranslations('contact');
   const { toast } = useToast();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -49,35 +53,35 @@ export default function ContactForm() {
       data-reveal
       className="reveal-item border border-[var(--line-soft)] bg-[var(--contact-form-surface)] p-7 shadow-[var(--contact-form-shadow)] md:p-8"
     >
-      <h2 className="text-4xl font-serif md:text-5xl">Inquiry Form</h2>
+      <h2 className="text-4xl font-serif md:text-5xl">{t('formTitle')}</h2>
       <div className="mt-4 h-px w-20 bg-gradient-to-r from-primary to-primary-gradient-end" />
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-8">
         <div className="grid gap-x-6 gap-y-8 md:grid-cols-2">
           <Field
-            label="Full Name"
-            placeholder="Jonathan Doe"
+            label={t('fullName')}
+            placeholder={t('namePlaceholder')}
             value={name}
             onChange={(v) => { setName(v); clearError('name'); }}
             error={errors.name}
           />
           <Field
-            label="Email Address"
+            label={t('emailAddress')}
             type="email"
-            placeholder="concierge@example.com"
+            placeholder={t('emailPlaceholder')}
             value={email}
             onChange={(v) => { setEmail(v); clearError('email'); }}
             error={errors.email}
           />
           <PhoneInput
-            label="Phone Number"
+            label={t('phoneNumber')}
             value={phone}
             onChange={setPhone}
           />
 
           <div>
             <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--contact-form-label)]">
-              Destination Of Interest
+              {t('destinationInterest')}
             </label>
             <div className="relative mt-2">
               <select
@@ -88,11 +92,11 @@ export default function ContactForm() {
                 } outline-none transition-colors focus:border-primary`}
               >
                 <option value="" disabled>
-                  Select a destination
+                  {t('selectDestination')}
                 </option>
-                {destinations.map((item) => (
-                  <option key={item} value={item}>
-                    {item}
+                {destinationKeys.map((key) => (
+                  <option key={key} value={t(key)}>
+                    {t(key)}
                   </option>
                 ))}
               </select>
@@ -109,13 +113,13 @@ export default function ContactForm() {
 
         <div>
           <label className="text-[10px] font-semibold uppercase tracking-[0.22em] text-[var(--contact-form-label)]">
-            Your Vision
+            {t('yourVision')}
           </label>
           <textarea
             rows={4}
             value={vision}
             onChange={(e) => { setVision(e.target.value); clearError('vision'); }}
-            placeholder="How can we design your unforgettable journey?"
+            placeholder={t('visionPlaceholder')}
             className="mt-2 w-full resize-none border-b border-[var(--contact-form-line)] bg-transparent py-2 text-base text-[var(--contact-form-text)] placeholder-[var(--contact-form-placeholder)] outline-none transition-colors focus:border-primary"
           />
           {errors.vision && (
@@ -129,7 +133,7 @@ export default function ContactForm() {
             disabled={sending}
             className="inline-flex h-12 items-center gap-2 border border-primary/65 bg-primary px-7 text-xs font-bold uppercase tracking-[0.2em] text-white transition-all hover:-translate-y-0.5 hover:bg-primary-gradient-end disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {sending ? 'Submitting...' : 'Submit Inquiry'}
+            {sending ? t('submitting') : t('submitInquiry')}
             <ArrowRight size={13} />
           </button>
         </div>

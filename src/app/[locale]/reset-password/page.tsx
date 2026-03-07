@@ -12,8 +12,10 @@ import { Input, Button, Spinner } from '@/components/ui';
 import { useFormValidation } from '@/hooks/useFormValidation';
 import { resetPasswordSchema } from '@/lib/validation/schemas';
 import AkazaLogo from '@/components/AkazaLogo';
+import { useTranslations } from 'next-intl';
 
 function ResetPasswordForm() {
+  const t = useTranslations('auth');
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token') || '';
@@ -62,11 +64,11 @@ function ResetPasswordForm() {
         <div className="flex justify-center mb-6">
           <CheckCircle size={48} strokeWidth={1} className="text-emerald-400" />
         </div>
-        <h1 className="text-2xl font-serif text-[var(--text-primary)] mb-3">Password Reset</h1>
+        <h1 className="text-2xl font-serif text-[var(--text-primary)] mb-3">{t('passwordResetTitle')}</h1>
         <p className="text-sm text-[var(--text-muted)] font-sans leading-relaxed mb-2">
-          Your password has been successfully reset.
+          {t('passwordResetSuccess')}
         </p>
-        <p className="text-xs text-[var(--text-muted)] font-sans">Redirecting to login...</p>
+        <p className="text-xs text-[var(--text-muted)] font-sans">{t('redirectingToLogin')}</p>
       </div>
     );
   }
@@ -74,15 +76,15 @@ function ResetPasswordForm() {
   return (
     <>
       <div className="mb-8">
-        <h1 className="text-3xl font-serif text-[var(--text-primary)] mb-2">New Password</h1>
-        <p className="text-sm text-[var(--text-muted)] font-sans">Choose a strong password for your account</p>
+        <h1 className="text-3xl font-serif text-[var(--text-primary)] mb-2">{t('newPassword')}</h1>
+        <p className="text-sm text-[var(--text-muted)] font-sans">{t('newPasswordSubtitle')}</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <Input
-          label="New Password"
+          label={t('newPassword')}
           type="password"
-          placeholder="Minimum 8 characters"
+          placeholder={t('minChars')}
           value={form.password}
           onChange={(e) => update('password', e.target.value)}
           error={errors.password}
@@ -90,9 +92,9 @@ function ResetPasswordForm() {
         />
 
         <Input
-          label="Confirm New Password"
+          label={t('confirmNewPassword')}
           type="password"
-          placeholder="Repeat your password"
+          placeholder={t('repeatPassword')}
           value={form.password_confirmation}
           onChange={(e) => update('password_confirmation', e.target.value)}
           error={errors.password_confirmation}
@@ -106,7 +108,7 @@ function ResetPasswordForm() {
           loading={loading}
           className="w-full"
         >
-          Reset Password
+          {t('resetPassword')}
         </Button>
       </form>
 
@@ -115,7 +117,7 @@ function ResetPasswordForm() {
           href="/login"
           className="text-[var(--text-muted)] hover:text-primary text-xs uppercase tracking-widest font-medium font-sans transition-colors"
         >
-          Back to Login
+          {t('backToLogin')}
         </Link>
       </div>
     </>

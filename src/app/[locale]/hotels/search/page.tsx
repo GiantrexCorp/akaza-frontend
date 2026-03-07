@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect, useRef, Suspense, type FormEvent } from 'react';
+import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/navigation';
 import { useSearchParams } from 'next/navigation';
 import { MapPin, Users, Search, LayoutGrid, List, X } from 'lucide-react';
@@ -18,13 +19,6 @@ import { formatPrice } from '@/lib/utils/format';
 
 type SortOption = 'price_asc' | 'price_desc' | 'stars_desc' | 'name_asc';
 
-const SORT_OPTIONS = [
-  { value: 'price_asc', label: 'Price: Low to High' },
-  { value: 'price_desc', label: 'Price: High to Low' },
-  { value: 'stars_desc', label: 'Stars: High to Low' },
-  { value: 'name_asc', label: 'Name: A–Z' },
-];
-
 function parseStars(categoryName: string): number {
   const match = categoryName.match(/(\d)/);
   return match ? parseInt(match[1], 10) : 0;
@@ -35,8 +29,17 @@ function hasFreeCancellation(hotel: HotelSearchResult): boolean {
 }
 
 function HotelSearchContent() {
+  const ht = useTranslations('hotels');
+  const ct = useTranslations('common');
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  const SORT_OPTIONS = [
+    { value: 'price_asc', label: ht('sortLowHigh') },
+    { value: 'price_desc', label: ht('sortHighLow') },
+    { value: 'stars_desc', label: ht('sortStars') },
+    { value: 'name_asc', label: ht('sortName') },
+  ];
 
   const [destinationCode, setDestinationCode] = useState(searchParams.get('destination') || '');
   const [destinationName, setDestinationName] = useState(searchParams.get('destinationName') || '');
@@ -193,15 +196,15 @@ function HotelSearchContent() {
       {/* Search Bar */}
       <section className="pt-32 pb-8 bg-[var(--surface-page)]">
         <div className="max-w-7xl mx-auto px-6">
-          <h1 className="text-4xl md:text-5xl font-serif text-[var(--text-primary)] mb-2">Find Your Hotel</h1>
-          <p className="text-sm text-[var(--text-muted)] font-sans mb-8">Search luxury hotels across Egypt and beyond</p>
+          <h1 className="text-4xl md:text-5xl font-serif text-[var(--text-primary)] mb-2">{ht('findYourHotel')}</h1>
+          <p className="text-sm text-[var(--text-muted)] font-sans mb-8">{ht('searchSubtitle')}</p>
 
           <form onSubmit={handleSearch} className="bg-[var(--surface-card)] border border-[var(--line-soft)] p-6 shadow-xl">
             <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
               <div className="md:col-span-2">
                 <Autocomplete
-                  label="Destination"
-                  placeholder="Search city or destination"
+                  label={ht('destination')}
+                  placeholder={ht('destPlaceholder')}
                   icon={<MapPin size={18} />}
                   size="sm"
                   query={destSearch.query}
@@ -222,7 +225,7 @@ function HotelSearchContent() {
               </div>
               <div>
                 <DatePicker
-                  label="Check-in"
+                  label={ht('checkIn')}
                   value={checkIn}
                   onChange={setCheckIn}
                   minDate={new Date().toISOString().split('T')[0]}
@@ -231,7 +234,7 @@ function HotelSearchContent() {
               </div>
               <div>
                 <DatePicker
-                  label="Check-out"
+                  label={ht('checkOut')}
                   value={checkOut}
                   onChange={setCheckOut}
                   minDate={checkIn || new Date().toISOString().split('T')[0]}
@@ -240,7 +243,7 @@ function HotelSearchContent() {
               </div>
               <div>
                 <Input
-                  label="Adults"
+                  label={ct('adults')}
                   type="number"
                   min="1"
                   max="6"
@@ -253,7 +256,7 @@ function HotelSearchContent() {
               <div>
                 <Button type="submit" variant="primary" loading={searchMutation.isPending} className="w-full h-[42px]" size="sm">
                   <Search size={14} />
-                  Search
+                  {ct('search')}
                 </Button>
               </div>
             </div>
@@ -267,12 +270,12 @@ function HotelSearchContent() {
           {searchMutation.isPending ? (
             <div className="py-20">
               <Spinner size="lg" />
-              <p className="text-center text-sm text-[var(--text-muted)] font-sans mt-4">Searching hotels...</p>
+              <p className="text-center text-sm text-[var(--text-muted)] font-sans mt-4">{ht('searchingHotels')}</p>
             </div>
           ) : searched && results.length === 0 ? (
             <EmptyState
-              title="No Hotels Found"
-              description="Try adjusting your search criteria or destination."
+              title={ht('noHotels')}
+              description={ht('noHotelsDesc')}
             />
           ) : results.length > 0 ? (
             <>
@@ -283,7 +286,7 @@ function HotelSearchContent() {
                   <div className="w-48">
                     <Select
                       size="sm"
-                      label="Sort by"
+                      label={ct('sortBy')}
                       options={SORT_OPTIONS}
                       value={sortBy}
                       onChange={(e) => { setSortBy(e.target.value as SortOption); setCurrentPage(1); }}
@@ -293,7 +296,7 @@ function HotelSearchContent() {
                   {/* Star Rating Pills */}
                   {availableStars.length > 0 && (
                     <div className="flex items-center gap-2">
-                      <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans">Stars</span>
+                      <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans">{ct('stars')}</span>
                       {availableStars.map((star) => (
                         <button
                           key={star}
@@ -314,7 +317,7 @@ function HotelSearchContent() {
                   {/* Board Type Pills */}
                   {availableBoards.length > 0 && (
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans">Board</span>
+                      <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans">{ct('board')}</span>
                       {availableBoards.map((board) => (
                         <button
                           key={board}
@@ -334,12 +337,12 @@ function HotelSearchContent() {
 
                   {/* Price Range */}
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans">Price</span>
+                    <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans">{ct('price')}</span>
                     <div className="w-24">
                       <Input
                         size="sm"
                         type="number"
-                        placeholder="Min"
+                        placeholder={ct('min')}
                         value={minPrice}
                         onChange={(e) => { setMinPrice(e.target.value); setCurrentPage(1); }}
                       />
@@ -349,7 +352,7 @@ function HotelSearchContent() {
                       <Input
                         size="sm"
                         type="number"
-                        placeholder="Max"
+                        placeholder={ct('max')}
                         value={maxPrice}
                         onChange={(e) => { setMaxPrice(e.target.value); setCurrentPage(1); }}
                       />
@@ -358,7 +361,7 @@ function HotelSearchContent() {
 
                   {/* Free Cancellation */}
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans whitespace-nowrap">Free cancellation</span>
+                    <span className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-[0.2em] font-sans whitespace-nowrap">{ct('freeCancel')}</span>
                     <Toggle
                       size="sm"
                       checked={freeCancellation}
@@ -374,7 +377,7 @@ function HotelSearchContent() {
                       className="flex items-center gap-1 px-3 py-1 text-xs font-sans text-primary hover:text-primary-dark transition-colors"
                     >
                       <X size={12} />
-                      Clear all
+                      {ct('clearAll')}
                     </button>
                   )}
                 </div>
@@ -385,11 +388,11 @@ function HotelSearchContent() {
                 <p className="text-sm text-[var(--text-muted)] font-sans">
                   {isFilterActive ? (
                     <>
-                      <span className="text-primary font-bold">{filteredAndSorted.length}</span> of {results.length} hotels
+                      <span className="text-primary font-bold">{filteredAndSorted.length}</span> {ct('of')} {results.length} {ht('ofHotels')}
                     </>
                   ) : (
                     <>
-                      <span className="text-primary font-bold">{results.length}</span> hotels found
+                      <span className="text-primary font-bold">{results.length}</span> {ht('hotelsFound')}
                     </>
                   )}
                 </p>
@@ -412,8 +415,8 @@ function HotelSearchContent() {
               {/* Grid / List */}
               {filteredAndSorted.length === 0 ? (
                 <EmptyState
-                  title="No Matching Hotels"
-                  description="Try adjusting your filters to see more results."
+                  title={ht('noMatchingHotels')}
+                  description={ht('noMatchingDesc')}
                 />
               ) : (
                 <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4'}>

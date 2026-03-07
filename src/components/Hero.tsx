@@ -1,6 +1,8 @@
 import Image from "next/image";
+import { getTranslations } from "next-intl/server";
 
-export default function Hero() {
+export default async function Hero() {
+  const t = await getTranslations('home');
   return (
     <section className="relative min-h-[92vh] pt-40 pb-24 overflow-hidden">
       {/* Background image */}
@@ -22,26 +24,25 @@ export default function Hero() {
       <div className="relative z-10 max-w-7xl mx-auto px-6">
         <div className="max-w-4xl bg-black/20 backdrop-blur-[2px] border border-white/10 p-8 md:p-10">
           <span className="inline-block px-5 py-2 border border-white/35 bg-black/25 backdrop-blur-sm text-xs uppercase tracking-[0.2em] text-primary mb-7 rounded-full font-semibold">
-            Travel, handled.
+            {t('heroTitle1')}
           </span>
 
           <h1 className="text-3xl sm:text-5xl md:text-7xl font-serif text-white mb-7 tracking-[0.01em] leading-[0.95] drop-shadow-[0_10px_28px_rgba(0,0,0,0.55)]">
-            Your journey,
+            {t('heroTitle2')}
             <br />
-            <span className="italic bg-gradient-to-r from-[#B97532] to-[#753F20] bg-clip-text text-transparent">privately handled.</span>
+            <span className="italic bg-gradient-to-r from-[#B97532] to-[#753F20] bg-clip-text text-transparent">{t('heroTitle3')}</span>
           </h1>
 
           <p className="text-lg md:text-[1.25rem] text-white/92 mb-10 max-w-3xl font-normal leading-relaxed tracking-[0.01em] drop-shadow-[0_8px_22px_rgba(0,0,0,0.45)]">
-            Premium travel planning, handpicked stays, VIP transfers, and
-            concierge-level handling across Egypt and key regional destinations.
+            {t('heroSubtitle')}
           </p>
 
           <div className="flex flex-col sm:flex-row items-start gap-4">
             <button className="w-full sm:w-auto bg-primary hover:bg-primary-dark text-white px-10 py-4 text-sm uppercase tracking-[0.2em] transition-all duration-300 min-w-[220px] font-semibold">
-              Plan My Journey
+              {t('heroCta1')}
             </button>
             <button className="w-full sm:w-auto border border-white/35 bg-black/22 backdrop-blur-md text-white px-10 py-4 text-sm uppercase tracking-[0.2em] hover:bg-black/32 transition-all min-w-[220px] font-semibold">
-              Explore Services
+              {t('heroCta2')}
             </button>
           </div>
         </div>

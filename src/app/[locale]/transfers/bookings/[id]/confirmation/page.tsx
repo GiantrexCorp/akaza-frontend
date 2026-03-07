@@ -13,8 +13,12 @@ import { useToast } from '@/components/ui/Toast';
 import { ApiError } from '@/lib/api/client';
 import { ProtectedRoute } from '@/lib/auth';
 import { CUSTOMER_BOOKING_STATUS_COLORS } from '@/lib/constants';
+import { useTranslations } from 'next-intl';
 
 function ConfirmationContent({ id }: { id: string }) {
+  const tt = useTranslations('transfers');
+  const ct = useTranslations('common');
+  const bt = useTranslations('booking');
   const { toast } = useToast();
   const { data: booking, isLoading: loading, error: queryError, refetch } = useTransferBookingDetail(id);
   useQueryErrorToast(!!queryError, queryError, 'Failed to load booking');
@@ -32,7 +36,7 @@ function ConfirmationContent({ id }: { id: string }) {
       a.remove();
       URL.revokeObjectURL(url);
     } catch {
-      toast('error', 'Failed to download voucher');
+      toast('error', ct('failedDownloadVoucher'));
     }
   };
 
@@ -49,10 +53,10 @@ function ConfirmationContent({ id }: { id: string }) {
       <div className="pt-36 pb-32 max-w-7xl mx-auto px-6">
         <PageError
           status={error?.status ?? 404}
-          title={error?.status === 404 ? 'Booking Not Found' : undefined}
+          title={error?.status === 404 ? ct('bookingNotFound') : undefined}
           onRetry={() => refetch()}
           backHref="/dashboard/bookings"
-          backLabel="My Bookings"
+          backLabel={ct('myBookings')}
         />
       </div>
     );
@@ -66,8 +70,8 @@ function ConfirmationContent({ id }: { id: string }) {
           <div className="flex justify-center mb-6">
             <CheckCircle size={56} strokeWidth={1} className="text-emerald-400" />
           </div>
-          <h1 className="text-3xl md:text-4xl font-serif text-[var(--text-primary)] mb-3">Transfer Booked</h1>
-          <p className="text-sm text-[var(--text-muted)] font-sans">Your booking reference is</p>
+          <h1 className="text-3xl md:text-4xl font-serif text-[var(--text-primary)] mb-3">{tt('submitted')}</h1>
+          <p className="text-sm text-[var(--text-muted)] font-sans">{tt('yourRefIs')}</p>
           <p className="text-2xl font-serif text-primary mt-2">{booking.booking_reference}</p>
         </div>
 
@@ -75,7 +79,7 @@ function ConfirmationContent({ id }: { id: string }) {
         <div className="bg-[var(--surface-card)] border border-[var(--line-soft)] divide-y divide-[var(--line-soft)]">
           {/* Status */}
           <div className="p-6 flex items-center justify-between">
-            <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans">Status</p>
+            <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans">{ct('status')}</p>
             <Badge label={booking.status_label} color={CUSTOMER_BOOKING_STATUS_COLORS[booking.status] || 'gray'} />
           </div>
 
@@ -85,7 +89,7 @@ function ConfirmationContent({ id }: { id: string }) {
               <MapPin size={16} className="text-primary shrink-0 mt-0.5" />
               <div>
                 <p className="text-lg font-serif text-[var(--text-primary)]">{booking.pickup_location}</p>
-                <p className="text-xs text-[var(--text-muted)] font-sans mt-0.5">to {booking.dropoff_location}</p>
+                <p className="text-xs text-[var(--text-muted)] font-sans mt-0.5">{ct('to')} {booking.dropoff_location}</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
@@ -106,16 +110,16 @@ function ConfirmationContent({ id }: { id: string }) {
             </div>
             <div className="flex items-start gap-3">
               <Users size={16} className="text-primary shrink-0 mt-0.5" />
-              <p className="text-sm text-[var(--text-secondary)] font-sans">{booking.passengers} passenger{booking.passengers > 1 ? 's' : ''}</p>
+              <p className="text-sm text-[var(--text-secondary)] font-sans">{booking.passengers} {booking.passengers > 1 ? ct('passengers') : ct('passenger')}</p>
             </div>
             <div className="flex items-start gap-3">
               <Briefcase size={16} className="text-primary shrink-0 mt-0.5" />
-              <p className="text-sm text-[var(--text-secondary)] font-sans">{booking.luggage_count} bag{booking.luggage_count !== 1 ? 's' : ''}</p>
+              <p className="text-sm text-[var(--text-secondary)] font-sans">{booking.luggage_count} {booking.luggage_count !== 1 ? ct('bags') : ct('bag')}</p>
             </div>
             {booking.flight_number && (
               <div className="flex items-start gap-3">
                 <Plane size={16} className="text-primary shrink-0 mt-0.5" />
-                <p className="text-sm text-[var(--text-secondary)] font-sans">Flight {booking.flight_number}</p>
+                <p className="text-sm text-[var(--text-secondary)] font-sans">{ct('flight')} {booking.flight_number}</p>
               </div>
             )}
           </div>
@@ -123,14 +127,14 @@ function ConfirmationContent({ id }: { id: string }) {
           {/* Special requests */}
           {booking.special_requests && (
             <div className="p-6">
-              <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-2">Special Requests</p>
+              <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-2">{bt('specialRequests')}</p>
               <p className="text-sm text-[var(--text-secondary)] font-sans">{booking.special_requests}</p>
             </div>
           )}
 
           {/* Price */}
           <div className="p-6 flex items-end justify-between">
-            <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans">Total</p>
+            <p className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans">{ct('total')}</p>
             <p className="text-2xl font-serif text-[var(--text-primary)]">{booking.formatted_price}</p>
           </div>
         </div>
@@ -139,12 +143,12 @@ function ConfirmationContent({ id }: { id: string }) {
         <div className="flex flex-col sm:flex-row gap-4 mt-8">
           {booking.voucher_path && (
             <Button variant="outline" icon={<Download size={14} />} onClick={handleDownloadVoucher} className="flex-1">
-              Download Voucher
+              {bt('downloadVoucher')}
             </Button>
           )}
           <Link href="/dashboard/bookings" className="flex-1">
             <Button variant="ghost" icon={<ArrowRight size={14} />} className="w-full">
-              My Bookings
+              {ct('myBookings')}
             </Button>
           </Link>
         </div>

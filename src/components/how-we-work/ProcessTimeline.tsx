@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { ClipboardList, PenTool, BadgeCheck, Compass, Handshake } from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
 
 type ProcessStep = {
   number: string;
@@ -10,64 +11,60 @@ type ProcessStep = {
   icon: React.ComponentType<{ size?: number; className?: string }>;
 };
 
-const steps: ProcessStep[] = [
-  {
-    number: '01',
-    title: 'Initial Consultation',
-    description:
-      'We begin with a focused discovery to understand your priorities, preferences, and non-negotiables. Every journey starts with clarity.',
-    image: '/images/hotel-marriott.jpg',
-    alt: 'Consultation over coffee',
-    icon: ClipboardList,
-  },
-  {
-    number: '02',
-    title: 'Custom Design',
-    description:
-      'Our strategists build a tailored itinerary with curated routes, premium stays, private experiences, and seamless transitions.',
-    image: '/images/map-egypt.jpg',
-    alt: 'Handwritten planning notes',
-    icon: PenTool,
-  },
-  {
-    number: '03',
-    title: 'Confirmation & Preparation',
-    description:
-      'Once approved, we finalize logistics, confirm vendors, and prepare every operational detail before your departure.',
-    image: '/images/hotel-four-seasons.jpg',
-    alt: 'Prepared travel documents',
-    icon: BadgeCheck,
-  },
-  {
-    number: '04',
-    title: 'In-Trip Handling',
-    description:
-      'During the journey, our team remains on standby for proactive oversight, smooth adjustments, and concierge-level support.',
-    image: '/images/vehicle-suv.jpg',
-    alt: 'Vehicle ready for route support',
-    icon: Compass,
-  },
-  {
-    number: '05',
-    title: 'Post-Travel Follow-Up',
-    description:
-      'We review your experience, capture insights, and prepare refined recommendations for your next chapter.',
-    image: '/images/marsa-alam.jpg',
-    alt: 'Post-journey review',
-    icon: Handshake,
-  },
-];
+export default async function ProcessTimeline() {
+  const t = await getTranslations('howWeWork');
 
-export default function ProcessTimeline() {
+  const steps: ProcessStep[] = [
+    {
+      number: '01',
+      title: t('step1Title'),
+      description: t('step1Desc'),
+      image: '/images/hotel-marriott.jpg',
+      alt: 'Consultation over coffee',
+      icon: ClipboardList,
+    },
+    {
+      number: '02',
+      title: t('step2Title'),
+      description: t('step2Desc'),
+      image: '/images/map-egypt.jpg',
+      alt: 'Handwritten planning notes',
+      icon: PenTool,
+    },
+    {
+      number: '03',
+      title: t('step3Title'),
+      description: t('step3Desc'),
+      image: '/images/hotel-four-seasons.jpg',
+      alt: 'Prepared travel documents',
+      icon: BadgeCheck,
+    },
+    {
+      number: '04',
+      title: t('step4Title'),
+      description: t('step4Desc'),
+      image: '/images/vehicle-suv.jpg',
+      alt: 'Vehicle ready for route support',
+      icon: Compass,
+    },
+    {
+      number: '05',
+      title: t('step5Title'),
+      description: t('step5Desc'),
+      image: '/images/marsa-alam.jpg',
+      alt: 'Post-journey review',
+      icon: Handshake,
+    },
+  ];
   return (
     <section id="process-steps" className="bg-[var(--surface-section)] px-6 py-16 md:py-24">
       <div className="mx-auto max-w-7xl">
         <span className="inline-flex items-center rounded-full border border-primary/35 bg-primary/10 px-4 py-2 text-[10px] uppercase tracking-[0.24em] font-semibold text-primary">
-          Our Method
+          {t('timelineTitle')}
         </span>
         <h2 className="mt-6 max-w-4xl text-4xl md:text-6xl font-serif leading-tight text-[var(--text-primary)]">
-          A Signature Five-Step Approach to
-          <span className="italic text-primary"> Global Exploration</span>
+          {t('timelineHeading1')}
+          <span className="italic text-primary"> {t('timelineHeading2')}</span>
         </h2>
 
         <div className="mt-10">

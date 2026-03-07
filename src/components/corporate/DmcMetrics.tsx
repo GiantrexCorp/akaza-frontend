@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
+import { useTranslations } from 'next-intl';
 
 type Metric = {
   key: string;
@@ -11,12 +12,13 @@ type Metric = {
   label: string;
 };
 
-const metrics: Metric[] = [
-  { key: 'global_hubs', target: 50, suffix: '+', label: 'Global Hubs' },
-  { key: 'local_experts', target: 1500, suffix: '+', label: 'Local Experts' },
-];
-
 export default function DmcMetrics() {
+  const t = useTranslations('corporate');
+
+  const metrics: Metric[] = [
+    { key: 'global_hubs', target: 50, suffix: '+', label: t('globalHubs') },
+    { key: 'local_experts', target: 1500, suffix: '+', label: t('localExperts') },
+  ];
   const [counts, setCounts] = useState<Record<string, number>>(
     Object.fromEntries(metrics.map((m) => [m.key, 0]))
   );
@@ -61,16 +63,15 @@ export default function DmcMetrics() {
       <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
         <div data-reveal className="reveal-item">
           <span className="text-primary text-[11px] uppercase tracking-[0.22em] font-semibold">
-            DMC Collaborations
+            {t('dmcTitle')}
           </span>
           <h3 className="mt-3 text-4xl md:text-6xl font-serif text-[var(--text-primary)]">
-            Local Soul,
+            {t('dmcHeading1')}
             <br />
-            <span className="italic text-primary">Global Standard</span>
+            <span className="italic text-primary">{t('dmcHeading2')}</span>
           </h3>
           <p className="mt-5 max-w-xl text-sm text-[var(--text-muted)] leading-relaxed">
-            As a premium destination management partner, we blend global operational
-            control with deep local intelligence for exceptional outcomes.
+            {t('dmcDesc')}
           </p>
 
           <div className="mt-7 grid grid-cols-2 gap-3 max-w-sm">
@@ -94,7 +95,7 @@ export default function DmcMetrics() {
             href="/destinations"
             className="mt-7 inline-flex items-center justify-center border border-primary/60 bg-primary px-6 py-3 text-xs font-bold uppercase tracking-[0.18em] text-white transition-all hover:bg-primary-gradient-end hover:-translate-y-0.5"
           >
-            Explore Destinations
+            {t('exploreDestinations')}
           </Link>
         </div>
 
