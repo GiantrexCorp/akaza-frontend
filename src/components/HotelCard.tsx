@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import Image from 'next/image';
 import { Star, ArrowRight, Utensils } from 'lucide-react';
 import { useHotelDetails } from '@/hooks/useHotels';

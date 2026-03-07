@@ -1,7 +1,6 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
-import Link from 'next/link';
+import { usePathname, Link } from '@/i18n/navigation';
 import { Hotel, User, Bell, LogOut, ChevronRight } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import type { ReactNode } from 'react';

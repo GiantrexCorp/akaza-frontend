@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { ArrowRight, Building2, Globe2, Sparkles } from 'lucide-react';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { useScrollReveal } from '@/hooks/useScrollReveal';

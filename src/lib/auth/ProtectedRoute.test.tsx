@@ -9,7 +9,7 @@ import ProtectedRoute from './ProtectedRoute';
 
 const mockPush = vi.fn();
 
-vi.mock('next/navigation', () => ({
+vi.mock('@/i18n/navigation', () => ({
   useRouter: () => ({
     push: mockPush,
     replace: vi.fn(),
@@ -18,9 +18,13 @@ vi.mock('next/navigation', () => ({
     refresh: vi.fn(),
     prefetch: vi.fn(),
   }),
-  useSearchParams: () => new URLSearchParams(),
   usePathname: () => '/dashboard',
   redirect: vi.fn(),
+  Link: vi.fn(),
+}));
+
+vi.mock('next/navigation', () => ({
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 function createWrapper() {

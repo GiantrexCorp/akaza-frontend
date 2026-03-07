@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { Link, usePathname } from '@/i18n/navigation';
 import { useAuth } from "@/lib/auth";
 import AkazaLogo from "./AkazaLogo";
 import NavLinks from "./navbar/NavLinks";
@@ -11,6 +10,7 @@ import { useTheme } from "./navbar/ThemeToggle";
 import ThemeToggle from "./navbar/ThemeToggle";
 import UserMenu from "./navbar/UserMenu";
 import MobileMenu from "./navbar/MobileMenu";
+import LanguageSwitcher from "./navbar/LanguageSwitcher";
 
 const navLinks = [
   { label: "Destinations", href: "/destinations" },
@@ -75,6 +75,7 @@ export default function Navbar() {
               </div>
 
               <div className="hidden md:flex items-center gap-3">
+                <LanguageSwitcher isLight={isLight} />
                 <ThemeToggle isLight={isLight} theme={theme} onToggle={toggleTheme} />
 
                 {user ? (

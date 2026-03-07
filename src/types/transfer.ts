@@ -6,7 +6,9 @@ export type { StatusLog, LocaleMap };
 export interface TransferVehicle {
   id: string;
   name: string;
+  translated_name: string;
   description: string;
+  translated_description: string;
   type: VehicleType;
   type_label: string;
   max_passengers: number;
@@ -23,7 +25,9 @@ export interface TransferRoute {
   transfer_type: TransferType;
   transfer_type_label: string;
   pickup_name: string;
+  translated_pickup_name: string;
   dropoff_name: string;
+  translated_dropoff_name: string;
   pickup_code: string | null;
   dropoff_code: string | null;
   status: 'active' | 'inactive';

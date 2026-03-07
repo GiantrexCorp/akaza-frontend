@@ -1,5 +1,6 @@
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import ThemeToggle from './ThemeToggle';
+import LanguageSwitcher from './LanguageSwitcher';
 import type { User } from '@/types/auth';
 
 interface NavLink {
@@ -28,6 +29,7 @@ export default function MobileMenu({ links, isActiveLink, isLight, theme, onTogg
       }`}
     >
       <div className="space-y-4 px-5 py-5">
+        <LanguageSwitcher isLight={isLight} mobile />
         <ThemeToggle isLight={isLight} theme={theme} onToggle={onToggleTheme} mobile />
         {links.map((link) => (
           <Link

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import Image from 'next/image';
 import { MapPin, Clock, Users, Check, X, Calendar, ChevronLeft, ChevronRight, Minus, Plus } from 'lucide-react';
 import { Button, Badge } from '@/components/ui';

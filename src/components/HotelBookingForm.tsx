@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
+import { useRouter, Link } from '@/i18n/navigation';
+import { useSearchParams } from 'next/navigation';
 import { ArrowLeft, User, Mail } from 'lucide-react';
 import { Input, Button, Select, Badge, PhoneInput } from '@/components/ui';
 import type { E164Number } from '@/components/ui';

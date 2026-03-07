@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 import { User, LogOut, LayoutDashboard } from 'lucide-react';
 import type { User as UserType } from '@/types/auth';
 
