@@ -1,8 +1,11 @@
+import type { LocaleMap } from './admin-notification';
+
 export interface Tour {
   id: string;
-  title: string;
+  title: LocaleMap;
   translated_title: string;
-  description: string;
+  description: LocaleMap;
+  translated_description: string;
   slug: string;
   location: string;
   latitude: number;
@@ -100,8 +103,6 @@ export interface StatusLog {
 }
 
 export type TourStatus = 'draft' | 'active' | 'inactive';
-
-import type { LocaleMap } from './admin-notification';
 
 export interface AdminTour {
   id: number;

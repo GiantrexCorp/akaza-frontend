@@ -26,7 +26,7 @@ export default function TourDetailContent({ tour, availabilities }: TourDetailCo
       {/* Hero Gallery */}
       <section className="pt-24 relative">
         <div className="relative h-[50vh] md:h-[60vh] overflow-hidden">
-          {tour.images.length > 0 ? (
+          {tour.images?.length > 0 ? (
             <>
               <Image
                 src={tour.images[currentImageIndex].url}
@@ -98,7 +98,7 @@ export default function TourDetailContent({ tour, availabilities }: TourDetailCo
 
               <div>
                 <h2 className="text-xs font-bold text-[var(--text-muted)] uppercase tracking-[0.3em] font-sans mb-4">About This Tour</h2>
-                <p className="text-[var(--text-secondary)] font-sans leading-relaxed whitespace-pre-line">{tour.description}</p>
+                <p className="text-[var(--text-secondary)] font-sans leading-relaxed whitespace-pre-line">{tour.translated_description}</p>
               </div>
 
               {tour.highlights.length > 0 && (

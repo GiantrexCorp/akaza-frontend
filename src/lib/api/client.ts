@@ -126,7 +126,7 @@ async function request<T>(
       signal,
     });
 
-    if (res.status === 401) handleUnauthorized(res.status);
+    if (res.status === 401 && localStorage.getItem('auth_token')) handleUnauthorized(res.status);
 
     let json: unknown = null;
     try {

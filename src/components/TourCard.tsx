@@ -9,7 +9,7 @@ interface TourCardProps {
 }
 
 export default function TourCard({ tour, formatPrice }: TourCardProps) {
-  const heroImage = tour.images[0];
+  const heroImage = tour.images?.[0] ?? null;
 
   return (
     <Link href={`/tours/${tour.slug}`} className="group block relative h-[520px] overflow-hidden">
