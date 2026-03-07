@@ -15,7 +15,7 @@ interface NavLinksProps {
 
 export default function NavLinks({ links, isActiveLink, isLight, inactiveLinkStyle, activeLinkStyle }: NavLinksProps) {
   return (
-    <div className="hidden md:flex items-center gap-1">
+    <div className="hidden md:flex items-center gap-1 shrink-0">
       {links.map((link) => {
         const isActive = isActiveLink(link.href);
         const isVipLink = link.href === '/#vip';
@@ -23,7 +23,7 @@ export default function NavLinks({ links, isActiveLink, isLight, inactiveLinkSty
           <Link
             key={link.label}
             href={link.href}
-            className={`rounded-full px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.22em] transition-all ${
+            className={`rounded-full px-3 lg:px-4 py-2 text-[10px] lg:text-[11px] font-semibold uppercase tracking-[0.15em] lg:tracking-[0.22em] whitespace-nowrap transition-all ${
               isVipLink
                 ? isActive
                   ? 'text-[var(--nav-vip-text)] bg-black/[0.08] shadow-[inset_0_0_0_1px_rgba(255,210,145,0.72),0_10px_22px_-16px_rgba(216,154,80,0.95)]'

@@ -1,15 +1,16 @@
 'use client';
 
-import { useState, useMemo, useEffect, useRef, Suspense, type FormEvent } from 'react';
+import { useState, useMemo, useEffect, Suspense, type FormEvent } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { MapPin, Users, Search, LayoutGrid, List, X } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import HotelCard from '@/components/HotelCard';
-import { Input, DatePicker, Button, Spinner, Pagination, EmptyState, Autocomplete, Select, Toggle } from '@/components/ui';
-import type { AutocompleteOption } from '@/components/ui';
+import { Input, DateRangePicker, Button, Spinner, Pagination, EmptyState, Autocomplete, Select, Toggle } from '@/components/ui';
+import type { AutocompleteOption, DateRange } from '@/components/ui';
 import { useHotelSearch } from '@/hooks/useHotels';
 import { useDestinationSearch } from '@/hooks/useDestinationSearch';
+import { hotelsApi } from '@/lib/api';
 import { PAGE_SIZE } from '@/lib/constants';
 import { useQueryErrorToast } from '@/hooks/useQueryErrorToast';
 import type { HotelSearchResult } from '@/types/hotel';
@@ -39,8 +40,10 @@ function HotelSearchContent() {
 
   const [destinationCode, setDestinationCode] = useState(searchParams.get('destination') || '');
   const [destinationName, setDestinationName] = useState(searchParams.get('destinationName') || '');
-  const [checkIn, setCheckIn] = useState(searchParams.get('checkIn') || '');
-  const [checkOut, setCheckOut] = useState(searchParams.get('checkOut') || '');
+  const [dates, setDates] = useState<DateRange>({
+    checkIn: searchParams.get('checkIn') || '',
+    checkOut: searchParams.get('checkOut') || '',
+  });
   const [adults, setAdults] = useState(searchParams.get('adults') || '2');
   const [children, setChildren] = useState(searchParams.get('children') || '0');
 
@@ -53,6 +56,7 @@ function HotelSearchContent() {
 
   const [results, setResults] = useState<HotelSearchResult[]>([]);
   const [searched, setSearched] = useState(false);
+  const [isAutoSearching, setIsAutoSearching] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   // Filter & sort state
@@ -153,7 +157,7 @@ function HotelSearchContent() {
 
   const handleSearch = async (e?: FormEvent) => {
     e?.preventDefault();
-    if (!destinationCode || !checkIn || !checkOut) return;
+    if (!destinationCode || !dates.checkIn || !dates.checkOut) return;
 
     setSearched(true);
     setCurrentPage(1);
@@ -161,14 +165,14 @@ function HotelSearchContent() {
     searchMutation.mutate(
       {
         destination: destinationCode,
-        check_in: checkIn,
-        check_out: checkOut,
+        check_in: dates.checkIn,
+        check_out: dates.checkOut,
         occupancies: [{ adults: parseInt(adults), children: parseInt(children) }],
       },
       {
         onSuccess: (data) => {
           setResults(data);
-          const params = new URLSearchParams({ destination: destinationCode, destinationName, checkIn, checkOut, adults, children });
+          const params = new URLSearchParams({ destination: destinationCode, destinationName, checkIn: dates.checkIn, checkOut: dates.checkOut, adults, children });
           router.replace(`/hotels/search?${params.toString()}`, { scroll: false });
         },
         onError: () => {
@@ -178,13 +182,43 @@ function HotelSearchContent() {
     );
   };
 
-  // Auto-search on mount when URL has valid search params
-  const didAutoSearch = useRef(false);
+  // Auto-search on mount when URL has valid search params (direct API call to avoid mutation lifecycle issues during client navigation)
   useEffect(() => {
-    if (!didAutoSearch.current && destinationCode && checkIn && checkOut) {
-      didAutoSearch.current = true;
-      handleSearch();
-    }
+    const dest = searchParams.get('destination');
+    const ci = searchParams.get('checkIn');
+    const co = searchParams.get('checkOut');
+    if (!dest || !ci || !co) return;
+
+    let cancelled = false;
+    setSearched(true);
+    setIsAutoSearching(true);
+    setCurrentPage(1);
+
+    hotelsApi
+      .search({
+        destination: dest,
+        check_in: ci,
+        check_out: co,
+        occupancies: [
+          {
+            adults: parseInt(searchParams.get('adults') || '2'),
+            children: parseInt(searchParams.get('children') || '0'),
+          },
+        ],
+      })
+      .then((data) => {
+        if (!cancelled) setResults(data);
+      })
+      .catch(() => {
+        if (!cancelled) setResults([]);
+      })
+      .finally(() => {
+        if (!cancelled) setIsAutoSearching(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
@@ -196,7 +230,7 @@ function HotelSearchContent() {
           <p className="text-sm text-[var(--text-muted)] font-sans mb-8">Search luxury hotels across Egypt and beyond</p>
 
           <form onSubmit={handleSearch} className="bg-[var(--surface-card)] border border-[var(--line-soft)] p-6 shadow-xl">
-            <div className="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
               <div className="md:col-span-2">
                 <Autocomplete
                   label="Destination"
@@ -220,20 +254,11 @@ function HotelSearchContent() {
                 />
               </div>
               <div>
-                <DatePicker
-                  label="Check-in"
-                  value={checkIn}
-                  onChange={setCheckIn}
+                <DateRangePicker
+                  label="Dates"
+                  value={dates}
+                  onChange={setDates}
                   minDate={new Date().toISOString().split('T')[0]}
-                  size="sm"
-                />
-              </div>
-              <div>
-                <DatePicker
-                  label="Check-out"
-                  value={checkOut}
-                  onChange={setCheckOut}
-                  minDate={checkIn || new Date().toISOString().split('T')[0]}
                   size="sm"
                 />
               </div>
@@ -263,7 +288,7 @@ function HotelSearchContent() {
       {/* Results */}
       <section className="pb-32 bg-[var(--surface-page)]">
         <div className="max-w-7xl mx-auto px-6">
-          {searchMutation.isPending ? (
+          {(searchMutation.isPending || isAutoSearching) ? (
             <div className="py-20">
               <Spinner size="lg" />
               <p className="text-center text-sm text-[var(--text-muted)] font-sans mt-4">Searching hotels...</p>
@@ -417,7 +442,7 @@ function HotelSearchContent() {
               ) : (
                 <div className={viewMode === 'grid' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4'}>
                   {paginatedResults.map((hotel) => (
-                    <HotelCard key={hotel.hotel_code} hotel={hotel} viewMode={viewMode} formatPrice={formatPrice} checkIn={checkIn} checkOut={checkOut} adults={adults} childrenCount={children} />
+                    <HotelCard key={hotel.hotel_code} hotel={hotel} viewMode={viewMode} formatPrice={formatPrice} checkIn={dates.checkIn} checkOut={dates.checkOut} adults={adults} childrenCount={children} />
                   ))}
                 </div>
               )}

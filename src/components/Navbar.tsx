@@ -61,7 +61,7 @@ export default function Navbar() {
           <span className={`pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent ${topAccent} to-transparent`} />
           <div className="px-4 py-3 md:px-6 md:py-4">
             <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-8 md:gap-10">
+              <div className="flex items-center gap-8 lg:gap-10">
                 <Link href="/" className="shrink-0">
                   <AkazaLogo className="drop-shadow-[0_4px_16px_rgba(0,0,0,0.45)]" />
                 </Link>
@@ -74,7 +74,7 @@ export default function Navbar() {
                 />
               </div>
 
-              <div className="hidden md:flex items-center gap-3">
+              <div className="hidden md:flex items-center gap-3 shrink-0">
                 <ThemeToggle isLight={isLight} theme={theme} onToggle={toggleTheme} />
 
                 {user ? (
@@ -82,7 +82,7 @@ export default function Navbar() {
                 ) : (
                   <Link
                     href="/login"
-                    className="rounded-full border border-[var(--line-soft)] px-4 py-2 text-[11px] uppercase tracking-[0.18em] font-semibold text-[var(--text-secondary)] transition-colors hover:border-white/20 hover:text-[var(--text-primary)]"
+                    className="rounded-full border border-[var(--line-soft)] px-3 lg:px-4 py-2 text-[10px] lg:text-[11px] uppercase tracking-[0.12em] lg:tracking-[0.18em] font-semibold whitespace-nowrap text-[var(--text-secondary)] transition-colors hover:border-white/20 hover:text-[var(--text-primary)]"
                   >
                     Login / Register
                   </Link>
@@ -90,7 +90,7 @@ export default function Navbar() {
 
                 <Link
                   href="/hotels/search"
-                  className="rounded-full border border-[var(--nav-avatar-border)] bg-gradient-to-r from-primary to-primary-gradient-end px-6 py-2.5 text-[11px] font-bold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_-16px_rgba(226,175,109,0.8)] transition-all hover:translate-y-[-1px] hover:shadow-[0_14px_34px_-14px_rgba(226,175,109,0.95)]"
+                  className="rounded-full border border-[var(--nav-avatar-border)] bg-gradient-to-r from-primary to-primary-gradient-end px-4 lg:px-6 py-2.5 text-[10px] lg:text-[11px] font-bold uppercase tracking-[0.15em] lg:tracking-[0.2em] whitespace-nowrap text-white shadow-[0_10px_30px_-16px_rgba(226,175,109,0.8)] transition-all hover:translate-y-[-1px] hover:shadow-[0_14px_34px_-14px_rgba(226,175,109,0.95)]"
                 >
                   Book Now
                 </Link>

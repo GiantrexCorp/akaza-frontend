@@ -14,8 +14,8 @@ import {
   Clock,
   User,
 } from "lucide-react";
-import { DatePicker } from "@/components/ui";
-import type { AutocompleteOption } from "@/components/ui";
+import { DateRangePicker } from "@/components/ui";
+import type { AutocompleteOption, DateRange } from "@/components/ui";
 import { useDestinationSearch } from "@/hooks/useDestinationSearch";
 
 export type TabId = "hotels" | "excursions" | "transfers";
@@ -89,8 +89,7 @@ export default function SearchWidget({
   const [values, setValues] = useState<Record<string, string>>({});
   const [destinationCode, setDestinationCode] = useState("");
   const [destinationName, setDestinationName] = useState("");
-  const [hotelCheckIn, setHotelCheckIn] = useState("");
-  const [hotelCheckOut, setHotelCheckOut] = useState("");
+  const [hotelDates, setHotelDates] = useState<DateRange>({ checkIn: "", checkOut: "" });
   const [hotelGuests, setHotelGuests] = useState("2");
   const [showDestDropdown, setShowDestDropdown] = useState(false);
   const destContainerRef = useRef<HTMLDivElement>(null);
@@ -117,8 +116,7 @@ export default function SearchWidget({
     setValues({});
     setDestinationCode("");
     setDestinationName("");
-    setHotelCheckIn("");
-    setHotelCheckOut("");
+    setHotelDates({ checkIn: "", checkOut: "" });
     setHotelGuests("2");
     setShowDestDropdown(false);
     destSearch.clear();
@@ -136,8 +134,8 @@ export default function SearchWidget({
         params.set("destination", destinationCode);
         params.set("destinationName", destinationName);
       }
-      if (hotelCheckIn) params.set("checkIn", hotelCheckIn);
-      if (hotelCheckOut) params.set("checkOut", hotelCheckOut);
+      if (hotelDates.checkIn) params.set("checkIn", hotelDates.checkIn);
+      if (hotelDates.checkOut) params.set("checkOut", hotelDates.checkOut);
       params.set("adults", hotelGuests || "2");
       params.set("children", "0");
     } else {
@@ -188,7 +186,7 @@ export default function SearchWidget({
         </div>
 
         <div id="search-tabpanel" role="tabpanel" aria-labelledby={`tab-${activeTab}`} className="p-5 md:p-7">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6 items-end">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 items-end">
             {activeTab === "hotels" ? (
               <>
                 <div className="space-y-2" ref={destContainerRef}>
@@ -246,48 +244,27 @@ export default function SearchWidget({
                     )}
                   </div>
                 </div>
-                <div className="space-y-2">
-                  <label className="block text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-[0.22em]">
-                    Check-in
-                  </label>
-                  <DatePicker
-                    value={hotelCheckIn}
-                    onChange={setHotelCheckIn}
-                    minDate={todayStr}
-                    renderTrigger={({ displayValue, onClick }) => (
+                <DateRangePicker
+                  value={hotelDates}
+                  onChange={setHotelDates}
+                  minDate={todayStr}
+                  renderTrigger={({ displayValue, onClick }) => (
+                    <div className="space-y-2">
+                      <label className="block text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-[0.22em]">
+                        Dates
+                      </label>
                       <div
                         onClick={onClick}
                         className="relative group border border-[var(--search-widget-field-border)] bg-[var(--search-widget-field-bg)] px-3 py-3 transition-all hover:border-primary/45 cursor-pointer"
                       >
                         <Calendar size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-primary group-hover:text-primary-dark transition-colors pointer-events-none" />
                         <span className={`block pl-8 pr-2 py-1 text-[1.15rem] font-serif ${displayValue ? 'text-[var(--field-text)]' : 'text-[var(--field-placeholder)]'}`}>
-                          {displayValue || "Select date"}
+                          {displayValue || "Select dates"}
                         </span>
                       </div>
-                    )}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="block text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-[0.22em]">
-                    Check-out
-                  </label>
-                  <DatePicker
-                    value={hotelCheckOut}
-                    onChange={setHotelCheckOut}
-                    minDate={hotelCheckIn || todayStr}
-                    renderTrigger={({ displayValue, onClick }) => (
-                      <div
-                        onClick={onClick}
-                        className="relative group border border-[var(--search-widget-field-border)] bg-[var(--search-widget-field-bg)] px-3 py-3 transition-all hover:border-primary/45 cursor-pointer"
-                      >
-                        <Calendar size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-primary group-hover:text-primary-dark transition-colors pointer-events-none" />
-                        <span className={`block pl-8 pr-2 py-1 text-[1.15rem] font-serif ${displayValue ? 'text-[var(--field-text)]' : 'text-[var(--field-placeholder)]'}`}>
-                          {displayValue || "Select date"}
-                        </span>
-                      </div>
-                    )}
-                  />
-                </div>
+                    </div>
+                  )}
+                />
                 <div className="space-y-2">
                   <label className="block text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-[0.22em]">
                     Guests
