@@ -118,11 +118,11 @@ export default function LanguageSwitcher({ isLight, mobile }: LanguageSwitcherPr
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className={`flex items-center gap-1.5 border border-[var(--line-soft)] px-2.5 py-2 transition-colors ${
+        className={`flex items-center gap-1.5 px-2.5 py-2 transition-colors ${
           isLight
-            ? 'bg-white/70 text-[var(--text-secondary)] hover:border-primary/40 hover:text-[var(--text-primary)]'
-            : 'bg-black/15 text-[var(--text-secondary)] hover:border-primary/40 hover:text-[var(--nav-user-hover-text)]'
-        } ${open ? 'border-primary/40' : ''}`}
+            ? 'text-[var(--text-secondary)] hover:bg-black/[0.06] hover:text-[var(--text-primary)]'
+            : 'text-[var(--text-secondary)] hover:bg-white/[0.08] hover:text-[var(--nav-user-hover-text)]'
+        }`}
       >
         <CurrentFlag className="w-4 h-3 shrink-0" />
         <span className="text-[10px] uppercase tracking-[0.15em] font-semibold">{shortLabels[currentLocale]}</span>
